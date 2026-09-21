@@ -1,0 +1,46 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+license = "AGPL-3.0-only"
+repository = "https://github.com/nkVas1/DreViGen"
+authors = ["nkVas1"]
+
+[workspace.dependencies]
+drevigen-testkit = { path = "crates/drevigen-testkit" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+# Clippy at a high setting, as the project guidelines require. Individual
+# allows below are the pedantic lints that fight idiomatic numeric code more
+# than they help; everything else stays on.
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+module_name_repetitions = "allow"
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+# Benchmarks and spikes want release-grade code with symbols intact.
+[profile.bench]
+inherits = "release"
+strip = "none"
+debug = 1

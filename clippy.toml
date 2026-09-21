@@ -1,0 +1,23 @@
+# `..` extends clippy's default allow-list rather than replacing it.
+#
+# These are proper nouns and domain terms that appear throughout our prose documentation.
+# Backticking a product or standard name in running text is typographically wrong, so they are
+# declared valid identifiers instead of silencing `doc_markdown` wholesale.
+doc-valid-idents = [
+    "..",
+    "DreViGen",
+    "GEDCOM",
+    "GEDCOM-X",
+    "OKLCH",
+    "APCA",
+    "WebGL",
+    "WebGPU",
+    "SQLite",
+    "OPFS",
+    "CRDT",
+    "MacFamilyTree",
+    "MobileFamilyTree",
+    "MyHeritage",
+    "FamilySearch",
+    "WikiTree",
+]
