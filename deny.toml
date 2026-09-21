@@ -49,16 +49,30 @@ yanked = "deny"
 
 # Each entry is a specific, dated acknowledgement — not a blanket downgrade of `unmaintained`.
 # A new unmaintained crate entering the graph still fails the build, which is the behaviour we
-# want: these four are known and tracked, the next one would not be.
+# want: every entry below is known and tracked, the next one would not be.
 #
-# All four are `unmaintained`, none is a vulnerability. `im` is a mandatory runtime dependency
-# of loro-internal and brings the other two with it, so there is nothing to upgrade to from our
-# side. Recorded as a known risk in ADR 0006; revisit whenever Loro is upgraded.
+# None is a vulnerability; all are `unmaintained`. They arrive in two clusters, and in both the
+# crate that pulls them in is a dependency we have chosen deliberately and cannot patch from
+# here:
+#
+#   - `im` and its two children are a mandatory runtime dependency of loro-internal (ADR 0006).
+#   - The `unic-*` family arrives through urlpattern, which tauri-utils uses to match the
+#     capability scopes; `proc-macro-error` arrives through gtk, which only Linux builds reach.
+#     Both are Tauri's to replace, and both are build-time or parsing code rather than anything
+#     that touches archive data.
+#
+# Revisit whenever Loro or Tauri is upgraded.
 ignore = [
     { id = "RUSTSEC-2026-0248", reason = "im 15.1.0 — archived; mandatory runtime dep of loro-internal. Upstream's to replace. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2026-0251", reason = "sized-chunks 0.6.5 — archived; pulled in by im. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2026-0247", reason = "bitmaps 2.1.0 — archived; pulled in by im. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2023-0089", reason = "atomic-polyfill 1.0.3 — archived; target-gated, absent from our host builds. Re-check when the WASM target lands. Reviewed 2026-09-21." },
+    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error 1.0.4 — unmaintained; build-time only, via glib-macros -> gtk -> muda/tao, so Linux builds only. Tauri's to replace. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2025-0075", reason = "unic-char-range 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2025-0080", reason = "unic-common 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2025-0081", reason = "unic-char-property 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2025-0098", reason = "unic-ucd-version 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2025-0100", reason = "unic-ucd-ident 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
 ]
 
 [sources]

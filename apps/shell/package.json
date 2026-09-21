@@ -1,0 +1,21 @@
+{
+  "name": "@drevigen/shell",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The native shell. Wraps the Tauri CLI; the front end it loads is @drevigen/web.",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "android:init": "tauri android init",
+    "android:dev": "tauri android dev",
+    "android:build": "tauri android build",
+    "ios:init": "tauri ios init",
+    "ios:dev": "tauri ios dev",
+    "ios:build": "tauri ios build",
+    "icons": "tauri icon ../../assets/identity/mark-1024.png"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.5"
+  }
+}

@@ -21,7 +21,9 @@ doc-valid-idents = [
     "FamilySearch",
     "WikiTree",
     "OKLab",
-    "OKLCH",
-    "APCA",
     "SplitMix64",
+    "WebView2",
+    "WebKitGTK",
+    "WebKit",
+    "SharedArrayBuffer",
 ]

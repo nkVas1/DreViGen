@@ -1,0 +1,55 @@
+[package]
+name = "drevigen-shell"
+description = "The native shell: the same front end as the web build, in a system webview."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[lib]
+# Tauri's mobile entry point is compiled into a shared library that the generated Android and
+# iOS projects load, so this crate is both a library and a binary. The `_lib` suffix is what
+# the mobile templates expect; renaming it breaks `tauri android build`.
+name = "drevigen_shell_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+log = "0.4.30"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+tauri = { version = "2.11.6", features = [] }
+tauri-plugin-log = "2.9.2"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+# Desktop only: both plugins are meaningless on a phone, where the OS owns window placement
+# and already guarantees one instance.
+tauri-plugin-single-instance = "2.4.5"
+tauri-plugin-window-state = "2.4.1"
+
+[lints.rust]
+# The workspace forbids unsafe code. This crate cannot: `tauri::mobile_entry_point` expands to
+# an `#[unsafe(no_mangle)] extern "C"` function so the Android and iOS runtimes can find it, and
+# the `unsafe_code` lint covers unsafe attributes as well as unsafe blocks. `deny` keeps the
+# rule in force everywhere except where the macro needs it; `forbid` could not be overridden.
+unsafe_code = "deny"
+missing_docs = "warn"
+unreachable_pub = "warn"
+
+[lints.clippy]
+# Mirrors [workspace.lints.clippy] exactly; it cannot inherit it because the block above is
+# a local override.
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+module_name_repetitions = "allow"
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"

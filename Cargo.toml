@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/*", "spikes/*"]
+members = ["apps/shell/src-tauri", "crates/*", "spikes/*"]
 # Spikes that are not Rust. The glob above would otherwise try to read a Cargo.toml that does
 # not exist and fail the whole workspace.
 exclude = ["spikes/s4-opfs-concurrency"]
