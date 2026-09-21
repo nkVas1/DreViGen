@@ -1,0 +1,10 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/nkVas1/DreViGen/security/advisories/new
+    about: Report privately. Never open a public issue for a security problem.
+
+  - name: Read the design documents first
+    url: https://github.com/nkVas1/DreViGen/tree/main/docs
+    about: Vision, research dossier, architecture, ADRs and roadmap. Most "why is it like that" questions are answered there, with the reasoning.

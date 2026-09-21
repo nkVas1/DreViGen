@@ -1,0 +1,48 @@
+name: Design objection
+description: Argue that an architectural or design decision is wrong. Actively wanted.
+labels: ['design', 'discussion']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A decision that survives a serious objection is stronger. One that does not should
+        change. This template exists because that is genuinely the intent, not a formality.
+
+  - type: input
+    id: decision
+    attributes:
+      label: Which decision
+      description: The ADR number, or the document and section.
+      placeholder: 'ADR 0004, or docs/03-design/art-direction.md §6'
+    validations:
+      required: true
+
+  - type: textarea
+    id: objection
+    attributes:
+      label: What is wrong with it
+      description: The specific failure. Concrete beats general.
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequence
+    attributes:
+      label: What goes wrong if it stands
+      description: Who is hurt, in what situation, how badly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative
+    attributes:
+      label: What you would do instead
+      description: Including what your alternative gives up. Every decision costs something.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Papers, specifications, benchmarks, or your own experience. Experience counts — say whose.

@@ -1,0 +1,47 @@
+name: GEDCOM test file
+description: Offer a real GEDCOM export for the round-trip test corpus. The most useful thing you can send.
+labels: ['gedcom', 'test-data']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Lossless GEDCOM round-tripping is only as good as the files it is tested against, and
+        real exports contain structures no specification reading predicts.
+
+        **Before you attach anything: remove living people, and anything you would not publish.**
+        A file with twenty people and one weird structure is more useful than a clean file with
+        five thousand.
+
+  - type: input
+    id: producer
+    attributes:
+      label: Which application produced it
+      placeholder: 'Gramps 6.1.2 · MacFamilyTree 11.3 · MyHeritage web export'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: GEDCOM version
+      options: ['7.0', '5.5.1', '5.5', 'Not sure']
+    validations:
+      required: true
+
+  - type: textarea
+    id: interesting
+    attributes:
+      label: What is interesting about it
+      description: Unusual structures, custom tags, non-Latin text, odd dates, calendars, anything that broke another tool.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: I removed living people and anything private.
+          required: true
+        - label: I am willing for this file to be committed to the public test corpus under the project licence.
+          required: true

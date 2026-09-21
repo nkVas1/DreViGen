@@ -1,0 +1,87 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    paths: ['**.md', '.github/workflows/docs.yml', 'lychee.toml']
+  pull_request:
+    paths: ['**.md', '.github/workflows/docs.yml', 'lychee.toml']
+  schedule:
+    # External links rot. Catch it weekly rather than at the worst moment.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    name: Link check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --offline
+            --no-progress
+            --include-fragments
+            './**/*.md'
+          fail: true
+
+      - name: Check external links
+        # Advisory only: a source going down is not our defect, but we want to know.
+        continue-on-error: true
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --max-retries 2
+            --timeout 25
+            --accept 200,206,403,429
+            --exclude-path './LICENSE'
+            './**/*.md'
+          fail: false
+
+  hygiene:
+    name: Hygiene
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Reject stray CJK characters
+        # Guards against characters slipping in from an unrelated input method.
+        # The project uses Latin and Cyrillic only.
+        run: |
+          if grep -rlP '[\x{3000}-\x{9fff}\x{ff00}-\x{ffef}]' --include='*.md' .; then
+            echo "::error::Stray CJK characters found in the files listed above."
+            exit 1
+          fi
+          echo "Clean."
+
+      - name: Reject tab indentation in Markdown
+        run: |
+          if grep -rlP '^\t' --include='*.md' .; then
+            echo "::error::Tab indentation found in the files listed above; use spaces."
+            exit 1
+          fi
+          echo "Clean."
+
+      - name: Verify every document referenced by the READMEs exists
+        run: |
+          status=0
+          for readme in README.md README.ru.md; do
+            grep -oP '\]\(\.\/[^)#]+' "$readme" | sed 's/^](\.\///' | while read -r target; do
+              if [ ! -e "$target" ]; then
+                echo "::error file=$readme::Referenced path does not exist: $target"
+                exit 1
+              fi
+            done || status=1
+          done
+          exit $status
