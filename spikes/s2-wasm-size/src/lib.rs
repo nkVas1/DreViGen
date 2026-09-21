@@ -85,7 +85,9 @@ mod crdt {
         #[wasm_bindgen(constructor)]
         #[must_use]
         pub fn new() -> Self {
-            Self { doc: LoroDoc::new() }
+            Self {
+                doc: LoroDoc::new(),
+            }
         }
 
         /// Opens a document from a snapshot.
