@@ -24,7 +24,7 @@ jobs:
     name: Format, lint, test
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # rust-toolchain.toml pins the version; this action honours it.
       - uses: dtolnay/rust-toolchain@stable
@@ -95,7 +95,7 @@ jobs:
     name: Licences and advisories
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
