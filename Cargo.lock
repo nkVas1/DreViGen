@@ -1185,6 +1185,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "s2-wasm-size"
+version = "0.0.0"
+dependencies = [
+ "drevigen-testkit",
+ "loro",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "scoped-tls"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

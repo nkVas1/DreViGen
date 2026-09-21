@@ -44,3 +44,12 @@ strip = "symbols"
 inherits = "release"
 strip = "none"
 debug = 1
+
+# The web build optimises for bytes downloaded, not for speed: every kilobyte lands in front of
+# the first paint. The native profile above stays tuned for throughput, because there the binary
+# is already on disk.
+[profile.wasm-release]
+inherits = "release"
+opt-level = "z"
+lto = "fat"
+codegen-units = 1

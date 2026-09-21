@@ -13,3 +13,4 @@ what it gives up has not been made yet.
 | [0004](./0004-own-layout-engine.md) | Own Sugiyama-derived layout engine rather than elkjs or d3-dag | Accepted |
 | [0005](./0005-assertion-conclusion-split.md) | Assertions and Conclusions as distinct model layers | Accepted |
 | [0006](./0006-loro-as-crdt-substrate.md) | Loro as the CRDT substrate | Accepted — pending on-device validation |
+| [0007](./0007-single-eager-wasm-module.md) | Ship the web core as one eager WASM module, no lazy split | Accepted — re-measured each phase |

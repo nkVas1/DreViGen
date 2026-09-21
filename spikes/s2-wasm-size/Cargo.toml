@@ -1,0 +1,21 @@
+[package]
+name = "s2-wasm-size"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+description = "Spike S2 — measures what the Rust core costs in bytes once compiled to WebAssembly."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+# Measured separately so the cost is attributed rather than reported as one number.
+default = ["crdt", "demo"]
+crdt = ["dep:loro"]
+demo = ["dep:drevigen-testkit"]
+
+[dependencies]
+wasm-bindgen = "0.2.128"
+loro = { version = "1.16.2", optional = true }
+drevigen-testkit = { version = "0.0.0", path = "../../crates/drevigen-testkit", optional = true }

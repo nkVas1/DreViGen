@@ -50,7 +50,7 @@ from day one.
 |---|---|---|---|
 | S1 | ~~**Loro at scale.**~~ **Done 2026-09-21.** Desktop: 50 000 people / 350 000 ops merge in **2.6 ms** retaining **95 MiB**; Automerge is 15.7× slower to build and 26× slower to merge. → [ADR 0006](../02-architecture/adr/0006-loro-as-crdt-substrate.md) | 4 days | **Passed.** Cost: Loro snapshots are 8× larger than Automerge's — mitigated in the ADR |
 | S1b | **The same spike on a mid-range Android device.** S1 produced desktop numbers only; the stated criterion is a phone. | 1 day | Merge < 2 s, retained < 300 MB on device. Fail → ADR 0006 is superseded, not amended |
-| S2 | **WASM core size.** Does the full core compiled to WASM stay inside the first-paint budget? | 2 days | < 2.5 MB gzipped, or a clean eager/lazy split identified |
+| S2 | ~~**WASM core size.**~~ **Done 2026-09-21.** Chosen dependencies compile to **606 KiB gzipped** against a 2 500 KiB budget — Loro is 589 KiB of it, the testkit 9 KiB. → [ADR 0007](../02-architecture/adr/0007-single-eager-wasm-module.md) | 2 days | **Passed**, 1 894 KiB of headroom. No lazy split. Re-measure as each core crate lands; Beider–Morse rule tables are the one to watch |
 | S3 | **MSDF atlas coverage.** How much Cyrillic + Latin + Greek can be pre-baked before atlas size dominates? | 3 days | Full Russian and German coverage < 4 MB, with a working on-demand path for the rest |
 | S4 | **OPFS concurrency.** Does the single-writer model hold under our access pattern, with `SQLITE_BUSY` handled? | 2 days | 10 000 writes with no data loss, no deadlock, under simulated contention |
 | S5 | **Tauri mobile capability.** Which plugins exist on both iOS and Android; what must we write ourselves? | 3 days | A written capability matrix; every gap has an owner and an estimate |
@@ -59,8 +59,9 @@ from day one.
 
 - [ ] pnpm + Cargo workspace, the full directory structure from the architecture overview
 - [ ] Toolchain pinned: Rust 1.96.1, Node 24.11.1, pnpm 11.10.0, exact versions throughout
-- [ ] CI: `cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`, `tsc --noEmit`,
-      `eslint`, `vitest`, `cargo audit`, `pnpm audit`, WASM size budget — all blocking
+- [x] CI (Rust half): `cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`, rustdoc
+      with `-D warnings`, `cargo deny` for licences, bans, sources and advisories — all blocking
+- [ ] CI (web half): `tsc --noEmit`, `eslint`, `vitest`, `pnpm audit`, WASM size budget
 - [ ] Release pipeline producing signed artefacts for all six targets, even if the app is empty
 - [ ] `tokens` package: the OKLCH → sRGB + APCA pipeline, with contrast failures breaking the build
 - [ ] Fonts vendored and subset; the type audit from the art direction resolved
@@ -316,7 +317,7 @@ project. A family of ten synchronises without an administrator.
 | ~~Loro fails the Phase 0 spike~~ | — | **Retired 2026-09-21.** S1 passed with wide margin; see [ADR 0006](../02-architecture/adr/0006-loro-as-crdt-substrate.md). Residual risk is the on-device run, tracked as S1b |
 | Loro snapshots are 8× larger than Automerge's | Medium | Shallow snapshot plus a separate op log in the `.dvg` container; sync transfers deltas not snapshots; snapshot size budgeted in CI |
 | Own layout engine takes longer than 2.5 weeks | Medium | Ship Phase 1 with a simpler coordinate assignment; crossing reduction is an independent improvement |
-| WASM bundle exceeds the first-paint budget | Medium | Eager kernel plus lazily loaded modules; native builds are unaffected |
+| ~~WASM bundle exceeds the first-paint budget~~ | Low | **Downgraded 2026-09-21.** S2 measured 606 KiB of 2 500 KiB. Residual risk is `drevigen-match`, whose Beider–Morse tables are data rather than code; the size budget becomes a failing CI gate as the core lands |
 | Cyrillic HTR accuracy is too low to be useful | Medium | Non-Latin tooling lags Latin by years and we knew it going in. Ship the transcription workspace regardless — structured, image-linked manual transcription is valuable on its own; recognition is an accelerator, not the feature |
 | Scope grows without bound | **High** | Phase exit criteria are contracts. Anything not in a phase goes to the post-1.0 list, and the list is allowed to be long |
 | Solo-developer bus factor | High | Documentation as a first-class deliverable; ADRs for every decision; no undocumented tribal knowledge |
