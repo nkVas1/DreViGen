@@ -1,0 +1,8 @@
+{
+  "default": "mark-1024.png",
+  "bg_color": "#F7F3EB",
+  "android_bg": "adaptive-background-1024.png",
+  "android_fg": "adaptive-foreground-1024.png",
+  "android_fg_scale": 100,
+  "android_monochrome": "adaptive-monochrome-1024.png"
+}

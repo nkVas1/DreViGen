@@ -13,6 +13,7 @@
 //! | `mark-mono-1024.png` | One colour, for a Windows taskbar and macOS template icons |
 //! | `adaptive-foreground.png` | Android's foreground layer, inside the 66 % safe zone |
 //! | `adaptive-background.png` | Android's background layer: the vellum ground |
+//! | `adaptive-monochrome.png` | Android 13 themed icons: one shape, transparent |
 //! | `mark.svg`, `mark-dark.svg`, `mark-mono.svg` | The vector source, for the web and for print |
 //!
 //! This is the mark the application ships with. The asset brief assigns a higher-fidelity
@@ -42,7 +43,7 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     }
 
-    let jobs: [(&str, Mark); 5] = [
+    let jobs: [(&str, Mark); 6] = [
         ("mark", Mark::new(Tone::Light)),
         ("mark-dark", Mark::new(Tone::Dark)),
         ("mark-mono", Mark::new(Tone::Monochrome)),
@@ -52,6 +53,12 @@ fn main() -> ExitCode {
             Mark::new(Tone::Light).transparent().inset(0.58),
         ),
         ("adaptive-background", ground_only()),
+        // Android 13 themed icons: the system discards the colour and tints the alpha, so
+        // this layer has to be one shape on nothing.
+        (
+            "adaptive-monochrome",
+            Mark::new(Tone::Monochrome).transparent().inset(0.58),
+        ),
     ];
 
     for (name, mark) in jobs {
