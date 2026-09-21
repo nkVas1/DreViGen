@@ -210,7 +210,8 @@ theatre.
    before atlas size becomes the bottleneck, and what is the on-demand rasterisation path.
 4. **OPFS concurrency.** Confirm the single-writer model holds under our access patterns, with
    explicit `SQLITE_BUSY` handling.
-5. **Tauri mobile plugin coverage.** Verify every capability we need exists on both iOS and
-   Android, and identify what must be written as a custom plugin.
+5. ~~**Tauri mobile plugin coverage.**~~ **Answered 2026-09-21** —
+   [mobile-capabilities.md](./mobile-capabilities.md). Official plugins cover everything except
+   camera, photo library and share sheet; we write those, 12 days total.
 
 Each is a timeboxed spike with a written outcome recorded as an ADR.

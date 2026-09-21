@@ -22,14 +22,14 @@
 
 ```
   PHASE 0  Основание        ████                                  3 weeks    spikes, skeleton, CI
-  PHASE 1  Ядро                 ████████████                     10 weeks    model, GEDCOM, canvas, Hall
+  PHASE 1  Ядро                 █████████████                  11.5 weeks    model, GEDCOM, canvas, Hall, media
   PHASE 2  Мастерская                       ████████              8 weeks    sources, evidence, research
   PHASE 3  Родня                                    ████████      8 weeks    server, accounts, contributions
   PHASE 4  Выражение                                    ██████    6 weeks    charts, print, export, publish
   PHASE 5  Автоматика                                     ██████  7 weeks    HTR, faces, record linkage
   PHASE 6  Огранка                                         █████  6 weeks    performance, a11y, l10n, release
                                                                  ────────
-                                                                  48 weeks
+                                                                 49.5 weeks
 ```
 
 Releases are cut at the end of every phase: `v0.1` … `v0.6`, then **`v1.0`** at the close of
@@ -53,7 +53,7 @@ from day one.
 | S2 | ~~**WASM core size.**~~ **Done 2026-09-21.** Chosen dependencies compile to **606 KiB gzipped** against a 2 500 KiB budget — Loro is 589 KiB of it, the testkit 9 KiB. → [ADR 0007](../02-architecture/adr/0007-single-eager-wasm-module.md) | 2 days | **Passed**, 1 894 KiB of headroom. No lazy split. Re-measure as each core crate lands; Beider–Morse rule tables are the one to watch |
 | S3 | **MSDF atlas coverage.** How much Cyrillic + Latin + Greek can be pre-baked before atlas size dominates? | 3 days | Full Russian and German coverage < 4 MB, with a working on-demand path for the rest |
 | S4 | **OPFS concurrency.** Does the single-writer model hold under our access pattern, with `SQLITE_BUSY` handled? | 2 days | 10 000 writes with no data loss, no deadlock, under simulated contention |
-| S5 | **Tauri mobile capability.** Which plugins exist on both iOS and Android; what must we write ourselves? | 3 days | A written capability matrix; every gap has an owner and an estimate |
+| S5 | ~~**Tauri mobile capability.**~~ **Done 2026-09-21.** Everything is covered by official plugins except **camera, photo library and share sheet**, where no maintained plugin exists. → [mobile-capabilities.md](../02-architecture/mobile-capabilities.md) | 3 days | **Passed.** 12 days of previously unplanned mobile work surfaced, scheduled into Phases 1 and 4 |
 
 ### Deliverables
 
@@ -66,6 +66,8 @@ from day one.
 - [ ] `tokens` package: the OKLCH → sRGB + APCA pipeline, with contrast failures breaking the build
 - [ ] Fonts vendored and subset; the type audit from the art direction resolved
 - [ ] The app opens on Windows, Android and in a browser, shows one screen, and is installable
+- [ ] P0-S5a — Rust `std::fs` verified inside the app sandbox on both mobile platforms
+- [ ] P0-S5b — the Rust WebSocket client verified from both mobile platforms
 
 ### Exit criteria
 
@@ -79,7 +81,7 @@ a phone and see a correctly typed, correctly coloured screen.
 **Goal:** a genuinely usable single-user genealogy application. Someone can build a real family
 tree in it, import their existing GEDCOM, and show it to relatives.
 
-**Duration:** 10 weeks · **Release:** `v0.1`
+**Duration:** 11.5 weeks · **Release:** `v0.1`
 
 ### Workstreams
 
@@ -125,6 +127,12 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 - [ ] Incremental R-tree for culling and hit-testing
 - [ ] All five semantic-zoom bands with cross-fade and no reflow
 - [ ] Spring-driven pan and zoom, interruptible, velocity-carrying
+
+**1.8 · Mobile media** (`crates/drevigen-plugin-media`, 1.5 weeks)
+- [ ] Camera capture and photo-library picking on iOS and Android, from one Rust surface
+- [ ] **EXIF preserved end to end** — capture date and camera model are genealogical evidence
+- [ ] Desktop falls back to the `dialog` file picker
+- [ ] `tauri-plugin-android-fs` integrated for scoped storage
 
 **1.7 · The Hall** (`packages/app`, 2 weeks)
 - [ ] First run: create a tree, or import a GEDCOM, in under two minutes
@@ -228,6 +236,8 @@ tree.
 - [ ] **Web publish** — a static, privacy-filtered site for relatives, hostable anywhere,
       regenerated on demand
 - [ ] **Sharing** — a deep link to any person or view, with the viewport in the URL
+- [ ] `drevigen-plugin-share` — the native share sheet on iOS and Android, since no maintained
+      plugin provides one
 - [ ] **Slideshow** — the Hall's ambient mode: photographs with context, for a family gathering
 
 ### Exit criteria
@@ -321,4 +331,5 @@ project. A family of ten synchronises without an administrator.
 | Cyrillic HTR accuracy is too low to be useful | Medium | Non-Latin tooling lags Latin by years and we knew it going in. Ship the transcription workspace regardless — structured, image-linked manual transcription is valuable on its own; recognition is an accelerator, not the feature |
 | Scope grows without bound | **High** | Phase exit criteria are contracts. Anything not in a phase goes to the post-1.0 list, and the list is allowed to be long |
 | Solo-developer bus factor | High | Documentation as a first-class deliverable; ADRs for every decision; no undocumented tribal knowledge |
-| App-store rejection on mobile | Low | Tauri mobile is shipping in production apps; the Phase 0 capability matrix surfaces problems in week 3, not month 11 |
+| App-store rejection on mobile | Low | Tauri mobile is shipping in production apps; the Phase 0 capability matrix surfaced its problems in week 3, not month 11 — see [mobile-capabilities.md](../02-architecture/mobile-capabilities.md) |
+| Photo import is the Хранитель persona's whole reason to open the mobile app, and no maintained plugin provides it | Medium | We write `drevigen-plugin-media` ourselves rather than depend on a 0.1.x crate with no commits in fifteen months. 7 days, scheduled in Phase 1 |
