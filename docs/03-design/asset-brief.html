@@ -1,0 +1,1470 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="DreViGen — пакет визуальных ассетов Herbarium Vivum: скетчи, промпты и спецификации поставки.">
+<style>:root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Herbarium Vivum Plates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prata&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────────────
+   HERBARIUM VIVUM · asset plates
+   Tokens mirror docs/03-design/art-direction.md §4
+   ───────────────────────────────────────────────────────────────────────── */
+:root{
+  --vellum:#FBF7EE;
+  --vellum-deep:#F3EBDB;
+  --well:#EBE1CD;
+  --ink:#1E232B;
+  --ink-soft:#55606D;
+  --ink-faint:#8F8676;
+  --rule:#CFC4AE;
+  --rule-soft:#E2D8C5;
+  --sanguine:#B4552C;
+  --sanguine-wash:#F6E7DC;
+  --sage:#6B8163;
+  --sepia:#8A6A44;
+  --verdigris:#3E8A86;
+  --madder:#A63D34;
+  --indigo:#3C4E8C;
+
+  --f-display:'Prata',Georgia,'Times New Roman',serif;
+  --f-text:'Source Serif 4',Georgia,serif;
+  --f-label:'Golos Text','Helvetica Neue',Arial,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+
+  --measure:66ch;
+  --shadow-plate:0 1px 0 rgba(30,35,43,.04), 0 12px 28px -18px rgba(30,35,43,.35);
+}
+/* «Лампа» — the night reading room. Not an inversion: the paper goes to a warm
+   near-black and the ink becomes the warm light. Declared once for the system
+   default and again for the stamped toggle, so both resolve identically. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --vellum:#1B1813;
+    --vellum-deep:#14120D;
+    --well:#252017;
+    --ink:#EFE7D6;
+    --ink-soft:#A79D89;
+    --ink-faint:#776E5D;
+    --rule:#3C3529;
+    --rule-soft:#2A251C;
+    --sanguine:#DB7C4E;
+    --sanguine-wash:#2E2018;
+    --sage:#93A687;
+    --sepia:#BC9769;
+    --verdigris:#5FB2AC;
+    --madder:#CE6F62;
+    --indigo:#8193CE;
+    --shadow-plate:0 1px 0 rgba(0,0,0,.3), 0 12px 28px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --vellum:#1B1813;
+  --vellum-deep:#14120D;
+  --well:#252017;
+  --ink:#EFE7D6;
+  --ink-soft:#A79D89;
+  --ink-faint:#776E5D;
+  --rule:#3C3529;
+  --rule-soft:#2A251C;
+  --sanguine:#DB7C4E;
+  --sanguine-wash:#2E2018;
+  --sage:#93A687;
+  --sepia:#BC9769;
+  --verdigris:#5FB2AC;
+  --madder:#CE6F62;
+  --indigo:#8193CE;
+  --shadow-plate:0 1px 0 rgba(0,0,0,.3), 0 12px 28px -18px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--vellum);
+  color:var(--ink);
+  font-family:var(--f-text);
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain — one inline tile, exactly as the brief prescribes */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='0.42'/></svg>");
+  mix-blend-mode:multiply;opacity:.055;
+}
+:root[data-theme="dark"] body::before{mix-blend-mode:screen;opacity:.035}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{mix-blend-mode:screen;opacity:.035}}
+
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:0 96px}
+
+/* ── type ───────────────────────────────────────────────────────────────── */
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0}
+h1{font-size:clamp(38px,7.4vw,68px);line-height:1.02;letter-spacing:-.012em}
+h2{font-size:clamp(25px,3.6vw,34px);line-height:1.14}
+h3{font-size:20px;line-height:1.25}
+p{margin:0 0 .85em}
+a{color:var(--sanguine);text-underline-offset:.18em;text-decoration-thickness:.06em}
+strong{font-weight:600}
+.lede{font-size:clamp(18px,2.1vw,21px);line-height:1.56;color:var(--ink-soft);max-width:var(--measure)}
+.prose{max-width:var(--measure)}
+.eyebrow{
+  font-family:var(--f-label);font-size:11.5px;font-weight:600;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px
+}
+.num{font-variant-numeric:tabular-nums}
+
+/* ── frontispiece ───────────────────────────────────────────────────────── */
+.front{padding-block:clamp(46px,8vw,86px) 30px;border-bottom:1px solid var(--rule)}
+.front-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:34px;align-items:start}
+@media (max-width:760px){.front-grid{grid-template-columns:1fr}}
+.front-mark{width:clamp(108px,17vw,168px);height:auto;color:var(--ink)}
+.imprint{
+  font-family:var(--f-label);font-size:12.5px;color:var(--ink-faint);
+  display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:26px;
+  padding-top:14px;border-top:1px solid var(--rule-soft)
+}
+.imprint b{font-weight:600;color:var(--ink-soft)}
+
+/* ── laws strip ─────────────────────────────────────────────────────────── */
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0;
+  border:1px solid var(--rule);border-radius:2px;margin:34px 0 0;overflow:hidden}
+.law{padding:18px 20px;border-right:1px solid var(--rule-soft)}
+.law:last-child{border-right:0}
+@media (max-width:760px){.law{border-right:0;border-bottom:1px solid var(--rule-soft)}.law:last-child{border-bottom:0}}
+.law h4{font-family:var(--f-label);font-size:13px;font-weight:600;margin:0 0 5px;letter-spacing:.01em}
+.law p{font-size:14.5px;line-height:1.5;color:var(--ink-soft);margin:0}
+
+/* ── section rhythm ─────────────────────────────────────────────────────── */
+section{padding-block:clamp(44px,6.5vw,74px);border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.sec-head .rn{font-family:var(--f-display);font-size:15px;color:var(--sanguine);letter-spacing:.06em}
+
+/* ── palette ────────────────────────────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:2px;
+  border:1px solid var(--rule);padding:2px;background:var(--rule-soft)}
+.sw{background:var(--vellum);padding:12px 13px 11px}
+.sw i{display:block;height:46px;border:1px solid rgba(30,35,43,.14);margin-bottom:9px}
+.sw b{display:block;font-family:var(--f-label);font-size:12.5px;font-weight:600}
+.sw code{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--ink-faint);margin-top:2px}
+.sw span{display:block;font-size:12.5px;color:var(--ink-soft);line-height:1.38;margin-top:5px}
+
+/* ── type specimen ──────────────────────────────────────────────────────── */
+.specimens{display:grid;gap:2px;background:var(--rule-soft);border:1px solid var(--rule);padding:2px}
+.spec{background:var(--vellum);padding:18px 20px;display:grid;grid-template-columns:132px minmax(0,1fr);gap:22px;align-items:baseline}
+@media (max-width:640px){.spec{grid-template-columns:1fr;gap:8px}}
+.spec dt{font-family:var(--f-label);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.spec dt small{display:block;text-transform:none;letter-spacing:0;font-weight:400;font-size:11.5px;margin-top:3px}
+.spec-sample{min-width:0}
+.spec-sample .s-display{font-family:var(--f-display);font-size:31px;line-height:1.1}
+.spec-sample .s-text{font-family:var(--f-text);font-size:18px}
+.spec-sample .s-label{font-family:var(--f-label);font-size:16px;font-variant-numeric:tabular-nums;letter-spacing:.005em}
+.spec-sample .s-mono{font-family:var(--f-mono);font-size:14px}
+.spec-sample p{margin:0;color:var(--ink)}
+
+/* ── copy blocks ────────────────────────────────────────────────────────── */
+.block{border:1px solid var(--rule);background:var(--vellum-deep);position:relative;margin:0 0 16px}
+.block-head{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:9px 12px 9px 14px;border-bottom:1px solid var(--rule-soft)}
+.block-head span{font-family:var(--f-label);font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint)}
+.block pre{margin:0;padding:14px;font-family:var(--f-mono);font-size:12.9px;line-height:1.66;
+  white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.block.neg pre{color:var(--madder)}
+.copy{
+  font-family:var(--f-label);font-size:12px;font-weight:600;letter-spacing:.03em;
+  border:1px solid var(--rule);background:var(--vellum);color:var(--ink-soft);
+  padding:6px 12px;min-height:30px;border-radius:2px;cursor:pointer;white-space:nowrap;
+  transition:background .16s ease,color .16s ease,border-color .16s ease
+}
+.copy:hover{border-color:var(--sanguine);color:var(--sanguine)}
+.copy:active{background:var(--sanguine-wash)}
+.copy[data-done="1"]{border-color:var(--sage);color:var(--sage)}
+:where(button,a,input,summary):focus-visible{outline:2px solid var(--sanguine);outline-offset:2px}
+
+/* ── plates ─────────────────────────────────────────────────────────────── */
+.plate{
+  border:1px solid var(--rule);background:var(--vellum);box-shadow:var(--shadow-plate);
+  margin-bottom:26px;scroll-margin-top:86px
+}
+.plate-top{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:13px 18px;border-bottom:1px solid var(--rule);background:var(--vellum-deep)
+}
+.plate-rn{
+  font-family:var(--f-display);font-size:15px;color:var(--sanguine);
+  letter-spacing:.07em;min-width:52px
+}
+.plate-name{font-family:var(--f-display);font-size:19px;line-height:1.2;flex:1 1 220px}
+.plate-name em{font-style:normal;font-family:var(--f-label);font-size:12.5px;color:var(--ink-faint);display:block;margin-top:2px;letter-spacing:.02em}
+.plate-body{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:0}
+@media (max-width:820px){.plate-body{grid-template-columns:1fr}}
+.plate-fig{
+  padding:24px;border-right:1px solid var(--rule-soft);background:var(--well);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px
+}
+@media (max-width:820px){.plate-fig{border-right:0;border-bottom:1px solid var(--rule-soft)}}
+.figframe{
+  background:var(--vellum);border:1px solid var(--rule);width:100%;
+  padding:16px;display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 4px var(--vellum), inset 0 0 0 5px var(--rule-soft)
+}
+.figframe.tight{padding:10px}
+.figcap{font-size:13px;line-height:1.45;color:var(--ink-soft);text-align:center;font-style:italic;max-width:34ch}
+.figcap b{font-style:normal;font-family:var(--f-label);font-size:11.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px}
+.plate-main{padding:22px 24px 24px;min-width:0}
+
+/* specimen label */
+.label{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;
+  font-family:var(--f-label);font-size:13.5px;margin:0 0 18px;
+  padding:0 0 16px;border-bottom:1px dashed var(--rule)
+}
+.label dt{color:var(--ink-faint);font-weight:500;white-space:nowrap}
+.label dd{margin:0;font-variant-numeric:tabular-nums}
+.tag{
+  display:inline-block;font-family:var(--f-label);font-size:11px;font-weight:600;
+  letter-spacing:.09em;text-transform:uppercase;padding:2px 8px;border:1px solid currentColor;border-radius:2px
+}
+.tag.p1{color:var(--sanguine)}
+.tag.p2{color:var(--verdigris)}
+.tag.p3{color:var(--ink-faint)}
+.tag.proc{color:var(--sage)}
+.tag.pd{color:var(--indigo)}
+.tag.hand{color:var(--sepia)}
+.note{font-size:14.5px;line-height:1.55;color:var(--ink-soft);border-left:2px solid var(--sepia);padding-left:13px;margin:14px 0 0}
+.note.warn{border-left-color:var(--madder)}
+.note b{color:var(--ink)}
+
+/* ── progress ───────────────────────────────────────────────────────────── */
+/* full-bleed: the bar sits outside .wrap, so it carries its own gutter */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--vellum);
+  border-bottom:1px solid var(--rule);padding:9px 20px}
+.bar-in{max-width:1140px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bar-track{flex:1 1 140px;height:5px;background:var(--rule-soft);border:1px solid var(--rule);position:relative;min-width:110px}
+.bar-fill{position:absolute;inset:0 auto 0 0;background:var(--sanguine);width:0;transition:width .3s ease}
+.bar-txt{font-family:var(--f-label);font-size:12.5px;font-weight:600;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.done-toggle{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-label);font-size:12.5px;
+  font-weight:500;color:var(--ink-soft);cursor:pointer;user-select:none;min-height:30px}
+.done-toggle input{width:17px;height:17px;accent-color:var(--sage);cursor:pointer}
+.plate[data-done="1"]{opacity:.62}
+.plate[data-done="1"] .plate-top{background:color-mix(in oklab,var(--sage) 12%,var(--vellum-deep))}
+
+/* ── tables ─────────────────────────────────────────────────────────────── */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+th{font-family:var(--f-label);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-faint);background:var(--vellum-deep);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-family:var(--f-mono);font-size:12.5px}
+
+/* ── index ──────────────────────────────────────────────────────────────── */
+.index{columns:2;column-gap:36px;font-family:var(--f-label);font-size:14px}
+@media (max-width:640px){.index{columns:1}}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 0;text-decoration:none;color:var(--ink);
+  border-bottom:1px solid var(--rule-soft);break-inside:avoid}
+.index a:hover{color:var(--sanguine)}
+.index .rn{font-family:var(--f-display);font-size:12.5px;color:var(--sanguine);min-width:42px}
+.index .ct{margin-left:auto;color:var(--ink-faint);font-variant-numeric:tabular-nums;font-size:12.5px}
+
+/* ── sketch defaults ────────────────────────────────────────────────────── */
+.sk{display:block;width:100%;height:auto;max-width:100%;color:var(--ink);
+  fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.sk .hair{stroke-width:.65}
+.sk .bold{stroke-width:1.9}
+.sk .acc{stroke:var(--sanguine)}
+.sk .accf{fill:var(--sanguine);stroke:none}
+.sk .fillw{fill:var(--vellum)}
+.sk .soft{stroke:var(--ink-faint)}
+.sk .dash{stroke-dasharray:3 4}
+.sk .dot{stroke-dasharray:.1 5.5}
+.sk text{font-family:var(--f-label);font-size:7px;fill:var(--ink-faint);stroke:none}
+.sk-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%}
+.sk-row.four{grid-template-columns:repeat(2,1fr)}
+.sk-cell{border:1px solid var(--rule-soft);padding:8px;background:var(--vellum)}
+.sk-cell figcaption{font-family:var(--f-label);font-size:10.5px;color:var(--ink-faint);text-align:center;margin-top:6px}
+
+@media print{
+  .bar,.copy,.done-toggle{display:none}
+  .plate{break-inside:avoid;box-shadow:none}
+  body{font-size:11pt}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="bar">
+  <div class="bar-in">
+    <span class="bar-txt">Готовность пакета</span>
+    <div class="bar-track" role="progressbar" aria-labelledby="prog-label" aria-valuemin="0" aria-valuemax="14" aria-valuenow="0" id="prog-bar">
+      <div class="bar-fill" id="prog-fill"></div>
+    </div>
+    <span class="bar-txt num" id="prog-label">0 / 14 таблиц</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════════ FRONTISPIECE ═══════════════════ -->
+<header class="front">
+  <div class="front-grid">
+    <div>
+      <p class="eyebrow">DreViGen · пакет визуальных ассетов · ред. 2 · 21.IX.2026</p>
+      <h1>Herbarium&nbsp;Vivum</h1>
+      <p class="lede" style="margin-top:18px">
+        Полный набор таблиц для производства изображений DreViGen: скетч, этикетка образца,
+        готовый промпт и спецификация поставки на каждый ассет. Всё, что нужно сгенерировать —
+        здесь; всё, что генерировать <em>нельзя</em>, отмечено и объяснено.
+      </p>
+      <div class="imprint">
+        <span><b>Художественное направление</b> — ботанический атлас XIX&nbsp;в.</span>
+        <span><b>Таблиц</b> <span class="num">14</span></span>
+        <span><b>Файлов к поставке</b> <span class="num">≈ 47</span></span>
+        <span><b>Модель</b> — генеративная, по промптам ниже</span>
+      </div>
+    </div>
+    <svg class="front-mark sk" viewBox="0 0 200 200" role="img" aria-label="Знак DreViGen: семя в разрезе с кольцами роста">
+      <g class="hair soft">
+        <g id="ray"><line x1="100" y1="16" x2="100" y2="34"/></g>
+        <use href="#ray" transform="rotate(22.5 100 100)"/><use href="#ray" transform="rotate(45 100 100)"/>
+        <use href="#ray" transform="rotate(67.5 100 100)"/><use href="#ray" transform="rotate(90 100 100)"/>
+        <use href="#ray" transform="rotate(112.5 100 100)"/><use href="#ray" transform="rotate(135 100 100)"/>
+        <use href="#ray" transform="rotate(157.5 100 100)"/><use href="#ray" transform="rotate(180 100 100)"/>
+        <use href="#ray" transform="rotate(202.5 100 100)"/><use href="#ray" transform="rotate(225 100 100)"/>
+        <use href="#ray" transform="rotate(247.5 100 100)"/><use href="#ray" transform="rotate(270 100 100)"/>
+        <use href="#ray" transform="rotate(292.5 100 100)"/><use href="#ray" transform="rotate(315 100 100)"/>
+        <use href="#ray" transform="rotate(337.5 100 100)"/>
+      </g>
+      <circle class="dot" cx="100" cy="100" r="88"/>
+      <circle cx="100" cy="100" r="72"/>
+      <circle class="hair" cx="100" cy="100" r="66"/>
+      <circle cx="100" cy="100" r="49"/>
+      <circle class="hair" cx="100" cy="100" r="44"/>
+      <circle cx="100" cy="100" r="27"/>
+      <circle class="accf" cx="100" cy="100" r="9"/>
+    </svg>
+  </div>
+
+  <div class="laws">
+    <div class="law">
+      <h4>Текст не рисуем</h4>
+      <p>Ни одной буквы внутри изображения. Кириллица у моделей ненадёжна, а весь текст в продукте — живой шрифт.</p>
+    </div>
+    <div class="law">
+      <h4>Генерируем крупно</h4>
+      <p>В 4× от наибольшего применения, затем уменьшаем. Мелкая штриховка выживает только если начать с запасом.</p>
+    </div>
+    <div class="law">
+      <h4>Промпт хранится рядом</h4>
+      <p>К каждому файлу — <code>.prompt.txt</code> с точным промптом, моделью и сидом. Иначе набор разъедется через год.</p>
+    </div>
+    <div class="law">
+      <h4>Оригинал неприкосновенен</h4>
+      <p>Никакой правки «поверх». Любое улучшение — производная с записанным происхождением.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ THE SYSTEM ═══════════════════ -->
+<section id="system">
+  <div class="sec-head"><span class="rn">I.</span><h2>Система, к которой всё приводится</h2></div>
+  <p class="prose" style="margin-bottom:26px">
+    Промпты ссылаются на «наши цвета» и «наш шрифт». Вот что это значит буквально. Если
+    сгенерированное не ложится в эту палитру — его перекрашивают на постобработке, а не принимают как есть.
+  </p>
+
+  <p class="eyebrow">Палитра · OKLCH → sRGB</p>
+  <div class="swatches" style="margin-bottom:34px">
+    <div class="sw"><i style="background:#FBF7EE"></i><b>vellum</b><code>oklch(96.5% .012 85)</code><span>Основа. С неё начинается любая поверхность.</span></div>
+    <div class="sw"><i style="background:#1E232B"></i><b>ink</b><code>oklch(22% .022 250)</code><span>Железо-галловые чернила. Сине-чёрный, никогда не чистый чёрный.</span></div>
+    <div class="sw"><i style="background:#B4552C"></i><b>sanguine</b><code>oklch(58% .132 42)</code><span>Единственный акцент. Сангина, красный мел.</span></div>
+    <div class="sw"><i style="background:#6B8163"></i><b>sage</b><code>oklch(55% .055 142)</code><span>Проверено, подтверждено источником.</span></div>
+    <div class="sw"><i style="background:#8A6A44"></i><b>sepia</b><code>oklch(52% .072 66)</code><span>Выведено, приблизительно, неточно.</span></div>
+    <div class="sw"><i style="background:#3E8A86"></i><b>verdigris</b><code>oklch(56% .066 186)</code><span>Места и география. Патина.</span></div>
+    <div class="sw"><i style="background:#A63D34"></i><b>madder</b><code>oklch(51% .145 25)</code><span>Противоречие, открытый вопрос.</span></div>
+    <div class="sw"><i style="background:#3C4E8C"></i><b>indigo</b><code>oklch(41% .092 266)</code><span>Слой исторической стратиграфии.</span></div>
+  </div>
+
+  <p class="eyebrow">Шрифтовая система</p>
+  <dl class="specimens">
+    <div class="spec">
+      <dt>Заголовок<small>Prata · дидон</small></dt>
+      <dd class="spec-sample"><p class="s-display">Иван Петрович Васильев</p></dd>
+    </div>
+    <div class="spec">
+      <dt>Текст<small>Source Serif 4</small></dt>
+      <dd class="spec-sample"><p class="s-text">Крещён 17 апреля 1871 года в селе Подгорном; восприемниками были крестьянин Пётр Сидоров и девица Анна Кузьмина.</p></dd>
+    </div>
+    <div class="spec">
+      <dt>Данные<small>Golos Text · табличные</small></dt>
+      <dd class="spec-sample"><p class="s-label">1871 – 1943 · 4 источника · 3 разночтения · 1 : 8 поколений</p></dd>
+    </div>
+    <div class="spec">
+      <dt>Шифр<small>JetBrains Mono</small></dt>
+      <dd class="spec-sample"><p class="s-mono">ГААО ф.29 оп.1 д.204 л.17об</p></dd>
+    </div>
+  </dl>
+  <p class="note warn" style="max-width:var(--measure)">
+    <b>Найдено при вёрстке этой страницы.</b> Archivo, названный в арт-дирекшне гарнитурой для
+    данных, <b>не содержит кириллицы</b> — Latin, Latin-ext и Vietnamese и ничего больше. Здесь
+    вместо него стоит <b>Golos Text</b> (Paratype): современный русский гротеск с полной
+    кириллицей и табличными цифрами. Кандидат на замену в спецификации; решается в шрифтовом
+    аудите Фазы&nbsp;1.
+  </p>
+</section>
+
+<!-- ═══════════════════ UNIVERSAL PROMPT PARTS ═══════════════════ -->
+<section id="preamble">
+  <div class="sec-head"><span class="rn">II.</span><h2>Два блока, которые идут в каждый промпт</h2></div>
+  <p class="prose" style="margin-bottom:24px">
+    Преамбула несёт художественное направление целиком, поэтому промпты в таблицах описывают
+    только сюжет. Копируйте преамбулу, затем сюжет из нужной таблицы, затем негативный промпт.
+  </p>
+
+  <div class="block">
+    <div class="block-head">
+      <span>Style preamble · префикс ко всем промптам</span>
+      <button class="copy" data-copy="#p-preamble" type="button">Скопировать</button>
+    </div>
+    <pre id="p-preamble">19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.</pre>
+  </div>
+
+  <div class="block neg">
+    <div class="block-head">
+      <span>Negative prompt · суффикс ко всем промптам</span>
+      <button class="copy" data-copy="#p-negative" type="button">Скопировать</button>
+    </div>
+    <pre id="p-negative">text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours</pre>
+  </div>
+
+  <div class="tablewrap" style="margin-top:26px">
+    <table>
+      <caption class="eyebrow" style="text-align:left;padding:12px 14px 0">Дисциплина поставки</caption>
+      <thead><tr><th>Пункт</th><th>Правило</th></tr></thead>
+      <tbody>
+        <tr><td>Разрешение</td><td>Генерировать в 4× от наибольшего применения, затем уменьшать. Мелкий штрих иначе не выживает.</td></tr>
+        <tr><td>Формат</td><td>PNG с прозрачностью там, где ассет ложится на вельму. AVIF/WebP делает сборка, не вы.</td></tr>
+        <tr><td>Имя файла</td><td><code>&lt;категория&gt;-&lt;имя&gt;-&lt;вариант&gt;@&lt;масштаб&gt;.png</code> — например <code>ornament-corner-tl@4x.png</code></td></tr>
+        <tr><td>Куда класть</td><td><code>assets/source/&lt;категория&gt;/</code>. Руками ничего не ресайзить — это делает <code>tools/assets/</code>.</td></tr>
+        <tr><td>Промпт</td><td>Рядом с каждым файлом <code>&lt;имя&gt;.prompt.txt</code>: точный промпт, модель, сид.</td></tr>
+        <tr><td>Оригиналы</td><td>Полноразмерные мастера <b>не идут в репозиторий</b> — вес клона навсегда. Публикуются в Releases раз в фазу.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ INDEX ═══════════════════ -->
+<section id="index">
+  <div class="sec-head"><span class="rn">III.</span><h2>Таблицы</h2></div>
+  <nav class="index" aria-label="Указатель таблиц">
+    <a href="#pl-1"><span class="rn">I</span><span>Знак приложения</span><span class="ct">4</span></a>
+    <a href="#pl-2"><span class="rn">II</span><span>Производные знака</span><span class="ct">3</span></a>
+    <a href="#pl-3"><span class="rn">III</span><span>Зерно бумаги</span><span class="ct">3</span></a>
+    <a href="#pl-4"><span class="rn">IV</span><span>Штриховка и растр</span><span class="ct">6</span></a>
+    <a href="#pl-5"><span class="rn">V</span><span>Пятна времени</span><span class="ct">1</span></a>
+    <a href="#pl-6"><span class="rn">VI</span><span>Рваный край и оттиск доски</span><span class="ct">1</span></a>
+    <a href="#pl-7"><span class="rn">VII</span><span>Угловые виньетки</span><span class="ct">4</span></a>
+    <a href="#pl-8"><span class="rn">VIII</span><span>Разделители</span><span class="ct">6</span></a>
+    <a href="#pl-9"><span class="rn">IX</span><span>Печать</span><span class="ct">2</span></a>
+    <a href="#pl-10"><span class="rn">X</span><span>Пустые состояния</span><span class="ct">4</span></a>
+    <a href="#pl-11"><span class="rn">XI</span><span>Онбординг</span><span class="ct">4</span></a>
+    <a href="#pl-12"><span class="rn">XII</span><span>Значки режимов</span><span class="ct">8</span></a>
+    <a href="#pl-13"><span class="rn">XIII</span><span>Портреты демо-дерева</span><span class="ct">12</span></a>
+    <a href="#pl-14"><span class="rn">XIV</span><span>Набор иконок</span><span class="ct">80</span></a>
+  </nav>
+</section>
+
+<!-- ═══════════════════ PLATES ═══════════════════ -->
+<section id="plates" style="border-bottom:0">
+<div class="sec-head" style="margin-bottom:28px"><span class="rn">IV.</span><h2>Таблицы: скетч, этикетка, промпт</h2></div>
+
+<!-- ───────── PLATE I ───────── -->
+<article class="plate" id="pl-1" data-plate="1">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. I</span>
+    <span class="plate-name">Знак приложения<em>Семя в разрезе · кольца роста как поколения</em></span>
+    <span class="tag p1">Фаза 1</span>
+    <label class="done-toggle"><input type="checkbox" id="done-1"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 200 200" role="img" aria-label="Скетч знака: три концентрических кольца с радиальными лучами и красной точкой в центре">
+          <g class="hair soft">
+            <g id="ray2"><line x1="100" y1="18" x2="100" y2="36"/></g>
+            <use href="#ray2" transform="rotate(22.5 100 100)"/><use href="#ray2" transform="rotate(45 100 100)"/>
+            <use href="#ray2" transform="rotate(67.5 100 100)"/><use href="#ray2" transform="rotate(90 100 100)"/>
+            <use href="#ray2" transform="rotate(112.5 100 100)"/><use href="#ray2" transform="rotate(135 100 100)"/>
+            <use href="#ray2" transform="rotate(157.5 100 100)"/><use href="#ray2" transform="rotate(180 100 100)"/>
+            <use href="#ray2" transform="rotate(202.5 100 100)"/><use href="#ray2" transform="rotate(225 100 100)"/>
+            <use href="#ray2" transform="rotate(247.5 100 100)"/><use href="#ray2" transform="rotate(270 100 100)"/>
+            <use href="#ray2" transform="rotate(292.5 100 100)"/><use href="#ray2" transform="rotate(315 100 100)"/>
+            <use href="#ray2" transform="rotate(337.5 100 100)"/>
+          </g>
+          <circle class="dot" cx="100" cy="100" r="88"/>
+          <path d="M100 28 C140 28 172 60 172 100 C172 141 139 172 100 172 C60 172 28 139 28 100 C28 61 61 28 100 28 Z"/>
+          <circle class="hair" cx="100" cy="100" r="66"/>
+          <path d="M100 51 C127 51 149 73 149 100 C149 128 126 149 100 149 C73 149 51 127 51 100 C51 72 73 51 100 51 Z"/>
+          <circle class="hair" cx="100" cy="100" r="44"/>
+          <circle cx="100" cy="100" r="27"/>
+          <circle class="accf" cx="100" cy="100" r="9"/>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 1</b>Три концентрических кольца, слегка неровные, как у настоящего образца. Радиальные волоски идут от центра к краю. На 16&nbsp;px читается как тёмное кольцо с тёплой точкой внутри.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Домашний экран телефона, панель задач Windows, док macOS, вкладка браузера</dd>
+        <dt>Файлов</dt><dd>4 — светлый, тёмный, монохромный силуэт, на сплошной вельме</dd>
+        <dt>Размер</dt><dd>2048 × 2048 px, PNG, прозрачный фон</dd>
+        <dt>Критерий</dt><dd>Узнаётся на 16 px и красив на 1024 px. Если на 16 px это мутное пятно — брак.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-1" type="button">Скопировать</button></div>
+        <pre id="pr-1">A botanical cross-section of a seed, viewed flat-on, rendered as a copperplate engraving. Three concentric growth rings, each hand-cut, with fine radial hatching running between them like the rays in a wood cross-section; the rings slightly irregular as in a real specimen rather than mechanically circular. At the exact centre, one small solid terracotta-red dot — the only colour in the image. Deep blue-black ink on warm cream vellum. Symmetrical overall silhouette but organic in its internal line work. Isolated on a plain vellum ground with wide empty margins. Iconic and simple enough to remain legible at very small size.</pre>
+      </div>
+      <p class="note"><b>Варианты.</b> Тёмный: чернила становятся тёплым кремовым, точка остаётся терракотовой — не инверсия, а перерисовка. Монохромный силуэт нужен для template-иконок macOS и монохромной панели задач Windows: одна заливка, без полутонов.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE II ───────── -->
+<article class="plate" id="pl-2" data-plate="2">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. II</span>
+    <span class="plate-name">Производные знака<em>Adaptive icon для Android · карточка репозитория</em></span>
+    <span class="tag p1">Фаза 1</span>
+    <label class="done-toggle"><input type="checkbox" id="done-2"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe tight">
+        <div class="sk-row">
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Передний слой adaptive icon: знак внутри безопасной зоны">
+              <rect class="hair soft dash" x="1" y="1" width="98" height="98"/>
+              <circle class="hair acc dash" cx="50" cy="50" r="33"/>
+              <circle cx="50" cy="50" r="25"/><circle class="hair" cx="50" cy="50" r="16"/>
+              <circle class="accf" cx="50" cy="50" r="5"/>
+            </svg>
+            <figcaption>foreground · зона 66%</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Задний слой: вельма с зерном">
+              <rect class="hair soft" x="1" y="1" width="98" height="98"/>
+              <g class="hair soft" opacity=".55">
+                <circle cx="22" cy="28" r=".9"/><circle cx="48" cy="19" r=".7"/><circle cx="71" cy="33" r=".9"/>
+                <circle cx="34" cy="52" r=".7"/><circle cx="62" cy="61" r=".9"/><circle cx="18" cy="72" r=".7"/>
+                <circle cx="80" cy="76" r=".9"/><circle cx="45" cy="84" r=".7"/><circle cx="88" cy="50" r=".7"/>
+              </g>
+            </svg>
+            <figcaption>background · вельма</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="figframe tight" style="margin-top:2px">
+        <svg class="sk" viewBox="0 0 200 100" role="img" aria-label="Карточка репозитория 2:1 со знаком слева и пустым полем справа">
+          <rect class="hair soft" x="1" y="1" width="198" height="98"/>
+          <rect class="hair soft dash" x="10" y="10" width="180" height="80"/>
+          <g transform="translate(45 50)">
+            <circle cx="0" cy="0" r="24"/><circle class="hair" cx="0" cy="0" r="15"/>
+            <circle class="accf" cx="0" cy="0" r="5"/>
+          </g>
+          <g class="hair soft"><line x1="92" y1="42" x2="168" y2="42"/><line x1="92" y1="52" x2="146" y2="52"/><line x1="92" y1="60" x2="158" y2="60"/></g>
+          <text x="92" y="74">← текст композитится живым шрифтом</text>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 2–4</b>Adaptive-слои и карточка 1280×640. Пунктир — безопасная зона и оттиск доски; в файл не входят.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Android launcher (маскируется системой), карточка репозитория в GitHub и соцсетях</dd>
+        <dt>Файлов</dt><dd>3 — foreground, background, social card</dd>
+        <dt>Размер</dt><dd>432 × 432 px каждый слой · 1280 × 640 px карточка</dd>
+        <dt>Критерий</dt><dd>Знак не обрезается ни одной маской Android: круг, squircle, капля, квадрат</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · карточка репозитория</span><button class="copy" data-copy="#pr-2" type="button">Скопировать</button></div>
+        <pre id="pr-2">A wide horizontal sheet of warm cream vellum, two units wide by one unit tall, completely blank except for a single engraved emblem placed in the left third: a botanical seed cross-section with three concentric growth rings and one small terracotta-red dot at its centre. A faint rectangular plate-mark impression runs inside all four edges, as left by a copperplate press. The right two-thirds of the sheet are entirely empty vellum with visible paper grain. No text, no lettering, no decoration in the empty area.</pre>
+      </div>
+      <p class="note warn"><b>Правая часть должна остаться пустой.</b> Туда сборка кладёт словесный знак живым шрифтом. Если модель заполнит поле орнаментом — перегенерировать, а не затирать.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE III ───────── -->
+<article class="plate" id="pl-3" data-plate="3">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. III</span>
+    <span class="plate-name">Зерно бумаги<em>Бесшовная плитка · не генерировать</em></span>
+    <span class="tag proc">Процедурно</span>
+    <label class="done-toggle"><input type="checkbox" id="done-3"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 200 140" role="img" aria-label="Схема генератора зерна: три октавы шума и вержерные линии">
+          <rect class="hair soft" x="2" y="2" width="196" height="136"/>
+          <g class="hair soft" opacity=".5">
+            <line x1="2" y1="26" x2="198" y2="26"/><line x1="2" y1="50" x2="198" y2="50"/>
+            <line x1="2" y1="74" x2="198" y2="74"/><line x1="2" y1="98" x2="198" y2="98"/><line x1="2" y1="122" x2="198" y2="122"/>
+          </g>
+          <g class="hair soft" opacity=".85">
+            <circle cx="18" cy="16" r=".8"/><circle cx="41" cy="33" r="1.1"/><circle cx="66" cy="12" r=".7"/><circle cx="88" cy="40" r=".9"/>
+            <circle cx="112" cy="20" r="1.2"/><circle cx="137" cy="36" r=".7"/><circle cx="161" cy="15" r=".9"/><circle cx="183" cy="31" r=".8"/>
+            <circle cx="24" cy="60" r="1"/><circle cx="52" cy="80" r=".7"/><circle cx="78" cy="65" r="1.1"/><circle cx="104" cy="86" r=".8"/>
+            <circle cx="129" cy="63" r=".9"/><circle cx="154" cy="82" r="1.2"/><circle cx="178" cy="68" r=".7"/>
+            <circle cx="14" cy="105" r=".9"/><circle cx="44" cy="120" r="1"/><circle cx="70" cy="108" r=".7"/><circle cx="97" cy="126" r=".9"/>
+            <circle cx="124" cy="110" r="1.1"/><circle cx="150" cy="128" r=".7"/><circle cx="176" cy="112" r=".9"/>
+          </g>
+          <rect class="acc dash" x="100" y="2" width="98" height="136"/>
+          <text class="acc" x="104" y="134" style="fill:var(--sanguine)">шов обязан быть невидим</text>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 5</b>Плитка 512×512. Модель не гарантирует бесшовность, а видимый шов через весь интерфейс — фатален.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Метод</dt><dd>Скрипт <code>tools/textures/generate-grain.ts</code>, не генеративная модель</dd>
+        <dt>Плитка</dt><dd>512 × 512 px, бесшовная (wrap-around noise)</dd>
+        <dt>Файлов</dt><dd>3 — <code>grain-light</code>, <code>grain-dark</code>, <code>grain-print</code></dd>
+        <dt>Применение</dt><dd><code>mix-blend-mode: multiply</code>, непрозрачность 4–7%</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Спецификация генератора</span><button class="copy" data-copy="#pr-3" type="button">Скопировать</button></div>
+        <pre id="pr-3">Три наложенные октавы value-noise:
+  · мелкая     1–2 px   — волокно
+  · средняя    4–8 px   — фактура прессовки
+  · крупная   64+ px    — неровная впитываемость ручной бумаги
+
+Вержерные линии (опционально, слабее шума):
+  · понтюзо   горизонтально каждые 24 px,  непрозрачность 2 %
+  · вержеры   вертикально   каждые 1.2 px, непрозрачность 1 %
+
+Выход: 8-bit greyscale PNG, 512×512, бесшовная.
+Проверка: замостить поле 4000 px — ни шва, ни различимого ритма повтора.</pre>
+      </div>
+      <p class="note"><b>Никогда не анимировать.</b> Движущееся зерно — это полноэкранная композиция каждый кадр, и холст потеряет свой бюджет в 16 мс. Зерно статично всегда.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE IV ───────── -->
+<article class="plate" id="pl-4" data-plate="4">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. IV</span>
+    <span class="plate-name">Штриховка и растр<em>Заливка областей на диаграммах и в печати</em></span>
+    <span class="tag proc">Процедурно</span>
+    <label class="done-toggle"><input type="checkbox" id="done-4"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 200 110" role="img" aria-label="Шесть образцов: три плотности штриховки и три плотности растра">
+          <defs>
+            <pattern id="h20" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="9" stroke="currentColor" stroke-width=".7"/></pattern>
+            <pattern id="h40" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width=".7"/></pattern>
+            <pattern id="h60" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width=".7"/>
+              <line x1="0" y1="0" x2="5" y2="0" stroke="currentColor" stroke-width=".7"/></pattern>
+            <pattern id="d20" width="8" height="8" patternUnits="userSpaceOnUse">
+              <circle cx="4" cy="4" r="1" fill="currentColor"/></pattern>
+            <pattern id="d40" width="6" height="6" patternUnits="userSpaceOnUse">
+              <circle cx="3" cy="3" r="1.3" fill="currentColor"/></pattern>
+            <pattern id="d60" width="5" height="5" patternUnits="userSpaceOnUse">
+              <circle cx="2.5" cy="2.5" r="1.7" fill="currentColor"/></pattern>
+          </defs>
+          <g class="hair">
+            <rect x="4" y="6" width="58" height="42" fill="url(#h20)"/><rect x="4" y="6" width="58" height="42"/>
+            <rect x="71" y="6" width="58" height="42" fill="url(#h40)"/><rect x="71" y="6" width="58" height="42"/>
+            <rect x="138" y="6" width="58" height="42" fill="url(#h60)"/><rect x="138" y="6" width="58" height="42"/>
+            <rect x="4" y="62" width="58" height="42" fill="url(#d20)"/><rect x="4" y="62" width="58" height="42"/>
+            <rect x="71" y="62" width="58" height="42" fill="url(#d40)"/><rect x="71" y="62" width="58" height="42"/>
+            <rect x="138" y="62" width="58" height="42" fill="url(#d60)"/><rect x="138" y="62" width="58" height="42"/>
+          </g>
+          <text x="4" y="56">20 %</text><text x="71" y="56">40 %</text><text x="138" y="56">60 %</text>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 6–11</b>Верх — косая штриховка 45°/135°, низ — растровая точка. Три плотности в каждом ряду, как в гравюре.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Метод</dt><dd>SVG <code>&lt;pattern&gt;</code> в коде, тот же конвейер что и зерно</dd>
+        <dt>Файлов</dt><dd>6 — штрих 20/40/60 %, растр 20/40/60 %</dd>
+        <dt>Применение</dt><dd>Заливка секторов веера, полосы стратиграфии, фотозоны в печати</dd>
+        <dt>Критерий</dt><dd>Читаются как три различимые ступени плотности при печати 300 dpi</dd>
+      </dl>
+      <p class="note"><b>Почему не цветом.</b> Плотность штриха переживает и чёрно-белую печать, и любое нарушение цветовосприятия — а цвет нет. Это выполнение правила «цвет никогда не единственный сигнал» из арт-дирекшна, а не стилизация.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE V ───────── -->
+<article class="plate" id="pl-5" data-plate="5">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. V</span>
+    <span class="plate-name">Пятна времени<em>Фоксинг · только для печатных артефактов</em></span>
+    <span class="tag p3">Фаза 3</span>
+    <label class="done-toggle"><input type="checkbox" id="done-5"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 160 200" role="img" aria-label="Лист с редкими пятнами старения, гуще к краям">
+          <rect class="hair soft" x="3" y="3" width="154" height="194"/>
+          <g class="soft hair" opacity=".8">
+            <path d="M14 20 c4-3 9-1 8 3 c-1 4-7 5-9 2 Z"/>
+            <path d="M139 34 c5-4 11 0 9 4 c-2 5-11 3-9-4 Z"/>
+            <path d="M10 92 c3-2 7 0 6 3 c-1 3-6 2-6-3 Z"/>
+            <path d="M148 110 c4-3 8 0 7 3 c-1 4-8 3-7-3 Z"/>
+            <path d="M20 168 c6-5 13 1 10 5 c-3 5-13 1-10-5 Z"/>
+            <path d="M132 178 c4-3 9-1 8 3 c-1 4-8 4-8-3 Z"/>
+            <path d="M74 14 c3-2 6 0 5 2 c-1 3-6 2-5-2 Z"/>
+            <path d="M88 186 c3-2 6 0 5 2 c-1 3-6 2-5-2 Z"/>
+            <path d="M70 96 c2-2 4 0 4 2 c0 2-5 1-4-2 Z" opacity=".5"/>
+          </g>
+          <rect class="acc dash hair" x="40" y="60" width="80" height="80"/>
+          <text class="acc" x="40" y="55" style="fill:var(--sanguine)">центр остаётся чистым</text>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 12</b>Пятна сгущаются к краям и почти отсутствуют в середине — как на настоящем хранившемся листе.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Только печать и постеры. В рабочем интерфейсе — никогда.</dd>
+        <dt>Файлов</dt><dd>1 исходник → альфа-оверлей на постобработке</dd>
+        <dt>Размер</dt><dd>3000 × 3000 px PNG</dd>
+        <dt>Критерий</dt><dd>Не мешает читать ничего, что ляжет поверх. Если мешает — разредить.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-5" type="button">Скопировать</button></div>
+        <pre id="pr-5">A sheet of aged cream vellum paper, photographed flat-on under even diffuse light, completely blank. Scattered irregular pale brown foxing spots of varying size and shape, concentrated toward the edges and corners and very sparse in the centre. Subtle uneven discolouration across the surface. No creases, no folds, no shadows, no objects, no torn edges. Pure paper surface only, filling the whole frame.</pre>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE VI ───────── -->
+<article class="plate" id="pl-6" data-plate="6">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. VI</span>
+    <span class="plate-name">Рваный край и оттиск доски<em>Рамка для печатных артефактов</em></span>
+    <span class="tag p3">Фаза 3</span>
+    <label class="done-toggle"><input type="checkbox" id="done-6"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 160 200" role="img" aria-label="Лист с рваными краями и оттиском печатной доски внутри">
+          <path d="M6 9 c8-3 14 2 22-1 c9-3 15 2 24-1 c8-2 14 3 22 0 c9-3 16 2 24-1 c9-3 16 2 24 0
+                   c3 9-2 15 1 23 c3 9-2 15 0 24 c2 9-3 15 0 24 c3 9-2 16 1 24 c2 9-3 16-1 24
+                   c-8 3-15-2-23 1 c-9 3-16-2-24 1 c-8 2-15-3-23 0 c-9 3-16-2-24 1 c-9 3-16-2-24 0
+                   c-3-9 2-16-1-24 c-3-9 2-15 0-24 c-2-9 3-16 0-24 c-3-9 2-16-1-24 c-2-9 3-15 1-23 Z"/>
+          <rect class="hair soft" x="26" y="30" width="108" height="140"/>
+          <rect class="hair soft" x="28" y="32" width="104" height="136" opacity=".45"/>
+          <g class="acc hair"><line x1="26" y1="22" x2="26" y2="28"/><line x1="18" y1="30" x2="24" y2="30"/></g>
+          <text class="acc" x="30" y="24" style="fill:var(--sanguine)">оттиск доски</text>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 13</b>Четыре естественных рваных края; внутри — прямоугольное вдавливание от медной доски примерно в 4 см от кромки.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Рамка для PDF-экспорта, постеров и книги рода</dd>
+        <dt>Файлов</dt><dd>1 → режется в nine-slice на постобработке</dd>
+        <dt>Размер</dt><dd>4000 × 5000 px PNG</dd>
+        <dt>Критерий</dt><dd>Углы режутся в nine-slice без видимого повтора фактуры на растянутых сторонах</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-6" type="button">Скопировать</button></div>
+        <pre id="pr-6">A rectangular sheet of handmade cream vellum paper photographed flat-on against pure white, showing its four natural deckle edges — soft, feathered, slightly irregular torn fibres, different on every side. Inside the sheet, a faint rectangular plate-mark impression about four centimetres in from each edge, as left by a copperplate press: a shallow indentation catching the light, not a printed line. Completely blank paper otherwise. Even diffuse lighting, no drop shadow, no curl, no objects.</pre>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE VII ───────── -->
+<article class="plate" id="pl-7" data-plate="7">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. VII</span>
+    <span class="plate-name">Угловые виньетки<em>Ветвь, входящая из угла листа</em></span>
+    <span class="tag p2">Фаза 2</span>
+    <span class="tag pd">Public domain</span>
+    <label class="done-toggle"><input type="checkbox" id="done-7"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 150 150" role="img" aria-label="Угловая виньетка: изогнутая ветвь с четырьмя листьями и бутоном">
+          <rect class="hair soft dash" x="2" y="2" width="146" height="146" opacity=".4"/>
+          <path class="bold" d="M6 6 C34 18 54 40 66 68 C72 82 74 94 74 104"/>
+          <path d="M20 13 C30 3 45 5 50 14 C40 23 26 22 20 13 Z"/>
+          <path class="hair" d="M24 15 C32 12 41 12 47 15"/>
+          <path d="M34 28 C46 20 59 25 61 35 C50 41 38 37 34 28 Z"/>
+          <path class="hair" d="M38 29 C45 28 54 30 58 34"/>
+          <path d="M14 26 C4 36 7 49 17 52 C24 43 22 31 14 26 Z"/>
+          <path class="hair" d="M15 30 C14 37 15 45 17 49"/>
+          <path d="M52 52 C64 46 76 53 76 62 C65 67 55 61 52 52 Z"/>
+          <path class="hair" d="M56 54 C63 54 71 57 74 61"/>
+          <circle cx="74" cy="109" r="5.5"/>
+          <path class="hair" d="M74 104 C70 109 71 113 74 114 C77 113 78 109 74 104 Z"/>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 14</b>Асимметрично, сдержанно, волосяной контур со штриховкой по изнанке листа. Завершается закрытым бутоном.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Титульные плиты, печатный экспорт, пустые состояния. В рабочем интерфейсе — нет.</dd>
+        <dt>Файлов</dt><dd>4 — <code>tl</code>, <code>tr</code>, <code>bl</code>, <code>br</code></dd>
+        <dt>Размер</dt><dd>2000 × 2000 px PNG, прозрачный фон</dd>
+        <dt>Критерий</dt><dd>Четыре штуки <b>не зеркала друг друга</b> — набор должен иметь рукотворное разнообразие</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-7" type="button">Скопировать</button></div>
+        <pre id="pr-7">A single small botanical ornament occupying the top-left corner of an otherwise empty page: one slender curving branch bearing four finely engraved leaves and one small closed bud at its tip. Drawn entirely in hairline copperplate outline, with delicate hatching only on the undersides of the leaves. The branch enters from the upper-left corner and curves gently inward and downward, thinning as it goes. Asymmetric, restrained, elegant, botanically plausible. Isolated on plain cream vellum; the rest of the frame is completely empty.</pre>
+      </div>
+      <p class="note"><b>Дешевле и честнее — взять подлинник.</b> Biodiversity Heritage Library и Rijksmuseum Studio отдают гравюры XIX века в public domain. Настоящая резцовая линия лучше любой генерации, и это соответствует концепции, а не имитирует её. Перекрасить под наш <code>ink</code> — задача скрипта в <code>tools/assets/</code>.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE VIII ───────── -->
+<article class="plate" id="pl-8" data-plate="8">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. VIII</span>
+    <span class="plate-name">Разделители<em>Наборные украшения между разделами</em></span>
+    <span class="tag p2">Фаза 2</span>
+    <span class="tag pd">Public domain</span>
+    <label class="done-toggle"><input type="checkbox" id="done-8"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 220 60" role="img" aria-label="Симметричный наборный разделитель с листьями и семенем в центре">
+          <g class="hair soft"><line x1="6" y1="30" x2="72" y2="30"/><line x1="148" y1="30" x2="214" y2="30"/></g>
+          <path d="M72 30 C84 20 96 22 104 27"/>
+          <path d="M148 30 C136 20 124 22 116 27"/>
+          <path d="M72 30 C84 40 96 38 104 33"/>
+          <path d="M148 30 C136 40 124 38 116 33"/>
+          <path d="M84 22 C88 13 98 12 101 18 C95 25 87 27 84 22 Z"/>
+          <path d="M136 22 C132 13 122 12 119 18 C125 25 133 27 136 22 Z"/>
+          <path d="M84 38 C88 47 98 48 101 42 C95 35 87 33 84 38 Z"/>
+          <path d="M136 38 C132 47 122 48 119 42 C125 35 133 33 136 38 Z"/>
+          <ellipse cx="110" cy="30" rx="7" ry="9"/>
+          <path class="hair" d="M110 22 C106 26 106 34 110 38 C114 34 114 26 110 22 Z"/>
+          <circle class="accf" cx="110" cy="30" r="2.2"/>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 15</b>Ширина примерно восемь высот. Идеально симметричен слева направо, с единственным семенем в центре.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Разделы в книге рода, печатных отчётах и доказательных рассуждениях</dd>
+        <dt>Файлов</dt><dd>6 различных</dd>
+        <dt>Размер</dt><dd>3200 × 400 px PNG, прозрачный фон</dd>
+        <dt>Критерий</dt><dd>Шесть штук различимы между собой, но читаются как один набор</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-8" type="button">Скопировать</button></div>
+        <pre id="pr-8">A horizontal typographic divider ornament in the style of a 19th-century printed book: a slender symmetrical arrangement of engraved leaves, thin tendrils and a single small seed form at the exact centre, roughly eight times wider than it is tall. Drawn in hairline outline with fine hatching. Perfectly balanced left to right, thinning out to plain rules at both ends. Isolated and centred on plain cream vellum with empty space above and below.</pre>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE IX ───────── -->
+<article class="plate" id="pl-9" data-plate="9">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. IX</span>
+    <span class="plate-name">Печать<em>Единственный церемониальный момент продукта</em></span>
+    <span class="tag p2">Фаза 2</span>
+    <label class="done-toggle"><input type="checkbox" id="done-9"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk acc" viewBox="0 0 160 160" role="img" aria-label="Круглая печать: венок из колосьев вокруг эмблемы семени">
+          <g class="hair">
+            <g id="ear"><path d="M80 14 C76 20 76 26 80 31 C84 26 84 20 80 14 Z"/><line x1="80" y1="31" x2="80" y2="38"/></g>
+            <use href="#ear" transform="rotate(30 80 80)"/><use href="#ear" transform="rotate(60 80 80)"/>
+            <use href="#ear" transform="rotate(90 80 80)"/><use href="#ear" transform="rotate(120 80 80)"/>
+            <use href="#ear" transform="rotate(150 80 80)"/><use href="#ear" transform="rotate(180 80 80)"/>
+            <use href="#ear" transform="rotate(210 80 80)"/><use href="#ear" transform="rotate(240 80 80)"/>
+            <use href="#ear" transform="rotate(270 80 80)"/><use href="#ear" transform="rotate(300 80 80)"/>
+            <use href="#ear" transform="rotate(330 80 80)"/>
+          </g>
+          <path d="M80 42 C99 42 118 58 118 80 C118 101 100 118 80 118 C59 118 42 100 42 80 C42 59 60 42 80 42 Z"/>
+          <path class="hair" d="M80 47 C96 47 113 61 113 80 C113 98 97 113 80 113 C63 113 47 98 47 80 C47 61 64 47 80 47 Z" opacity=".6"/>
+          <circle cx="80" cy="80" r="19"/>
+          <circle cx="80" cy="80" r="11" class="hair"/>
+          <circle cx="80" cy="80" r="4.5" style="fill:var(--sanguine);stroke:none"/>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 16</b>Оттиск, а не фотография: резцовая линия, слегка неровный край, как у вдавленной в бумагу печати.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Анимация принятия Contribution в каноническое дерево. Печать прижимается к листу — один раз, 500 мс.</dd>
+        <dt>Файлов</dt><dd>2 — ровный оттиск и «неровный прижим» с более светлым краем</dd>
+        <dt>Размер</dt><dd>2000 × 2000 px PNG, прозрачный фон</dd>
+        <dt>Цвет</dt><dd>Только <code>sanguine</code>. Один цвет, без полутонов.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · сюжет</span><button class="copy" data-copy="#pr-9" type="button">Скопировать</button></div>
+        <pre id="pr-9">A circular seal impression, engraved rather than photographed: a ring of twelve small wheat ears encircling a simple central emblem of a seed in cross-section. Rendered as a hand-cut stamp pressed into paper, with a slightly uneven and partly broken outer edge where the ink did not take evenly. Single colour throughout — terracotta red — with no shading beyond the line work itself. Isolated and centred on plain cream vellum.</pre>
+      </div>
+      <p class="note"><b>Зачем два варианта.</b> Анимация чередует их, поэтому повторный прижим никогда не выглядит машинным. Это единственная церемония в продукте — она обязана ощущаться как настоящий оттиск.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE X ───────── -->
+<article class="plate" id="pl-10" data-plate="10">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. X</span>
+    <span class="plate-name">Пустые состояния<em>Четыре сюжета · одна композиционная сетка</em></span>
+    <span class="tag p1">Фаза 1</span>
+    <label class="done-toggle"><input type="checkbox" id="done-10"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe tight">
+        <div class="sk-row">
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Проросток с двумя семядолями и корневой системой">
+              <line class="hair soft" x1="8" y1="52" x2="92" y2="52"/>
+              <line x1="50" y1="52" x2="50" y2="28"/>
+              <path d="M50 32 C42 22 30 22 26 30 C34 38 46 38 50 32 Z"/>
+              <path d="M50 32 C58 22 70 22 74 30 C66 38 54 38 50 32 Z"/>
+              <path class="hair" d="M31 27 C38 28 45 30 49 33 M69 27 C62 28 55 30 51 33"/>
+              <g class="hair">
+                <path d="M50 52 C50 62 48 72 44 80"/><path d="M50 56 C55 64 60 70 66 76"/>
+                <path d="M50 60 C45 68 40 73 34 78"/><path d="M50 64 C54 72 58 78 61 86"/>
+                <path d="M46 72 C43 78 40 82 37 88"/><path d="M52 70 C56 76 58 82 59 90"/>
+              </g>
+            </svg>
+            <figcaption>у вас пока никого нет</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Пустой лист для образца с уголками и лупой">
+              <rect x="14" y="16" width="52" height="62"/>
+              <g class="hair">
+                <path d="M20 22 l0 -4 l8 0"/><path d="M60 22 l0 -4 l-8 0"/>
+                <path d="M20 72 l0 4 l8 0"/><path d="M60 72 l0 4 l-8 0"/>
+              </g>
+              <path class="hair soft dash" d="M28 34 h24 M28 44 h24 M28 54 h16" opacity=".45"/>
+              <circle cx="74" cy="62" r="13"/>
+              <circle class="hair" cx="74" cy="62" r="10" opacity=".5"/>
+              <line class="bold" x1="83" y1="72" x2="93" y2="84"/>
+            </svg>
+            <figcaption>ничего не найдено</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Стопка из трёх архивных папок с пустым ярлыком">
+              <path d="M16 70 l60 0 l8 -10 l-60 0 Z"/>
+              <path d="M16 70 l0 -6 l60 0 l8 -10"/>
+              <path d="M19 58 l58 0 l7 -9 l-58 0 Z"/>
+              <path d="M22 47 l56 0 l7 -9 l-56 0 Z"/>
+              <rect class="hair" x="34" y="36" width="24" height="12" transform="skewX(-8)"/>
+              <path class="acc hair" d="M50 30 C56 24 66 26 68 32 C62 38 52 36 50 30 Z"/>
+              <path class="acc hair" d="M50 30 C44 24 34 26 32 32 C38 38 48 36 50 30 Z"/>
+              <path class="acc hair" d="M50 30 l0 14"/>
+            </svg>
+            <figcaption>факт без источника</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Засушенный цветок между двумя стёклами">
+              <rect x="18" y="26" width="64" height="48"/>
+              <rect class="hair soft" x="22" y="30" width="64" height="48" opacity=".45"/>
+              <line class="hair soft" x1="18" y1="26" x2="22" y2="30"/><line class="hair soft" x1="82" y1="26" x2="86" y2="30"/>
+              <line class="hair soft" x1="82" y1="74" x2="86" y2="78"/>
+              <line x1="50" y1="66" x2="50" y2="44"/>
+              <path d="M50 44 C44 38 44 32 50 32 C56 32 56 38 50 44 Z"/>
+              <path d="M50 44 C42 44 38 40 40 36 C46 34 50 40 50 44 Z"/>
+              <path d="M50 44 C58 44 62 40 60 36 C54 34 50 40 50 44 Z"/>
+              <path class="hair" d="M50 54 C44 52 40 48 38 44 M50 58 C56 56 60 52 62 48"/>
+            </svg>
+            <figcaption>нет связи</figcaption>
+          </figure>
+        </div>
+      </div>
+      <p class="figcap"><b>fig. 17–20</b>Все четыре — терпеливые, не тревожные. Много пустой вельмы вокруг. Ни один не «сломан».</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Экраны без данных. Пользователь не сделал ничего плохого — интонация это подтверждает.</dd>
+        <dt>Файлов</dt><dd>4</dd>
+        <dt>Размер</dt><dd>2400 × 1800 px PNG · работают при 480 × 360 в интерфейсе</dd>
+        <dt>Критерий</dt><dd>Читаются как один набор: одна плотность линии, одна композиционная сетка, один акцент</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · пустое дерево</span><button class="copy" data-copy="#pr-10a" type="button">Скопировать</button></div>
+        <pre id="pr-10a">A single young seedling with two simple cotyledon leaves, drawn as a botanical specimen plate. The soil line is indicated by one horizontal hairline rule; below it a delicate branching root system is fully visible, drawn with the same care as the leaves above. The plant is small and centred with a great deal of empty vellum around it. Hopeful rather than sad. Hairline engraving with light hatching.</pre>
+      </div>
+      <div class="block">
+        <div class="block-head"><span>Промпт · ничего не найдено</span><button class="copy" data-copy="#pr-10b" type="button">Скопировать</button></div>
+        <pre id="pr-10b">An empty herbarium mounting sheet with four small paper corner-mounts but no specimen mounted in it, seen flat-on. A magnifying glass with a slender engraved handle rests beside it at an angle, partly overlapping the lower-right corner. Quiet and patient, never comic. Centred on plain cream vellum with generous empty margins. Hairline engraving with light hatching.</pre>
+      </div>
+      <div class="block">
+        <div class="block-head"><span>Промпт · факт без источника</span><button class="copy" data-copy="#pr-10c" type="button">Скопировать</button></div>
+        <pre id="pr-10c">An engraved still life of a small stack of three closed archive folders seen at a slight angle, tied together with a single ribbon, with one blank paper label on the topmost folder. Hairline copperplate engraving with fine hatching along the folder edges. The ribbon is the only element in terracotta red. Isolated on cream vellum with generous margins.</pre>
+      </div>
+      <div class="block" style="margin-bottom:0">
+        <div class="block-head"><span>Промпт · нет связи</span><button class="copy" data-copy="#pr-10d" type="button">Скопировать</button></div>
+        <pre id="pr-10d">An engraved illustration of a pressed flower specimen sealed between two sheets of glass, resting flat on a desk — intact, preserved, waiting. The two glass sheets are offset very slightly so both edges are visible. Nothing broken, nothing alarming, no cracks. Hairline engraving with fine hatching, cream vellum ground, generous empty margins.</pre>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE XI ───────── -->
+<article class="plate" id="pl-11" data-plate="11">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. XI</span>
+    <span class="plate-name">Онбординг<em>Четыре шага · один непрерывный сюжет</em></span>
+    <span class="tag p1">Фаза 1</span>
+    <label class="done-toggle"><input type="checkbox" id="done-11"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe tight">
+        <div class="sk-row">
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Шаг 1: один образец в центре пустого листа">
+              <rect class="hair soft" x="10" y="10" width="80" height="80"/>
+              <g transform="translate(50 44)">
+                <line x1="0" y1="10" x2="0" y2="-6"/>
+                <path d="M0 -6 C-7 -14 -14 -12 -15 -6 C-9 -1 -3 -2 0 -6 Z"/>
+                <path d="M0 -6 C7 -14 14 -12 15 -6 C9 -1 3 -2 0 -6 Z"/>
+              </g>
+              <rect class="hair soft" x="38" y="62" width="24" height="10"/>
+            </svg>
+            <figcaption>1 · начните с себя</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Шаг 2: добавлены два образца выше, соединённые линиями">
+              <rect class="hair soft" x="10" y="10" width="80" height="80"/>
+              <g transform="translate(33 30) scale(.62)"><line x1="0" y1="10" x2="0" y2="-6"/><path d="M0 -6 C-7 -14 -14 -12 -15 -6 C-9 -1 -3 -2 0 -6 Z"/><path d="M0 -6 C7 -14 14 -12 15 -6 C9 -1 3 -2 0 -6 Z"/></g>
+              <g transform="translate(67 30) scale(.62)"><line x1="0" y1="10" x2="0" y2="-6"/><path d="M0 -6 C-7 -14 -14 -12 -15 -6 C-9 -1 -3 -2 0 -6 Z"/><path d="M0 -6 C7 -14 14 -12 15 -6 C9 -1 3 -2 0 -6 Z"/></g>
+              <g class="hair soft"><path d="M33 40 L50 52"/><path d="M67 40 L50 52"/></g>
+              <g transform="translate(50 64)"><line x1="0" y1="10" x2="0" y2="-6"/><path d="M0 -6 C-7 -14 -14 -12 -15 -6 C-9 -1 -3 -2 0 -6 Z"/><path d="M0 -6 C7 -14 14 -12 15 -6 C9 -1 3 -2 0 -6 Z"/></g>
+            </svg>
+            <figcaption>2 · добавьте родителей</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Шаг 3: рядом с образцом два сложенных документа и лупа">
+              <rect class="hair soft" x="8" y="12" width="46" height="66"/>
+              <g transform="translate(31 42) scale(.85)"><line x1="0" y1="10" x2="0" y2="-6"/><path d="M0 -6 C-7 -14 -14 -12 -15 -6 C-9 -1 -3 -2 0 -6 Z"/><path d="M0 -6 C7 -14 14 -12 15 -6 C9 -1 3 -2 0 -6 Z"/></g>
+              <g transform="rotate(-7 74 40)"><rect x="60" y="24" width="30" height="24"/><path class="hair soft" d="M64 31 h20 M64 37 h14"/></g>
+              <g transform="rotate(6 74 60)"><rect x="60" y="50" width="30" height="24"/><path class="hair soft" d="M64 57 h20 M64 63 h14"/></g>
+              <circle class="acc" cx="76" cy="84" r="8"/><line class="acc bold" x1="82" y1="90" x2="90" y2="96"/>
+            </svg>
+            <figcaption>3 · приложите документы</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 100 100" role="img" aria-label="Шаг 4: три перекрывающихся листа, перевязанных лентой">
+              <rect class="hair soft" x="8" y="22" width="48" height="60" transform="rotate(-6 32 52)"/>
+              <rect class="hair soft" x="26" y="18" width="48" height="60" transform="rotate(2 50 48)"/>
+              <rect x="44" y="22" width="48" height="60" transform="rotate(8 68 52)"/>
+              <path class="acc" d="M12 62 C34 54 62 52 90 58"/>
+              <path class="acc hair" d="M48 56 C44 50 46 45 52 46 C57 47 56 53 48 56 Z"/>
+              <path class="acc hair" d="M48 56 C52 50 58 48 61 52 C63 57 56 59 48 56 Z"/>
+            </svg>
+            <figcaption>4 · позовите семью</figcaption>
+          </figure>
+        </div>
+      </div>
+      <p class="figcap"><b>fig. 21–24</b>Один и тот же лист на всех четырёх. Читается как последовательность, а не как четыре разные картинки.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Первый запуск. Для персоны-дедушки это первое впечатление о продукте — и о том, страшно ли им пользоваться.</dd>
+        <dt>Файлов</dt><dd>4</dd>
+        <dt>Размер</dt><dd>2400 × 1800 px PNG, прозрачный фон</dd>
+        <dt>Критерий</dt><dd>Понятно без подписей. Если шаг непонятен без текста — сюжет выбран неверно.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпты · четыре шага подряд</span><button class="copy" data-copy="#pr-11" type="button">Скопировать все</button></div>
+        <pre id="pr-11">1 — A single pressed plant specimen mounted at the centre of an otherwise empty herbarium sheet, with one small blank paper label beneath it.
+
+2 — The same herbarium sheet, now carrying two further pressed specimens mounted above the first and joined to it by two fine hand-ruled lines.
+
+3 — A herbarium sheet bearing one specimen, beside which lie two small folded archive documents and a magnifying glass, all engraved in the same hand.
+
+4 — Three herbarium sheets of identical design lying slightly overlapped on a desk, as if three people had each brought their own, with a single ribbon loosely tying them together.
+
+— каждый добавлять к общей преамбуле, плюс:
+Hairline copperplate engraving, fine hatching, a restrained terracotta accent on one element only, cream vellum ground, generous margins, flat-on view.</pre>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE XII ───────── -->
+<article class="plate" id="pl-12" data-plate="12">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. XII</span>
+    <span class="plate-name">Значки режимов<em>Восемь схем · это чертежи, а не иллюстрации</em></span>
+    <span class="tag p2">Фаза 2</span>
+    <label class="done-toggle"><input type="checkbox" id="done-12"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe tight">
+        <div class="sk-row" style="grid-template-columns:repeat(2,1fr)">
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Атлас">
+              <g class="hair soft"><path d="M26 20 V30 H54 V20 M40 30 V38"/><path d="M20 46 V38 H60 V46"/></g>
+              <rect x="16" y="10" width="20" height="10"/><rect x="44" y="10" width="20" height="10"/>
+              <rect x="30" y="38" width="20" height="9"/>
+              <rect class="acc" x="10" y="47" width="18" height="9"/><rect x="52" y="47" width="18" height="9"/>
+            </svg>
+            <figcaption>Атлас</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Веер">
+              <path d="M12 54 A28 28 0 0 1 68 54"/>
+              <path d="M21 54 A19 19 0 0 1 59 54"/>
+              <path d="M30 54 A10 10 0 0 1 50 54"/>
+              <g class="hair"><line x1="40" y1="54" x2="40" y2="26"/><line x1="40" y1="54" x2="20" y2="34"/><line x1="40" y1="54" x2="60" y2="34"/>
+              <line x1="30" y1="54" x2="17" y2="42" opacity=".6"/><line x1="50" y1="54" x2="63" y2="42" opacity=".6"/></g>
+              <path class="accf" d="M30 54 A10 10 0 0 1 40 44 L40 54 Z"/>
+              <line class="bold" x1="10" y1="54" x2="70" y2="54"/>
+            </svg>
+            <figcaption>Веер</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Песочные часы">
+              <g class="hair soft"><circle cx="20" cy="10" r="3"/><circle cx="40" cy="10" r="3"/><circle cx="60" cy="10" r="3"/>
+              <circle cx="30" cy="22" r="3"/><circle cx="50" cy="22" r="3"/></g>
+              <circle class="accf" cx="40" cy="33" r="4.5"/>
+              <g class="hair soft"><circle cx="30" cy="44" r="3"/><circle cx="50" cy="44" r="3"/>
+              <circle cx="20" cy="56" r="3"/><circle cx="40" cy="56" r="3"/><circle cx="60" cy="56" r="3"/></g>
+              <g class="hair"><path d="M20 13 L30 19 M40 13 L30 19 M40 13 L50 19 M60 13 L50 19 M30 25 L40 29 M50 25 L40 29"/>
+              <path d="M40 37 L30 41 M40 37 L50 41 M30 47 L20 53 M30 47 L40 53 M50 47 L40 53 M50 47 L60 53"/></g>
+            </svg>
+            <figcaption>Песочные часы</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Стратиграфия">
+              <g class="hair soft"><line x1="6" y1="14" x2="74" y2="14"/><line x1="6" y1="28" x2="74" y2="28"/>
+              <line x1="6" y1="42" x2="74" y2="42"/><line x1="6" y1="56" x2="74" y2="56"/></g>
+              <rect style="fill:var(--indigo);stroke:none;opacity:.22" x="6" y="28" width="68" height="14"/>
+              <rect style="fill:var(--indigo);stroke:none;opacity:.14" x="6" y="42" width="68" height="14"/>
+              <line class="bold" x1="20" y1="10" x2="20" y2="38"/>
+              <line class="bold acc" x1="34" y1="18" x2="34" y2="52"/>
+              <line class="bold" x1="48" y1="24" x2="48" y2="46"/>
+              <line class="bold" x1="62" y1="32" x2="62" y2="60"/>
+            </svg>
+            <figcaption>Стратиграфия</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Потоки, диаграмма Санки">
+              <path style="fill:var(--ink);stroke:none;opacity:.14" d="M10 10 C34 10 36 16 60 16 L60 28 C36 28 34 22 10 22 Z"/>
+              <path style="fill:var(--sanguine);stroke:none;opacity:.3" d="M10 24 C34 24 36 32 60 32 L60 42 C36 42 34 34 10 34 Z"/>
+              <path style="fill:var(--ink);stroke:none;opacity:.14" d="M10 36 C34 36 36 46 60 46 L60 56 C36 56 34 46 10 46 Z"/>
+              <g class="bold"><line x1="10" y1="10" x2="10" y2="22"/><line x1="10" y1="24" x2="10" y2="34"/><line x1="10" y1="36" x2="10" y2="46"/></g>
+              <g class="bold"><line x1="60" y1="16" x2="60" y2="28"/><line x1="60" y1="32" x2="60" y2="56"/></g>
+            </svg>
+            <figcaption>Потоки</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Родство">
+              <g class="hair soft"><circle cx="16" cy="18" r="4"/><circle cx="38" cy="10" r="4"/><circle cx="62" cy="20" r="4"/>
+              <circle cx="28" cy="36" r="4"/><circle cx="52" cy="40" r="4"/><circle cx="20" cy="54" r="4"/><circle cx="62" cy="52" r="4"/>
+              <path d="M16 22 L28 32 M38 14 L28 32 M38 14 L52 36 M62 24 L52 36 M28 40 L20 50"/></g>
+              <g class="acc bold"><path d="M20 50 L28 40 M28 36 L38 14 M38 14 L52 36 M52 44 L62 48"/></g>
+              <circle class="accf" cx="20" cy="54" r="4.5"/><circle class="accf" cx="62" cy="52" r="4.5"/>
+            </svg>
+            <figcaption>Родство</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима Генограмма">
+              <rect x="14" y="10" width="18" height="18"/>
+              <circle cx="57" cy="19" r="9"/>
+              <line x1="32" y1="19" x2="48" y2="19"/>
+              <path d="M40 19 V36 H24 V44 M40 36 H56 V44"/>
+              <rect class="acc" x="16" y="44" width="16" height="16"/>
+              <circle cx="56" cy="52" r="8"/>
+            </svg>
+            <figcaption>Генограмма</figcaption>
+          </figure>
+          <figure class="sk-cell" style="margin:0">
+            <svg class="sk" viewBox="0 0 80 64" role="img" aria-label="Схема режима География">
+              <rect class="hair soft" x="6" y="6" width="68" height="52"/>
+              <g class="hair soft"><path d="M6 24 C22 20 30 30 44 26 C58 22 66 30 74 27"/>
+              <path d="M6 42 C20 38 28 46 42 43 C56 40 66 47 74 44"/>
+              <path d="M26 6 C22 20 30 34 26 58" opacity=".5"/><path d="M54 6 C58 22 50 38 54 58" opacity=".5"/></g>
+              <g><path class="accf" d="M22 34 C22 30 25 27 28 27 C31 27 34 30 34 34 C34 38 28 44 28 44 C28 44 22 38 22 34 Z"/>
+              <path d="M44 22 C44 19 46 17 48 17 C51 17 53 19 53 22 C53 26 48 31 48 31 C48 31 44 26 44 22 Z"/>
+              <path d="M56 44 C56 41 58 39 60 39 C63 39 65 41 65 44 C65 48 60 52 60 52 C60 52 56 48 56 44 Z"/></g>
+            </svg>
+            <figcaption>География</figcaption>
+          </figure>
+        </div>
+      </div>
+      <p class="figcap"><b>fig. 25–32</b>Схематически точны: веер действительно делится на сектора, Санки действительно сохраняет массу.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Переключатель режимов отображения. Пользователь выбирает по картинке, не по названию.</dd>
+        <dt>Файлов</dt><dd>8</dd>
+        <dt>Размер</dt><dd>1200 × 1200 px PNG, прозрачный фон</dd>
+        <dt>Критерий</dt><dd>Схема верна. Неправильно нарисованный Санки хуже, чем отсутствие значка.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Шаблон промпта · подставить сюжет</span><button class="copy" data-copy="#pr-12" type="button">Скопировать</button></div>
+        <pre id="pr-12">A small precise schematic diagram in the style of a figure from a 19th-century scientific treatise: &lt;СЮЖЕТ&gt;. Drawn with hairline rules and simple geometric forms, no labels, no lettering, no decoration. One single element emphasised in terracotta red; everything else in blue-black ink. Isolated and centred on plain cream vellum.
+
+СЮЖЕТЫ:
+  Атлас          a small node-link family diagram of three generations, boxes joined by right-angled rules
+  Веер           a half-circle fan divided into three concentric rings of radial segments
+  Песочные часы  an hourglass shape formed from two opposed triangular arrays of small circles
+  Стратиграфия   horizontal geological strata bands with four vertical bars of differing length crossing them
+  Потоки         a Sankey diagram, three bands on the left flowing and merging into two on the right
+  Родство        a small network of circles with one continuous path between two of them picked out
+  Генограмма     the standard genogram notation of one nuclear family: square, circle, connecting rules, two children
+  География      a fragment of an engraved old map with contour lines and three small location pins</pre>
+      </div>
+      <p class="note"><b>Быстрее нарисовать.</b> Восемь схем этого класса — час работы в SVG и полный контроль над точностью. Генерация здесь, скорее всего, обойдётся дороже по времени на отбраковку. Скетчи слева уже почти готовы к тому, чтобы стать финалом.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE XIII ───────── -->
+<article class="plate" id="pl-13" data-plate="13">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. XIII</span>
+    <span class="plate-name">Портреты демо-дерева<em>Единственная фотографическая таблица</em></span>
+    <span class="tag p1">Фаза 1</span>
+    <label class="done-toggle"><input type="checkbox" id="done-13"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 160 190" role="img" aria-label="Кабинетный портрет 1890-х: овальная виньетка, паспарту, свет слева">
+          <rect x="6" y="6" width="148" height="178"/>
+          <rect class="hair soft" x="14" y="14" width="132" height="162"/>
+          <ellipse class="hair soft dash" cx="80" cy="88" rx="46" ry="58" opacity=".55"/>
+          <path d="M80 64 C92 64 99 74 99 86 C99 98 91 108 80 108 C69 108 61 98 61 86 C61 74 68 64 80 64 Z"/>
+          <path d="M55 146 C57 124 66 112 80 112 C94 112 103 124 105 146"/>
+          <path class="hair soft" d="M68 112 C72 122 88 122 92 112"/>
+          <g class="hair soft" opacity=".5">
+            <path d="M24 40 C24 70 24 110 24 150"/><path d="M32 46 C32 74 32 112 32 150"/>
+          </g>
+          <g class="hair soft"><line x1="14" y1="158" x2="146" y2="158"/></g>
+          <text x="16" y="172">паспарту · подпись фотографа живым шрифтом</text>
+          <g class="acc hair"><path d="M118 30 l14 -14"/><text class="acc" x="104" y="28" style="fill:var(--sanguine)">свет слева</text></g>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 33</b>Овальная виньетка, мягкий свет из одного источника слева, зернистость серебряно-желатинового отпечатка.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Назначение</dt><dd>Демо-дерево. Реальные семейные фотографии использовать нельзя, современный сток убьёт интонацию.</dd>
+        <dt>Файлов</dt><dd>12 — по 4 на эпоху 1890-х, 1920–30-х, 1950–60-х; разный возраст и пол</dd>
+        <dt>Размер</dt><dd>1600 × 2000 px, погрудно</dd>
+        <dt>Исключение</dt><dd><b>Единственная таблица, где изображение фотографическое</b>, а не гравюрное. Преамбулу заменить.</dd>
+      </dl>
+      <div class="block">
+        <div class="block-head"><span>Промпт · вместо общей преамбулы</span><button class="copy" data-copy="#pr-13" type="button">Скопировать</button></div>
+        <pre id="pr-13">A studio portrait photograph in the style of the 1890s, made on a glass plate negative: a &lt;ВОЗРАСТ&gt; &lt;МУЖЧИНА/ЖЕНЩИНА&gt; facing slightly off-camera, in period-appropriate clothing of a Russian provincial family, against a plain painted studio backdrop. Soft single-source light from the left, shallow depth of field, visible silver-gelatin grain, slight edge vignetting, faded sepia-brown tone, small emulsion imperfections and one fine scratch. Head and shoulders, oval vignette. Neutral expression, dignified, unsmiling. No text, no border, no watermark.
+
+Для 1920–30-х: заменить на matte gelatin print, harder light, plainer clothing.
+Для 1950–60-х: заменить на a 1950s black-and-white print, softer contrast, everyday clothing.</pre>
+      </div>
+      <p class="note warn"><b>Обязательно и без исключений.</b> Каждый портрет хранится с <code>synthetic: true</code> в метаданных, водяным знаком в углу демо-сборки и только в <code>assets/demo/</code>. Синтетическое лицо не должно иметь физической возможности попасть в чей-то настоящий архив — это прямое следствие правила «сгенерированное всегда помечено» из арт-дирекшна.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ───────── PLATE XIV ───────── -->
+<article class="plate" id="pl-14" data-plate="14">
+  <div class="plate-top">
+    <span class="plate-rn">Табл. XIV</span>
+    <span class="plate-name">Набор иконок<em>Рисуем в SVG · не генерируем</em></span>
+    <span class="tag hand">Рисуется</span>
+    <label class="done-toggle"><input type="checkbox" id="done-14"> готово</label>
+  </div>
+  <div class="plate-body">
+    <div class="plate-fig">
+      <div class="figframe">
+        <svg class="sk" viewBox="0 0 200 116" role="img" aria-label="Шесть примеров иконок на сетке 24 пикселя с текстовыми подписями">
+          <g class="hair soft dash" opacity=".4">
+            <rect x="8" y="8" width="48" height="48"/><rect x="76" y="8" width="48" height="48"/><rect x="144" y="8" width="48" height="48"/>
+          </g>
+          <g transform="translate(20 20)"><path d="M0 12 L12 2 L24 12 M4 9 V22 H20 V9"/></g>
+          <g transform="translate(88 20)"><circle cx="9" cy="8" r="6"/><path d="M0 24 C0 16 4 13 9 13 C14 13 18 16 18 24"/><path d="M22 6 h6 M25 3 v6"/></g>
+          <g transform="translate(156 20)"><rect x="0" y="2" width="18" height="22"/><path class="hair" d="M4 8 h10 M4 13 h10 M4 18 h6"/><path class="acc" d="M20 18 l4 4 l-4 4"/></g>
+          <g class="hair soft"><line x1="8" y1="66" x2="56" y2="66"/><line x1="76" y1="66" x2="124" y2="66"/><line x1="144" y1="66" x2="192" y2="66"/></g>
+          <text x="8" y="78" style="font-size:8px">Домой</text>
+          <text x="76" y="78" style="font-size:8px">Добавить</text>
+          <text x="144" y="78" style="font-size:8px">Отправить</text>
+          <text class="acc" x="8" y="100" style="fill:var(--sanguine);font-size:7.5px">подпись — часть иконки, а не подсказка при наведении</text>
+          <line class="acc hair" x1="8" y1="88" x2="192" y2="88"/>
+        </svg>
+      </div>
+      <p class="figcap"><b>fig. 34</b>Сетка 24 px, открытые волосяные формы без заливок, те же пять толщин линии, что и во всей системе.</p>
+    </div>
+    <div class="plate-main">
+      <dl class="label">
+        <dt>Метод</dt><dd>SVG вручную. Модель не удержит штрих на пиксельной сетке и не даст согласованности между 80 иконками.</dd>
+        <dt>Файлов</dt><dd>≈ 80 — навигация 12, персона и семья 16, источники 14, медиа 10, синхронизация 12, режимы 8, система 8</dd>
+        <dt>Где</dt><dd><code>packages/ui/icons/</code>, со своим чек-листом</dd>
+        <dt>Правило</dt><dd><b>Ни одной иконки без видимой текстовой подписи.</b> Не тултип — подпись.</dd>
+      </dl>
+      <p class="note"><b>Это не стилистическое предпочтение.</b> Исследования пожилых пользователей фиксируют, что неподписанные иконки — частый источник путаницы, потому что символьные конвенции у старших поколений не те же. Подпись — функциональная часть элемента, и линтер в CI отклоняет интерактивный элемент без неё.</p>
+    </div>
+  </div>
+</article>
+</section>
+
+<!-- ═══════════════════ PUBLIC DOMAIN ═══════════════════ -->
+<section id="pd">
+  <div class="sec-head"><span class="rn">V.</span><h2>Лучше, чем генерировать</h2></div>
+  <p class="prose" style="margin-bottom:22px">
+    Для орнаментов, фоновых плит и картографической подложки подлинные гравюры XIX века
+    бесплатны, юридически чисты и просто <em>лучше</em> по качеству резцовой линии. Использовать
+    их — значит быть верным концепции, а не имитировать её.
+  </p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Источник</th><th>Что там есть</th><th>Лицензия</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://www.biodiversitylibrary.org/">Biodiversity Heritage Library</a></td><td>Сотни тысяч сканов ботанических и зоологических таблиц; отдельная коллекция извлечённых иллюстраций</td><td>Преимущественно public domain — проверять поштучно</td></tr>
+        <tr><td><a href="https://www.rijksmuseum.nl/en/rijksstudio">Rijksmuseum Studio</a></td><td>Гравюры в очень высоком разрешении, свободно скачиваются</td><td>Public domain</td></tr>
+        <tr><td><a href="https://digitalcollections.nypl.org/">NYPL Digital Collections</a></td><td>Карты, таблицы, наборный орнамент</td><td>Размеченный public-domain раздел</td></tr>
+        <tr><td><a href="https://www.oldbookillustrations.com/">Old Book Illustrations</a></td><td>Отобранные, уже извлечённые, с прозрачностью</td><td>Public domain</td></tr>
+        <tr><td><a href="https://www.davidrumsey.com/">David Rumsey Map Collection</a></td><td>Исторические карты — подложка для режима «География»</td><td>CC BY-NC-SA — проверять поштучно</td></tr>
+        <tr><td><a href="https://archive.org/">Internet Archive</a></td><td>Атласы и травники целиком</td><td>Public domain для изданий до 1930</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note" style="max-width:var(--measure)"><b>Процесс.</b> Отобрать → проверить лицензию → записать происхождение в <code>assets/source/ATTRIBUTION.md</code> → перекрасить под наш <code>ink</code> скриптом в <code>tools/assets/</code>. Неатрибутированный ассет — юридическая проблема, которую потом не размотать.</p>
+</section>
+
+<!-- ═══════════════════ ORDER OF WORK ═══════════════════ -->
+<section id="order" style="border-bottom:0">
+  <div class="sec-head"><span class="rn">VI.</span><h2>Порядок работ</h2></div>
+  <p class="prose" style="margin-bottom:22px">
+    Фаза&nbsp;1 разблокирует первую работающую сборку — без этих шести позиций приложение
+    нечем наполнить. Остальное ждёт, пока появится интерфейс, куда это класть.
+  </p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Очередь</th><th>Таблицы</th><th>Файлов</th><th>Метод</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag p1">Сначала · Фаза 1</span></td><td>I знак · II производные · X пустые состояния · XI онбординг · XIII портреты</td><td class="num">27</td><td>Генерация</td></tr>
+        <tr><td><span class="tag proc">Параллельно</span></td><td>III зерно · IV штриховка</td><td class="num">9</td><td>Скрипт, не модель</td></tr>
+        <tr><td><span class="tag p2">Потом · Фаза 2</span></td><td>VII виньетки · VIII разделители · IX печать · XII значки режимов</td><td class="num">20</td><td>Public domain + генерация</td></tr>
+        <tr><td><span class="tag p3">Позже · Фаза 3</span></td><td>V пятна · VI рваный край</td><td class="num">2</td><td>Генерация</td></tr>
+        <tr><td><span class="tag hand">Своим ходом</span></td><td>XIV набор иконок</td><td class="num">80</td><td>Рисуется в SVG</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note" style="max-width:var(--measure)">
+    <b>Проверка на узнаваемость.</b> Когда Фаза&nbsp;1 соберётся, снять экраны, убрать логотип,
+    название и весь текст. Если по вельме, резцовой линии, сангине и градациям образца
+    не узнаётся DreViGen — ассеты не сработали, и переделывается направление, а не файлы.
+  </p>
+</section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── copy buttons ─────────────────────────────────────────────────────── */
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var src = document.querySelector(btn.getAttribute('data-copy'));
+      if (!src) return;
+      var text = src.textContent;
+      var done = function () {
+        var prev = btn.textContent;
+        btn.textContent = 'Скопировано';
+        btn.setAttribute('data-done', '1');
+        setTimeout(function () {
+          btn.textContent = prev;
+          btn.removeAttribute('data-done');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { /* nothing to offer */ }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  /* ── progress, persisted per viewer ───────────────────────────────────── */
+  var KEY = 'drevigen.assets.done.v1';
+  var plates = Array.prototype.slice.call(document.querySelectorAll('.plate'));
+  var fill = document.getElementById('prog-fill');
+  var label = document.getElementById('prog-label');
+  var bar = document.getElementById('prog-bar');
+
+  function read() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function write(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private window */ }
+  }
+  function plural(n) {
+    var a = n % 10, b = n % 100;
+    if (a === 1 && b !== 11) return 'таблица';
+    if (a >= 2 && a <= 4 && (b < 10 || b >= 20)) return 'таблицы';
+    return 'таблиц';
+  }
+  function paint() {
+    var n = plates.filter(function (p) { return p.getAttribute('data-done') === '1'; }).length;
+    var total = plates.length;
+    fill.style.width = (total ? (n / total) * 100 : 0) + '%';
+    label.textContent = n + ' / ' + total + ' ' + plural(total);
+    bar.setAttribute('aria-valuenow', String(n));
+  }
+
+  var state = read();
+  plates.forEach(function (plate) {
+    var id = plate.getAttribute('data-plate');
+    var box = plate.querySelector('input[type="checkbox"]');
+    if (!box) return;
+    if (state[id]) { box.checked = true; plate.setAttribute('data-done', '1'); }
+    box.addEventListener('change', function () {
+      if (box.checked) { plate.setAttribute('data-done', '1'); state[id] = 1; }
+      else { plate.removeAttribute('data-done'); delete state[id]; }
+      write(state);
+      paint();
+    });
+  });
+  paint();
+})();
+</script>
+
+</body>
+</html>

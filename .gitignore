@@ -57,6 +57,7 @@ blob-report/
 
 # ── Design scratch (throwaway shots; curated ones live in design-archive/) ─
 .design-scratch/
+.playwright-mcp/
 
 # ── Editors & OS ──────────────────────────────────────────────────────────
 .idea/
