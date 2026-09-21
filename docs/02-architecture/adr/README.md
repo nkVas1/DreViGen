@@ -15,3 +15,4 @@ what it gives up has not been made yet.
 | [0006](./0006-loro-as-crdt-substrate.md) | Loro as the CRDT substrate | Accepted — pending on-device validation |
 | [0007](./0007-single-eager-wasm-module.md) | Ship the web core as one eager WASM module, no lazy split | Accepted — re-measured each phase |
 | [0008](./0008-opfs-sahpool-single-connection.md) | One SQLite connection on `opfs-sahpool`; no cross-origin isolation | Accepted |
+| [0009](./0009-msdf-atlas-tiers.md) | Pre-bake one MSDF coverage tier; load the rest on demand | Accepted |

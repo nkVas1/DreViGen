@@ -51,7 +51,7 @@ from day one.
 | S1 | ~~**Loro at scale.**~~ **Done 2026-09-21.** Desktop: 50 000 people / 350 000 ops merge in **2.6 ms** retaining **95 MiB**; Automerge is 15.7× slower to build and 26× slower to merge. → [ADR 0006](../02-architecture/adr/0006-loro-as-crdt-substrate.md) | 4 days | **Passed.** Cost: Loro snapshots are 8× larger than Automerge's — mitigated in the ADR |
 | S1b | **The same spike on a mid-range Android device.** S1 produced desktop numbers only; the stated criterion is a phone. | 1 day | Merge < 2 s, retained < 300 MB on device. Fail → ADR 0006 is superseded, not amended |
 | S2 | ~~**WASM core size.**~~ **Done 2026-09-21.** Chosen dependencies compile to **606 KiB gzipped** against a 2 500 KiB budget — Loro is 589 KiB of it, the testkit 9 KiB. → [ADR 0007](../02-architecture/adr/0007-single-eager-wasm-module.md) | 2 days | **Passed**, 1 894 KiB of headroom. No lazy split. Re-measure as each core crate lands; Beider–Morse rule tables are the one to watch |
-| S3 | **MSDF atlas coverage.** How much Cyrillic + Latin + Greek can be pre-baked before atlas size dominates? | 3 days | Full Russian and German coverage < 4 MB, with a working on-demand path for the rest |
+| S3 | ~~**MSDF atlas coverage.**~~ **Done 2026-09-21.** ASCII + Russian + German + typographic punctuation = **1.3 MB across six instances at 512²**; adding Greek and Latin Extended costs 1024² atlases and 18 MB of VRAM. → [ADR 0009](../02-architecture/adr/0009-msdf-atlas-tiers.md) | 3 days | **Passed** at a third of budget. Greek loads on demand. Found that msdf-atlas-gen 1.4 silently ignores variable-axis settings |
 | S4 | ~~**OPFS concurrency.**~~ **Done 2026-09-21.** Integrity held in all five scenarios; throughput did not. `opfs-sahpool` is **7.1× faster** than `opfs` and needs no cross-origin isolation. → [ADR 0008](../02-architecture/adr/0008-opfs-sahpool-single-connection.md) | 2 days | **Passed.** Refutes two documented assumptions: COOP/COEP is dropped, and the model tightens from single-writer to single-*connection* |
 | S5 | ~~**Tauri mobile capability.**~~ **Done 2026-09-21.** Everything is covered by official plugins except **camera, photo library and share sheet**, where no maintained plugin exists. → [mobile-capabilities.md](../02-architecture/mobile-capabilities.md) | 3 days | **Passed.** 12 days of previously unplanned mobile work surfaced, scheduled into Phases 1 and 4 |
 
@@ -124,7 +124,8 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 
 **1.6 · Canvas** (`packages/canvas`, 2.5 weeks)
 - [ ] WebGL 2 renderer with instanced symbols; WebGPU behind a capability check
-- [ ] MSDF text pipeline
+- [ ] MSDF text pipeline: tier A pre-baked at 512², on-demand loading per Unicode block,
+      metrics as packed binary rather than the tool's JSON
 - [ ] Incremental R-tree for culling and hit-testing
 - [ ] All five semantic-zoom bands with cross-fade and no reflow
 - [ ] Spring-driven pan and zoom, interruptible, velocity-carrying
