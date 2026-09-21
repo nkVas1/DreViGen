@@ -47,31 +47,22 @@ jobs:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc --workspace --no-deps --all-features
 
-  audit:
-    name: Dependency audit
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: rustsec/audit-check@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  licences:
-    name: Dependency licences
+  supply-chain:
+    name: Licences and advisories
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      # The project guidelines allow MIT / Apache-2.0 / BSD-class dependencies only, and no
-      # dependency that requires payment to function. A copyleft crate pulled in transitively
-      # would change our obligations silently, so the build fails on one.
+      # cargo-deny is the single source of truth for supply-chain policy: licences, bans,
+      # sources and advisories. rustsec/audit-check was tried and dropped — it needs
+      # `checks: write`, and it would re-report the unmaintained crates deny.toml acknowledges
+      # with dated reasons, so the two tools would disagree about the same graph.
       - name: Install cargo-deny
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-deny
 
-      - name: Check licences and advisories
-        run: cargo deny check licenses bans sources
+      - name: Check licences, bans, sources and advisories
+        run: cargo deny check

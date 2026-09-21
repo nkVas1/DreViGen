@@ -6,7 +6,7 @@
 //! us a generator whose output is explicitly not stable across releases, plus a dependency tree,
 //! in exchange for properties we do not need.
 //!
-//! [`Rng`] is [xoshiro256++], seeded through [`SplitMix64`]. Both are public-domain designs a few
+//! [`Rng`] is [xoshiro256++], seeded through SplitMix64. Both are public-domain designs a few
 //! lines long, which is exactly the case the project guidelines describe: do not take a library
 //! for a function you can write correctly in ten lines.
 //!
@@ -23,7 +23,7 @@ pub struct Rng {
 impl Rng {
     /// Creates a generator from a 64-bit seed.
     ///
-    /// The seed is expanded through [`SplitMix64`], as the xoshiro authors recommend, so that even
+    /// The seed is expanded through SplitMix64, as the xoshiro authors recommend, so that even
     /// seeds like `0` or `1` produce well-distributed state.
     #[must_use]
     pub fn new(seed: u64) -> Self {
