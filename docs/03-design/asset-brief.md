@@ -378,7 +378,7 @@ that no historical plate happens to contain.
 
 ```
 assets/
-├── source/                    ← originals at full resolution, committed via Git LFS
+├── source/                    ← working masters, committed — optimised, not full resolution
 │   ├── identity/
 │   ├── ornament/
 │   ├── illustration/
@@ -387,6 +387,14 @@ assets/
 ├── demo/                      ← synthetic sample portraits, watermarked
 └── generated/                 ← build output; git-ignored
 ```
+
+**Full-resolution originals stay out of the repository.** A few dozen 4000 px plates is
+hundreds of megabytes, which makes every clone expensive permanently, and Git LFS free quota
+(1 GB storage and 1 GB bandwidth per month) would not survive it on a public repository.
+Commit the largest size the product uses at 2×, as AVIF q85 or PNG where transparency detail
+demands it; keep the originals locally and publish a `design-masters-<date>.zip` to GitHub
+Releases once per phase. Regeneration is cheap when the prompt and seed are recorded;
+repository weight is permanent. Full policy in [`assets/README.md`](../../assets/README.md).
 
 | # | Asset | Count | Priority |
 |---|---|---|---|
