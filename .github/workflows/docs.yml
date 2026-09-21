@@ -23,7 +23,7 @@ jobs:
     name: Link check
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Check internal links
         uses: lycheeverse/lychee-action@v2
@@ -53,7 +53,7 @@ jobs:
     name: Hygiene
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Reject stray CJK characters
         # Guards against characters slipping in from an unrelated input method.
