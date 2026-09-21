@@ -14,7 +14,7 @@ name = "drevigen-tokens"
 path = "src/main.rs"
 
 [dependencies]
-drevigen-color = { path = "../drevigen-color" }
+drevigen-color = { version = "0.0.0", path = "../drevigen-color" }
 
 [lints]
 workspace = true
