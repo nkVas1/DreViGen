@@ -112,13 +112,22 @@ required.
 
 Three voices, each with a job, all open-licensed with genuine Cyrillic.
 
+*Settled by measurement on 2026-09-21 — see [typefaces.md](./typefaces.md) for the full audit
+and the arguments. Two faces named in the first draft of this document turned out to have no
+Cyrillic at all.*
+
 | Voice | Face | Use |
 |---|---|---|
-| **Заголовок** — the plate | **Theano Didot** (OFL, A. Kryukov) | Plate titles, person names at z3–z4, section heads. A true Didone with proper Cyrillic. High contrast, engraved authority. Display sizes only — never below 24 px. |
-| **Текст** — the page | **Source Serif 4 Variable** (OFL) | Body, notes, biographies, research prose. Variable 200–900, Latin + Cyrillic + Greek. |
-| **Данные** — the label | **Archivo Variable** (OFL) | Dates, counts, tables, UI controls, specimen labels. Variable on weight *and* width. **Tabular figures and a slashed zero are mandatory** — a column of years must align. |
-| **Рука** — the margin | **Caveat Variable** (OFL) | Marginalia only: research queries, personal notes, corrections in flight. Never for data, never below 16 px, never load-bearing. *Cyrillic coverage to be verified in the Phase 1 type audit; fallback is an alternative OFL hand with confirmed Cyrillic.* |
-| **Шифр** — the reference | **JetBrains Mono** (OFL) | Archival references only (`ГААО ф.29 оп.1 д.204 л.17об`), identifiers, GEDCOM tags. |
+| **Заголовок** — the plate | **Prata** (OFL, Cyreal) | Plate titles, person names at z3–z4, section heads. A true Didone with complete Cyrillic. High contrast, engraved authority. Display sizes only — never below 24 px. Missing `…` and `№`, which fall back to the text face. |
+| **Текст** — the page | **Source Serif 4 Variable** (OFL) | Body, notes, biographies, research prose. Variable on optical size and weight, with tabular figures and a slashed zero. |
+| **Данные** — the label | **Golos Text Variable** (OFL, ParaType) | Dates, counts, tables, UI controls, specimen labels. Variable weight, **tabular figures** — a column of years must align. Chosen over Inter, which is complete but is the generic default the brief exists to avoid; the slashed zero it gives up is needed only in archival shelf marks, which are set in the mono voice. |
+| **Рука** — the margin | **Caveat Variable** (OFL) | Marginalia only: research queries, personal notes, corrections in flight. Never for data, never below 16 px, never load-bearing. Cyrillic coverage confirmed by the audit. |
+| **Шифр** — the reference | **JetBrains Mono** (OFL) | Archival references only (`ГААО ф.29 оп.1 д.204 л.17об`), identifiers, GEDCOM tags. **Slashed zero**, which is why shelf marks belong here. |
+
+**Not used, and recorded so they are not proposed again:** *Theano Didot* is not distributable
+through the normal font pipeline; *Archivo* and *Bodoni Moda* contain **no Cyrillic whatsoever**;
+*Playfair Display* is complete and is one of the most-used serifs on the web, which costs more
+than the two characters Prata lacks.
 
 ### Scale
 
@@ -134,8 +143,8 @@ it does not zoom a bitmap.
 ### Rules
 
 - Measure 60–75 characters for prose. Never full-bleed text.
-- **Never Theano Didot below 24 px** — Didone hairlines disappear and it becomes an
-  accessibility failure rather than a style.
+- **Never Prata below 24 px** — Didone hairlines disappear and it becomes an accessibility
+  failure rather than a style.
 - Numerals in any column or comparison are tabular, always.
 - Russian text is set with proper typography: «ёлочки», non-breaking spaces before dashes,
   hanging punctuation where the renderer allows.

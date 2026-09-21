@@ -53,11 +53,15 @@ Verified open-licensed candidates with genuine Cyrillic coverage:
 | **Inter** | Neo-grotesque | Excellent screen legibility. Ubiquitous — which is precisely the "AI-slop" signal we avoid for display, though it is defensible for dense data. |
 
 **[judgement]** The pairing decision belongs in the art-direction document, not here. The
-research conclusion is narrower: **a Didone display face is available with proper Cyrillic
-(Theano Didot), and a variable serif with Cyrillic is available for text (Source Serif 4)** — so
-the botanical-plate direction is typographically achievable without commissioning type. The
-tabular data face must have **tabular figures** and a **slashed zero**, which rules out several
-otherwise attractive options.
+research conclusion is narrower: the botanical-plate direction is typographically achievable
+without commissioning type.
+
+**Corrected 2026-09-21 by measurement** — [typefaces.md](../03-design/typefaces.md). The list
+above was assembled from secondary sources and two of its entries are unusable: **Archivo has
+no Cyrillic at all**, and neither does Bodoni Moda. Theano Didot is real but not distributable
+through the normal pipeline. The chosen set is Prata, Source Serif 4, Golos Text, Caveat and
+JetBrains Mono, each verified against the actual character sets the product must set. The
+lesson generalises: a font's marketing copy is not a coverage report.
 
 ## 3. Colour
 
