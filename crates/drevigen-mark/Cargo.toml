@@ -1,0 +1,29 @@
+[package]
+name = "drevigen-mark"
+description = "The DreViGen mark, generated from parameters and rasterised for every platform's icons."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[[bin]]
+name = "drevigen-mark"
+path = "src/main.rs"
+required-features = ["render"]
+
+[features]
+# The library draws SVG with no dependencies. Rasterising is a build-time concern, so the
+# renderer and its dependency tree are opt-in and absent from anything that ships.
+default = []
+render = ["dep:resvg", "dep:tiny-skia"]
+
+[dependencies]
+drevigen-color = { version = "0.0.0", path = "../drevigen-color" }
+resvg = { version = "0.48.1", optional = true }
+tiny-skia = { version = "0.12.0", optional = true }
+
+[lints]
+workspace = true
