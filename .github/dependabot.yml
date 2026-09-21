@@ -1,7 +1,8 @@
 version: 2
 
-# The cargo and npm ecosystems are enabled in Phase 0, when the manifests land.
-# Declaring them before the manifests exist only produces failing update runs.
+# Grouped deliberately. A solo project drowns in one pull request per patch bump, and a
+# drowned queue is an unread queue; grouping keeps the signal — a major version, a security
+# fix — visible among the noise.
 
 updates:
   - package-ecosystem: github-actions
@@ -12,3 +13,51 @@ updates:
     commit-message:
       prefix: 'chore(ci)'
     labels: ['dependencies']
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(deps)'
+    labels: ['dependencies', 'rust']
+    open-pull-requests-limit: 5
+    groups:
+      # Tauri releases its core, its build crate and its plugins together, and they have to
+      # move together: a plugin built against a newer core does not link.
+      tauri:
+        patterns: ['tauri', 'tauri-*']
+      rust-minor:
+        update-types: ['minor', 'patch']
+        exclude-patterns: ['tauri', 'tauri-*', 'loro', 'loro-*']
+    ignore:
+      # Pinned by ADR 0006 and measured in spike S1. A Loro upgrade is a decision with
+      # benchmarks attached, not a dependency bump.
+      - dependency-name: 'loro'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(deps)'
+    labels: ['dependencies', 'web']
+    open-pull-requests-limit: 5
+    groups:
+      # React, its DOM package and its types are one upgrade, always.
+      react:
+        patterns: ['react', 'react-dom', '@types/react', '@types/react-dom', 'react-aria-components']
+      # The npm CLI and the JavaScript API are versioned with the Rust crates above.
+      tauri:
+        patterns: ['@tauri-apps/*']
+      build-tooling:
+        patterns: ['vite', '@vitejs/*', 'vite-plugin-*', 'typescript']
+      web-minor:
+        update-types: ['minor', 'patch']
+        exclude-patterns: ['react', 'react-dom', '@types/react', '@types/react-dom', 'react-aria-components', '@tauri-apps/*', 'vite', '@vitejs/*', 'vite-plugin-*', 'typescript']
