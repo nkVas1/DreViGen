@@ -190,18 +190,32 @@ wants MinIO or a bucket.
 | Concern | Choice |
 |---|---|
 | Native (Tauri) | SQLite via the Rust core, WAL mode, FTS5 for search |
-| Web | SQLite compiled to WASM over **OPFS**, in a worker |
+| Web | SQLite WASM on the **`opfs-sahpool`** VFS, one connection in one worker, no WAL |
 | Operation log | Append-only, content-addressed, stored alongside the snapshot |
 | Project file | `.dvg` — a zip container: snapshot + operation log + media + manifest, and a valid `.gdz` superset so GEDCOM 7 tools can read the genealogical core |
 
 On the web path, SQLite WASM over OPFS is now a serious runtime — multi-gigabyte client-side
-databases at near-native speed. Two operational facts govern the implementation: maximum
-performance needs `SharedArrayBuffer`, which requires **cross-origin isolation** (COOP/COEP
-headers); and testing in March 2026 showed 8–10 concurrent workers are sustainable provided
-locking is minimal and `SQLITE_BUSY` is handled explicitly. **[current]**
+databases at near-native speed.
 
-**Obligation.** Serve the web build cross-origin isolated; keep exactly one writer worker;
-handle `SQLITE_BUSY` with backoff rather than assuming it cannot happen.
+Two operational claims recorded here from secondary sources were **measured and refuted** by
+spike S4. They are left standing beside the measurement rather than quietly edited away, because
+the shape of the error is the useful part — both were true as statements and wrong as guidance.
+
+| As recorded **[current]**, and wrong | What the measurement found |
+|---|---|
+| Maximum performance needs `SharedArrayBuffer`, which requires **cross-origin isolation** (COOP/COEP headers) | The **opposite**. `opfs-sahpool` avoids `SharedArrayBuffer` entirely and is **7.1× faster** than the VFS that needs it. COOP/COEP is dropped — an invasive constraint we would have paid for needlessly. |
+| Testing showed **8–10 concurrent workers are sustainable** provided locking is minimal and `SQLITE_BUSY` is handled | Sustainable in the sense that nothing breaks and no data is lost — and going from one connection to seven costs **6.6× throughput**. The penalty is for having several connections at all, not for write contention. |
+
+A third fact neither source mentioned: **WAL is unavailable on OPFS**. It needs shared memory,
+which OPFS does not provide, so an explicit `PRAGMA journal_mode = WAL` silently leaves the
+database in `delete` mode. The web build therefore has different durability characteristics from
+the native build.
+
+**Obligation.** One SQLite connection per origin, in one worker, on `opfs-sahpool` — reads go
+through it too. Web Locks arbitrate which tab owns it, and a second tab gets a plain-language
+screen rather than a VFS error. `SQLITE_BUSY` handling stays as belt and braces, though SQLite
+serialises below that layer and it never fired in five scenarios. Full reasoning in
+[ADR 0008](../02-architecture/adr/0008-opfs-sahpool-single-connection.md).
 
 ## 9. Summary of obligations
 
@@ -214,5 +228,5 @@ handle `SQLITE_BUSY` with backoff rather than assuming it cannot happen.
 | Attribution | Peer ID bound to account; derived attribution index; blame, revert, contributor pages |
 | Server | Rust + Axum + SQLx + PostgreSQL 18 + Valkey, Docker Compose, Caddy, on the owner's VPS |
 | Alternative deployment | Documented Cloudflare Workers adapter for users without a server |
-| Local storage | SQLite (native) / SQLite WASM + OPFS (web), FTS5, append-only op log |
+| Local storage | SQLite with WAL (native) / SQLite WASM on `opfs-sahpool`, one connection, no WAL (web); FTS5, append-only op log |
 | Project file | `.dvg` zip container, superset of GEDCOM 7 `.gdz` |
