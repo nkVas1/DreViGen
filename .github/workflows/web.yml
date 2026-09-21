@@ -1,0 +1,108 @@
+name: Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'apps/shell/package.json'
+      - 'packages/**'
+      - 'assets/fonts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/web.yml'
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'apps/shell/package.json'
+      - 'packages/**'
+      - 'assets/fonts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Type-check and build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # --frozen-lockfile, so a pull request that changes a dependency has to say so in the
+      # lockfile. An install that resolves differently in CI than on a laptop is a bug that
+      # only ever shows up at the worst moment.
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm --filter @drevigen/web typecheck
+
+      - name: Build
+        run: pnpm --filter @drevigen/web build
+
+      # The whole point of the web build is that it installs and works offline. A manifest
+      # without icons, or a service worker that did not emit, are both silent failures.
+      - name: The build is installable
+        run: |
+          cd apps/web/dist
+          for required in index.html manifest.webmanifest sw.js favicon.svg icon-192.png icon-512.png; do
+            if [ ! -f "$required" ]; then
+              echo "::error::apps/web/dist/$required is missing"
+              exit 1
+            fi
+          done
+          icons=$(node -e "process.stdout.write(String(JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')).icons.length))")
+          if [ "$icons" -lt 3 ]; then
+            echo "::error::the web app manifest declares $icons icons"
+            exit 1
+          fi
+          echo "manifest declares $icons icons"
+
+      # A first-load budget, not a build-size one: what a phone on a slow connection has to
+      # fetch before the first screen appears. The fonts are cached after that; the JavaScript
+      # is not, on every release.
+      - name: First-load budget
+        run: |
+          bytes=$(find apps/web/dist/assets -name '*.js' ! -name '*.map' -printf '%s\n' | awk '{s+=$1} END {print s+0}')
+          limit=400000
+          echo "JavaScript: $bytes bytes (budget $limit)"
+          if [ "$bytes" -gt "$limit" ]; then
+            echo "::error::the first load is over budget by $((bytes - limit)) bytes"
+            exit 1
+          fi
+
+  audit:
+    name: Advisories
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Only what ships. A development-only advisory is worth knowing about and is not worth
+      # blocking a branch over, which is what `--prod` draws the line at.
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high

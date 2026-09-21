@@ -57,15 +57,24 @@ from day one.
 
 ### Deliverables
 
-- [ ] pnpm + Cargo workspace, the full directory structure from the architecture overview
-- [ ] Toolchain pinned: Rust 1.96.1, Node 24.11.1, pnpm 11.10.0, exact versions throughout
+- [x] pnpm + Cargo workspace, the full directory structure from the architecture overview
+- [x] Toolchain pinned: Rust 1.96.1, Node 24.11.1, pnpm 11.10.0, exact versions throughout
 - [x] CI (Rust half): `cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`, rustdoc
       with `-D warnings`, `cargo deny` for licences, bans, sources and advisories — all blocking
-- [ ] CI (web half): `tsc --noEmit`, `eslint`, `vitest`, `pnpm audit`, WASM size budget
-- [ ] Release pipeline producing signed artefacts for all six targets, even if the app is empty
-- [ ] `tokens` package: the OKLCH → sRGB + APCA pipeline, with contrast failures breaking the build
-- [ ] Fonts vendored and subset; the type audit from the art direction resolved
-- [ ] The app opens on Windows, Android and in a browser, shows one screen, and is installable
+- [x] CI (web half): `tsc --noEmit`, `pnpm audit --prod`, an installability check on the built
+      output, and a first-load budget on the JavaScript
+- [ ] CI (web half), the rest: `eslint` and `vitest`. Neither has anything to run against yet —
+      there is one component and no logic in it — so the configuration lands with the first
+      code that would fail without it, in Phase 1
+- [x] Release pipeline for all six targets — **unsigned**, and the reasons are written down in
+      [release-and-distribution.md](../02-architecture/release-and-distribution.md) rather than
+      discovered later. Signing waits for certificates; the web build is the recommended path
+      for a relative in the meantime
+- [x] `tokens` package: the OKLCH → sRGB + APCA pipeline, with contrast failures breaking the build
+- [x] Fonts vendored and subset; the type audit from the art direction resolved
+- [x] The mark, generated from the palette, at every size from a 16 px tab to a store listing
+- [x] The app opens on Windows and in a browser, shows one screen, and is installable
+- [ ] The same on Android. The build is wired and the icons are cut; it has not run on a device
 - [ ] P0-S5a — Rust `std::fs` verified inside the app sandbox on both mobile platforms
 - [ ] P0-S5b — the Rust WebSocket client verified from both mobile platforms
 
@@ -73,6 +82,11 @@ from day one.
 
 Five ADRs written. The repository builds green on every target. A person can install the app on
 a phone and see a correctly typed, correctly coloured screen.
+
+**Open at 2026-09-22:** the phone. Everything else in this phase is done — the desktop shell
+opens on Windows with the frame in the palette, the web build installs, and both are the same
+front end. What remains is running it on real hardware: S1b, P0-S5a and P0-S5b are all
+device-bound, and none of them can be closed from a laptop.
 
 ---
 

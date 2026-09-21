@@ -3,9 +3,9 @@ name: Rust
 on:
   push:
     branches: [main]
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'apps/shell/**', 'apps/web/public/**', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'apps/shell/**', 'apps/web/public/**', '.github/workflows/rust.yml']
   workflow_dispatch:
 
 permissions:
@@ -33,6 +33,14 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      # apps/shell is a Tauri crate, so the whole workspace now needs the Linux webview stack
+      # to type-check. The alternative — excluding the shell from the workspace checks — would
+      # mean the crate most likely to break is the one nothing lints.
+      - name: Linux webview dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y             libwebkit2gtk-4.1-dev             libayatana-appindicator3-dev             librsvg2-dev             libxdo-dev             libssl-dev             patchelf
+
       - name: Format
         run: cargo fmt --all --check
 
@@ -58,6 +66,22 @@ jobs:
           changed=$(git status --porcelain -- packages/tokens/dist)
           if [ -n "$changed" ]; then
             echo "::error::packages/tokens/dist is stale or untracked. Run: cargo run -p drevigen-tokens -- generate"
+            echo "$changed"
+            exit 1
+          fi
+
+      # The icons are generated and committed for the same reason the tokens are: a change to
+      # the mark should be visible in a pull request rather than appearing at release time.
+      #
+      # Only the SVGs are compared. They are text and byte-identical everywhere; the PNGs are
+      # rasterised, and holding a rasteriser to byte equality across operating systems is how
+      # a gate becomes a flake. Every PNG is derived from an SVG, so nothing escapes this.
+      - name: Generated icons are up to date
+        run: |
+          cargo run -p drevigen-mark --features render -- assets/identity apps/web/public
+          changed=$(git status --porcelain -- assets/identity apps/web/public | grep '\.svg$' || true)
+          if [ -n "$changed" ]; then
+            echo "::error::The mark changed but its files were not regenerated. Run: cargo run -p drevigen-mark --features render -- assets/identity apps/web/public"
             echo "$changed"
             exit 1
           fi

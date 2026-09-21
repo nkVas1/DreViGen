@@ -1,0 +1,152 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (a draft release is created under it)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Six artefacts from one source tree. The release is created as a draft so the notes can be
+  # written and the downloads checked before anyone is told it exists.
+  desktop:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Windows (x64)
+            runner: windows-latest
+            args: '--target x86_64-pc-windows-msvc'
+          - label: macOS (Apple silicon and Intel)
+            runner: macos-15
+            args: '--target universal-apple-darwin'
+          - label: Linux (x64)
+            runner: ubuntu-24.04
+            args: ''
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Linux webview dependencies
+        if: matrix.runner == 'ubuntu-24.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            libssl-dev \
+            patchelf
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: macOS cross targets
+        if: matrix.runner == 'macos-15'
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: '. -> target'
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Absent until the sync service exists and the application updates itself. The
+          # configuration does not produce updater artefacts yet, so nothing here is used; it
+          # is wired now so that turning the updater on is a one-line change.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Code signing. Both are empty until the certificates exist; see
+          # docs/02-architecture/release-and-distribution.md for what each platform refuses to
+          # do without them.
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          projectPath: apps/shell
+          tagName: ${{ inputs.tag || github.ref_name }}
+          releaseName: DreViGen ${{ inputs.tag || github.ref_name }}
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  android:
+    name: Android (arm64, arm, x86_64)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # gen/android is generated rather than committed: it is a Gradle project reproducible
+      # from tauri.conf.json, and checking it in means merge conflicts in files nobody wrote.
+      - name: Generate the Android project
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
+        run: pnpm --filter @drevigen/shell exec tauri android init --ci
+
+      - name: Build
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
+        run: pnpm --filter @drevigen/shell exec tauri android build --apk --aab
+
+      # Unsigned, and said so in the file name. A release keystore is the one piece of this
+      # that cannot live in the repository, and an unsigned AAB cannot be published to a store
+      # — it is here so the family can sideload the APK and so the build is proven to work.
+      - uses: actions/upload-artifact@v5
+        with:
+          name: android-unsigned
+          path: |
+            apps/shell/src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+            apps/shell/src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab
+          if-no-files-found: error
+          retention-days: 30
