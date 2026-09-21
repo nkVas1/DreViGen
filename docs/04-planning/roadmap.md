@@ -48,7 +48,8 @@ from day one.
 
 | # | Question | Budget | Pass criterion |
 |---|---|---|---|
-| S1 | **Loro at scale.** Can a 50 000-person tree with a 100 000-operation history fork, diff and merge within budget on a mid-range Android device? | 4 days | Merge < 2 s, memory < 300 MB. Fail → Automerge 3.5, re-spike 2 days |
+| S1 | ~~**Loro at scale.**~~ **Done 2026-09-21.** Desktop: 50 000 people / 350 000 ops merge in **2.6 ms** retaining **95 MiB**; Automerge is 15.7× slower to build and 26× slower to merge. → [ADR 0006](../02-architecture/adr/0006-loro-as-crdt-substrate.md) | 4 days | **Passed.** Cost: Loro snapshots are 8× larger than Automerge's — mitigated in the ADR |
+| S1b | **The same spike on a mid-range Android device.** S1 produced desktop numbers only; the stated criterion is a phone. | 1 day | Merge < 2 s, retained < 300 MB on device. Fail → ADR 0006 is superseded, not amended |
 | S2 | **WASM core size.** Does the full core compiled to WASM stay inside the first-paint budget? | 2 days | < 2.5 MB gzipped, or a clean eager/lazy split identified |
 | S3 | **MSDF atlas coverage.** How much Cyrillic + Latin + Greek can be pre-baked before atlas size dominates? | 3 days | Full Russian and German coverage < 4 MB, with a working on-demand path for the rest |
 | S4 | **OPFS concurrency.** Does the single-writer model hold under our access pattern, with `SQLITE_BUSY` handled? | 2 days | 10 000 writes with no data loss, no deadlock, under simulated contention |
@@ -312,7 +313,8 @@ project. A family of ten synchronises without an administrator.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Loro fails the Phase 0 spike | High | Automerge 3.5 fallback, abstraction boundary designed for the swap, 2-day re-spike budgeted |
+| ~~Loro fails the Phase 0 spike~~ | — | **Retired 2026-09-21.** S1 passed with wide margin; see [ADR 0006](../02-architecture/adr/0006-loro-as-crdt-substrate.md). Residual risk is the on-device run, tracked as S1b |
+| Loro snapshots are 8× larger than Automerge's | Medium | Shallow snapshot plus a separate op log in the `.dvg` container; sync transfers deltas not snapshots; snapshot size budgeted in CI |
 | Own layout engine takes longer than 2.5 weeks | Medium | Ship Phase 1 with a simpler coordinate assignment; crossing reduction is an independent improvement |
 | WASM bundle exceeds the first-paint budget | Medium | Eager kernel plus lazily loaded modules; native builds are unaffected |
 | Cyrillic HTR accuracy is too low to be useful | Medium | Non-Latin tooling lags Latin by years and we knew it going in. Ship the transcription workspace regardless — structured, image-linked manual transcription is valuable on its own; recognition is an accelerator, not the feature |
