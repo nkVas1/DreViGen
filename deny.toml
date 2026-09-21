@@ -1,0 +1,67 @@
+# cargo-deny — https://embarkstudios.github.io/cargo-deny/
+#
+# The project guidelines are explicit: every dependency must be MIT, Apache-2.0, BSD or an
+# equivalent permissive licence, and none may require payment to function. A copyleft crate
+# arriving transitively would change DreViGen's own obligations without anyone noticing, so the
+# build fails on one rather than leaving it to review.
+
+[graph]
+all-features = true
+
+[licenses]
+# Permissive licences only. AGPL-3.0 is DreViGen's own licence, not one we accept inbound:
+# a GPL-family dependency would constrain how the core can be linked into the WASM and mobile
+# builds, which is precisely the freedom the architecture depends on.
+allow = [
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "Unicode-3.0",
+    "Unlicense",
+    "CC0-1.0",
+    "MPL-2.0",          # file-level copyleft only; does not reach our code
+    "BSL-1.0",
+    "OFL-1.1",          # fonts
+]
+confidence-threshold = 0.9
+
+# The allow list is a policy statement, not an inventory of what today's dependency graph
+# happens to contain, so a permitted licence nobody currently uses is not a finding.
+unused-allowed-license = "allow"
+
+# This policy governs what we take *in*. DreViGen's own crates are AGPL-3.0 by design, and they
+# are unpublished, so cargo-deny's `private` mechanism is the right escape hatch: it exempts
+# workspace crates marked `publish = false` and nothing else. A third-party AGPL crate is still
+# rejected, which is the point.
+private = { ignore = true }
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[advisories]
+yanked = "deny"
+
+# Each entry is a specific, dated acknowledgement — not a blanket downgrade of `unmaintained`.
+# A new unmaintained crate entering the graph still fails the build, which is the behaviour we
+# want: these four are known and tracked, the next one would not be.
+#
+# All four are `unmaintained`, none is a vulnerability. `im` is a mandatory runtime dependency
+# of loro-internal and brings the other two with it, so there is nothing to upgrade to from our
+# side. Recorded as a known risk in ADR 0006; revisit whenever Loro is upgraded.
+ignore = [
+    { id = "RUSTSEC-2026-0248", reason = "im 15.1.0 — archived; mandatory runtime dep of loro-internal. Upstream's to replace. Reviewed 2026-09-21." },
+    { id = "RUSTSEC-2026-0251", reason = "sized-chunks 0.6.5 — archived; pulled in by im. Reviewed 2026-09-21." },
+    { id = "RUSTSEC-2026-0247", reason = "bitmaps 2.1.0 — archived; pulled in by im. Reviewed 2026-09-21." },
+    { id = "RUSTSEC-2023-0089", reason = "atomic-polyfill 1.0.3 — archived; target-gated, absent from our host builds. Re-check when the WASM target lands. Reviewed 2026-09-21." },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

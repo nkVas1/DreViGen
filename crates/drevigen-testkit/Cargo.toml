@@ -7,6 +7,9 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
+# Workspace-internal for now. Publishing it would be useful to others building genealogy
+# tooling, and is a decision for after the data model settles.
+publish = false
 
 [dependencies]
 

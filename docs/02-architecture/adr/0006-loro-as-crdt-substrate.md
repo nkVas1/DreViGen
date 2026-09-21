@@ -82,6 +82,26 @@ encoding, not the history.
 - Snapshot size is tracked as a budgeted metric in CI, so regression is visible rather than
   discovered.
 
+**A supply-chain finding, recorded rather than buried.** `cargo deny` reports four
+`unmaintained` advisories in Loro's dependency graph — none of them a vulnerability:
+
+| Crate | Advisory | How it arrives |
+|---|---|---|
+| `im` 15.1.0 | RUSTSEC-2026-0248 | **Mandatory runtime dependency** of `loro-internal` |
+| `sized-chunks` 0.6.5 | RUSTSEC-2026-0251 | via `im` |
+| `bitmaps` 2.1.0 | RUSTSEC-2026-0247 | via `im` |
+| `atomic-polyfill` 1.0.3 | RUSTSEC-2023-0089 | target-gated; absent from our host builds |
+
+All three of the first group are archived crates by the same author. There is nothing to upgrade
+to from our side — replacing `im` is upstream's decision. This does not reverse the choice:
+unmaintained is not vulnerable, and `im` is a long-established immutable-collections crate. It
+does mean Loro carries a small amount of bit-rot risk that Automerge does not, and it is a thing
+to re-examine at every Loro upgrade.
+
+The four are acknowledged individually in `deny.toml` with dated reasons rather than by
+downgrading the `unmaintained` check, so **a new unmaintained crate entering the graph still
+fails the build**.
+
 **Not yet answered.** These are desktop numbers. The stated criterion is a mid-range Android
 device, and nothing here proves the ratio holds under a phone's memory pressure, thermal limits
 and slower storage. **Task P0-S1b runs the same spike on device before Phase 0 closes.** If it
