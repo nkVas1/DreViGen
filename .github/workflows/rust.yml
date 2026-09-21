@@ -3,9 +3,9 @@ name: Rust
 on:
   push:
     branches: [main]
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', '.github/workflows/rust.yml']
   workflow_dispatch:
 
 permissions:
@@ -41,6 +41,22 @@ jobs:
 
       - name: Test
         run: cargo test --workspace --all-features
+
+      # The palette gate. A colour pair that cannot be read fails the build here rather than
+      # being noticed by a user, which is the only way a contrast rule survives a deadline.
+      - name: Design tokens are readable
+        run: cargo run -p drevigen-tokens -- check
+
+      # The generated files are committed so a colour change is visible in a pull request.
+      # If regenerating moves them, the commit is stale.
+      - name: Generated tokens are up to date
+        run: |
+          cargo run -p drevigen-tokens -- generate
+          if ! git diff --quiet -- packages/tokens/dist; then
+            echo "::error::packages/tokens/dist is stale. Run: cargo run -p drevigen-tokens -- generate"
+            git diff --stat -- packages/tokens/dist
+            exit 1
+          fi
 
       - name: Documentation builds without warnings
         env:

@@ -1,0 +1,15 @@
+{
+  "name": "@drevigen/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generated design tokens. Source of truth is crates/drevigen-tokens/src/palette.rs.",
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    ".": "./dist/tokens.ts"
+  },
+  "scripts": {
+    "generate": "cargo run -p drevigen-tokens -- generate",
+    "check": "cargo run -p drevigen-tokens -- check"
+  }
+}

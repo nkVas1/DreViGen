@@ -1,0 +1,20 @@
+[package]
+name = "drevigen-tokens"
+description = "The DreViGen palette, its contrast contract, and the generators that emit it as CSS and TypeScript."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[[bin]]
+name = "drevigen-tokens"
+path = "src/main.rs"
+
+[dependencies]
+drevigen-color = { path = "../drevigen-color" }
+
+[lints]
+workspace = true
