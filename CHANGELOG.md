@@ -68,11 +68,47 @@ contract begins at 1.0.
 - Archivo, named in the art direction as the data face, turns out to have **no Cyrillic**.
   Golos Text substituted pending the Phase 1 type audit.
 
+### Added — 2026-09-21 · Phase 0 spikes complete
+
+All five Phase 0 spikes are measured and closed. Two of them reversed assumptions the dossier
+had recorded from secondary sources, which is what spikes are for.
+
+- **S2 — WASM size.** The chosen dependencies compile to **606 KiB gzipped** against a 2 500 KiB
+  budget; Loro is 589 KiB of it. `tools/measure-wasm.sh` runs the full shipping pipeline.
+- **S3 — MSDF atlases.** ASCII + Russian + German + typographic punctuation is 183 glyphs,
+  **1.3 MB across six instances at 512²**. Greek and Latin Extended force 1024² atlases and
+  18 MB of VRAM, so they load on demand. `tools/measure-msdf.sh`.
+- **S4 — OPFS.** Five scenarios, 10 000 rows each, verified by gap scan as well as row count.
+- **S5 — Tauri mobile.** Every needed capability checked against the official support table and
+  against crates.io maintenance data.
+- **pnpm workspace** alongside the Cargo workspace.
+
+### Changed — 2026-09-21 · corrections from measurement
+
+- **Cross-origin isolation is not required.** The research note recorded that full SQLite WASM
+  speed needs `SharedArrayBuffer` and therefore COOP/COEP. The opposite is true: `opfs-sahpool`
+  avoids `SharedArrayBuffer` and is **7.1× faster**. An invasive constraint dropped.
+- **"8–10 concurrent workers are sustainable" is true and misleading.** Nothing breaks, and
+  going from one connection to seven costs **6.6× throughput**. The model tightens from
+  single-*writer* to single-*connection*.
+- **WAL is unavailable on OPFS** at all — neither source mentioned it. The web build has
+  different durability characteristics from native.
+- **Twelve days of unplanned mobile work surfaced**: camera, photo library and share sheet have
+  no maintained Tauri plugin, and all three sit on the Хранитель persona's path.
+
 ### Decided — 2026-09-21
 
 - [**ADR 0006**](docs/02-architecture/adr/0006-loro-as-crdt-substrate.md) — Loro is the CRDT
   substrate. It builds 15.7× faster, loads 52× faster, merges 26× faster and retains 17 % less
   memory than Automerge; Automerge wins only on encoded size, 0.8 MiB against 6.6 MiB, which the
   ADR mitigates and states openly. Conditional on an on-device run, tracked as spike S1b.
+- [**ADR 0007**](docs/02-architecture/adr/0007-single-eager-wasm-module.md) — one eager WASM
+  module, no lazy split. The measurement removes the reason for a split whose costs are
+  permanent.
+- [**ADR 0008**](docs/02-architecture/adr/0008-opfs-sahpool-single-connection.md) — one SQLite
+  connection on `opfs-sahpool`, no cross-origin isolation, Web Locks for tab ownership, and a
+  plain-language screen for a second tab rather than a VFS error.
+- [**ADR 0009**](docs/02-architecture/adr/0009-msdf-atlas-tiers.md) — pre-bake tier A, load the
+  rest on demand; metrics as packed binary, not the tool's JSON.
 
 [Unreleased]: https://github.com/nkVas1/DreViGen/commits/main
