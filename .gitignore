@@ -1,0 +1,77 @@
+# ── Dependencies ──────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ── Build artefacts ───────────────────────────────────────────────────────
+dist/
+build/
+out/
+target/
+*.tsbuildinfo
+.vite/
+.turbo/
+
+# ── Tauri ─────────────────────────────────────────────────────────────────
+src-tauri/target/
+src-tauri/gen/
+*.app
+*.dmg
+*.msi
+*.AppImage
+*.deb
+*.rpm
+*.apk
+*.aab
+*.ipa
+
+# ── Environment & secrets ─────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+!**/testdata/**/*.key
+secrets/
+
+# ── Local databases & user data ───────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+/data/
+/uploads/
+
+# ── Machine-learning model weights (fetched by script, never committed) ───
+/models/**/*.onnx
+/models/**/*.safetensors
+/models/**/*.gguf
+/models/**/*.bin
+
+# ── Test & coverage output ────────────────────────────────────────────────
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+
+# ── Design scratch (throwaway shots; curated ones live in design-archive/) ─
+.design-scratch/
+
+# ── Editors & OS ──────────────────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ── Personal working notes (not part of the public project) ───────────────
+dev-notes/
