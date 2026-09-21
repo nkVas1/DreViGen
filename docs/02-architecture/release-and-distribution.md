@@ -82,8 +82,10 @@ in-app updater is not permitted. See the last row of
 
 ## 4. Versions
 
-The application version lives in `apps/shell/src-tauri/tauri.conf.json`. It is `0.0.0` while
-there is nothing to release.
+The application version lives in `apps/shell/src-tauri/tauri.conf.json`. It is `0.0.1`, which
+is the *lowest value Android accepts*: `versionCode` is derived from it, and Tauri refuses to
+build an Android package at `0.0.0`. The Rust crates stay at the workspace's `0.0.0` because
+they are not published.
 
 Windows Installer requires `major.minor.patch` with each part inside its own narrow range, and
 macOS requires the bundle version to increase monotonically, so the scheme has to be plain
