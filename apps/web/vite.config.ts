@@ -18,7 +18,7 @@ export default defineConfig({
       registerType: 'prompt',
       // A family archive should never update itself out from under someone mid-edit. The
       // prompt strategy asks; `autoUpdate` would not.
-      includeAssets: ['fonts/*.woff2'],
+      includeAssets: ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'DreViGen',
         short_name: 'DreViGen',
@@ -29,7 +29,19 @@ export default defineConfig({
         background_color: '#F7F3EB',
         theme_color: '#F7F3EB',
         orientation: 'any',
-        icons: [],
+        icons: [
+          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+          // `maskable` is a separate entry rather than a second purpose on the one above:
+          // a launcher that crops to a circle needs the inset drawing, and a launcher that
+          // does not would show that one with too much margin.
+          {
+            src: '/icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
       },
       workbox: {
         // Fonts and the WASM core are immutable and content-hashed; caching them is the whole

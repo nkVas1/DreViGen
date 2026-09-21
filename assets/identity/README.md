@@ -4,8 +4,12 @@ Everything in this directory is **generated**. Do not edit it by hand; edit
 `crates/drevigen-mark/src/lib.rs` and run:
 
 ```sh
-cargo run -p drevigen-mark --features render -- assets/identity
+cargo run -p drevigen-mark --features render -- assets/identity apps/web/public
 ```
+
+The second directory is what a browser needs — the favicon and the web app manifest icons —
+and it is written straight into `apps/web/public/`, so there is no copy of the mark to keep in
+step.
 
 The mark is a seed in cross-section whose growth rings are generations: three hand-irregular
 rings, sixteen radial rays, and one filled dot of `sanguine` at the centre — the only colour in

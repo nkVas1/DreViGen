@@ -1113,6 +1113,7 @@ name = "drevigen-mark"
 version = "0.0.0"
 dependencies = [
  "drevigen-color",
+ "drevigen-tokens",
  "resvg",
  "tiny-skia",
 ]

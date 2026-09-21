@@ -15,13 +15,14 @@ path = "src/main.rs"
 required-features = ["render"]
 
 [features]
-# The library draws SVG with no dependencies. Rasterising is a build-time concern, so the
-# renderer and its dependency tree are opt-in and absent from anything that ships.
+# The library draws SVG and depends on nothing but the palette crates. Rasterising is a
+# build-time concern, so resvg and its tree are opt-in and absent from anything that ships.
 default = []
 render = ["dep:resvg", "dep:tiny-skia"]
 
 [dependencies]
 drevigen-color = { version = "0.0.0", path = "../drevigen-color" }
+drevigen-tokens = { version = "0.0.0", path = "../drevigen-tokens" }
 resvg = { version = "0.48.1", optional = true }
 tiny-skia = { version = "0.12.0", optional = true }
 

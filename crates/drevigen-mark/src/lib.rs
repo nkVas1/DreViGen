@@ -23,6 +23,7 @@
 use core::fmt::Write as _;
 
 use drevigen_color::Srgb;
+use drevigen_tokens::palette;
 
 /// Which ground the mark will sit on.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -43,6 +44,18 @@ pub struct Mark {
     ground: bool,
     /// Fraction of the canvas the mark occupies, leaving the rest as margin.
     inset: f64,
+    /// Whether to draw the full specimen or the reduced form.
+    detail: Detail,
+}
+
+/// How much of the mark to draw.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Detail {
+    /// Every ring and ray. Correct from roughly 48 px upwards.
+    Full,
+    /// One ring and the seed. What survives at 16 px, where the rays become a grey smudge and
+    /// the hairlines disappear into the gaps between pixels.
+    Reduced,
 }
 
 impl Mark {
@@ -53,7 +66,19 @@ impl Mark {
             tone,
             ground: true,
             inset: 0.88,
+            detail: Detail::Full,
         }
+    }
+
+    /// Returns the reduced mark: one ring and the seed.
+    ///
+    /// For a favicon and anything else that will be seen at 16 or 32 px. Shrinking the full
+    /// drawing to that size does not produce a small mark, it produces a grey circle; this is
+    /// what the mark looks like when there is only room for the idea of it.
+    #[must_use]
+    pub fn reduced(mut self) -> Self {
+        self.detail = Detail::Reduced;
+        self
     }
 
     /// Returns the mark without a ground, for compositing.
@@ -73,10 +98,15 @@ impl Mark {
         self
     }
 
+    /// The mark's three colours, read from the palette rather than typed in.
+    ///
+    /// An icon is the one place a brand colour is usually pasted as a hex literal and then
+    /// drifts from the interface it sits beside. These come from the same tokens the contrast
+    /// gate checks, so they cannot.
     fn ink(&self) -> Srgb {
         match self.tone {
-            Tone::Light | Tone::Monochrome => hex("#0B131C"),
-            Tone::Dark => hex("#F2EADA"),
+            Tone::Light | Tone::Monochrome => token(&palette::light(), "ink"),
+            Tone::Dark => token(&palette::dark(), "ink"),
         }
     }
 
@@ -84,16 +114,16 @@ impl Mark {
         match self.tone {
             // The one spot of colour. A monochrome icon has none by definition, so the centre
             // is drawn in the ink and distinguished by being solid.
-            Tone::Light => hex("#9B3300"),
-            Tone::Dark => hex("#FFB98F"),
-            Tone::Monochrome => hex("#0B131C"),
+            Tone::Light => token(&palette::light(), "sanguine"),
+            Tone::Dark => token(&palette::dark(), "sanguine"),
+            Tone::Monochrome => token(&palette::light(), "ink"),
         }
     }
 
     fn ground_colour(&self) -> Srgb {
         match self.tone {
-            Tone::Light | Tone::Monochrome => hex("#F7F3EB"),
-            Tone::Dark => hex("#18130E"),
+            Tone::Light | Tone::Monochrome => token(&palette::light(), "vellum"),
+            Tone::Dark => token(&palette::dark(), "vellum"),
         }
     }
 
@@ -125,6 +155,21 @@ impl Mark {
         // Stroke weights scale with the mark so the engraving reads the same at 32 px and 1024.
         let hair = (r * 0.012).max(0.6);
         let line = (r * 0.026).max(1.0);
+
+        if self.detail == Detail::Reduced {
+            let _ = write!(
+                svg,
+                r#"<g stroke="{ink}" fill="none" stroke-linejoin="round">{}</g>"#,
+                irregular_ring(c, r * 0.80, line * 1.6, 1.010, 0.992)
+            );
+            let _ = write!(
+                svg,
+                r#"<circle cx="{c:.2}" cy="{c:.2}" r="{:.2}" fill="{accent}"/>"#,
+                r * 0.26
+            );
+            svg.push_str("</svg>");
+            return svg;
+        }
 
         // The radial rays sit between the outer dotted ring and the second ring. Sixteen of
         // them: enough to read as a wood section, few enough not to become a moiré at 32 px.
@@ -216,8 +261,16 @@ fn irregular_ring(c: f64, r: f64, width: f64, stretch_x: f64, stretch_y: f64) ->
     format!(r#"<path stroke-width="{width:.2}" d="{d}"/>"#)
 }
 
-fn hex(value: &str) -> Srgb {
-    Srgb::from_hex(value).unwrap_or(Srgb::new(0.0, 0.0, 0.0))
+/// Looks a token up by name, gamut-mapped to something a screen can show.
+///
+/// The names are compile-time constants from the palette and `palette::tests` proves each one
+/// resolves; black is the only sensible fallback for a name that cannot, and it would be loud
+/// enough to notice.
+fn token(tokens: &[palette::Token], name: &str) -> Srgb {
+    tokens
+        .iter()
+        .find(|t| t.name == name)
+        .map_or(Srgb::new(0.0, 0.0, 0.0), palette::Token::srgb)
 }
 
 #[cfg(test)]
@@ -240,17 +293,38 @@ mod tests {
     #[test]
     fn the_accent_appears_exactly_once_in_colour_tones() {
         // "One accent. If two things are sanguine, one of them is wrong." — art-direction §4.
-        let svg = Mark::new(Tone::Light).to_svg(256);
-        assert_eq!(svg.matches("#9B3300").count(), 1);
+        for tone in [Tone::Light, Tone::Dark] {
+            let svg = Mark::new(tone).to_svg(256);
+            assert_eq!(svg.matches(&accent(tone)).count(), 1, "{tone:?}");
+        }
     }
 
     #[test]
     fn the_monochrome_tone_uses_no_accent() {
         let svg = Mark::new(Tone::Monochrome).to_svg(256);
         assert!(
-            !svg.contains("#9B3300"),
+            !svg.contains(&accent(Tone::Light)),
             "a template icon must be one colour"
         );
+    }
+
+    #[test]
+    fn the_colours_are_the_palettes_own() {
+        // The point of reading tokens rather than pasting hex: change the palette and the icon
+        // changes with it. This fails the moment someone reintroduces a literal.
+        let svg = Mark::new(Tone::Light).to_svg(256);
+        for name in ["ink", "vellum", "sanguine"] {
+            let expected = super::token(&drevigen_tokens::palette::light(), name).to_hex();
+            assert!(
+                svg.contains(&expected),
+                "{name} ({expected}) is not in the mark"
+            );
+        }
+    }
+
+    /// The accent hex for a tone, as the palette defines it.
+    fn accent(tone: Tone) -> String {
+        Mark::new(tone).accent().to_hex()
     }
 
     #[test]
@@ -301,6 +375,32 @@ mod tests {
             widest(&large) > widest(&small) * 8.0,
             "strokes did not scale"
         );
+    }
+
+    #[test]
+    fn the_reduced_mark_is_one_ring_and_the_seed() {
+        // Not a smaller drawing: a different one. Counting elements is the cheapest way to
+        // notice if someone "restores" the rays into the favicon.
+        let full = Mark::new(Tone::Light).to_svg(64);
+        let small = Mark::new(Tone::Light).reduced().to_svg(64);
+
+        assert_eq!(small.matches("<line").count(), 0, "no rays at 16 px");
+        assert_eq!(small.matches("<path").count(), 1, "exactly one ring");
+        assert_eq!(
+            small.matches("<circle").count(),
+            1,
+            "the seed, and nothing else"
+        );
+        assert!(
+            full.len() > small.len() * 2,
+            "the full mark should be far richer"
+        );
+    }
+
+    #[test]
+    fn the_reduced_mark_keeps_the_accent() {
+        let svg = Mark::new(Tone::Light).reduced().to_svg(64);
+        assert_eq!(svg.matches(&accent(Tone::Light)).count(), 1);
     }
 
     #[test]
