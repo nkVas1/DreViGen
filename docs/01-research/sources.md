@@ -2,6 +2,11 @@
 
 All sources accessed **2026-09-21** unless noted. Grouped by the note that relies on them.
 
+Entries tagged **[read in full]** were read end to end rather than through an abstract or a
+secondary summary; what each contributed is recorded in [library.md](./library.md). Everything
+else was consulted at the depth the citing claim requires, and the dossier's **[current]** and
+**[judgement]** tags say where that depth is thin.
+
 ## Standards & specifications
 
 - FamilySearch GEDCOM Specification 7.0.18 (2026-02-17) — https://gedcom.io/specifications/FamilySearchGEDCOMv7.html
@@ -25,9 +30,9 @@ All sources accessed **2026-09-21** unless noted. Grouped by the note that relie
 ## Academic literature
 
 - Siu et al., *Reexamining Technological Support for Genealogy Research, Collaboration, and Education*, arXiv:2411.07869 — https://arxiv.org/abs/2411.07869
-- McGuffin & Balakrishnan, *Interactive Visualization of Genealogical Graphs*, IEEE InfoVis 2005 — https://www.dgp.toronto.edu/~ravin/papers/infovis2005_geneology.pdf
+- **[read in full]** McGuffin & Balakrishnan, *Interactive Visualization of Genealogical Graphs*, IEEE InfoVis 2005 — https://www.dgp.toronto.edu/~ravin/papers/infovis2005_geneology.pdf
 - Mařík, *Efficient Genealogical Graph Layout*, Springer LNCS (2016), doi:10.1007/978-3-319-50901-3_45 — https://link.springer.com/chapter/10.1007/978-3-319-50901-3_45
-- Racine, *Efficient Algorithms for Drawing Large Genealogy Trees*, MSc thesis, TU Wien (2025) — https://repositum.tuwien.at/handle/20.500.12708/220457
+- **[read in full]** Racine, *Efficient Algorithms for Drawing Large Genealogy Trees*, MSc thesis, TU Wien (2025) — https://repositum.tuwien.at/handle/20.500.12708/220457
 - Sugiyama, Tagawa & Toda, *Methods for Visual Understanding of Hierarchical System Structures*, IEEE Trans. SMC 11(2), 1981
 - *Structural and Temporal Hallmarks of Genealogical Networks*, arXiv:2606.18210 — https://arxiv.org/pdf/2606.18210
 - *Othram maps: a graph-powered platform for pedigree visualization and forensic intelligence* — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12883083/

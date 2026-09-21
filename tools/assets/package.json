@@ -1,0 +1,12 @@
+{
+  "name": "@drevigen/asset-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

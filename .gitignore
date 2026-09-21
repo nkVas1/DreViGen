@@ -76,3 +76,8 @@ pnpm-debug.log*
 
 # ── Personal working notes (not part of the public project) ───────────────
 dev-notes/
+
+# ── Reference library ─────────────────────────────────────────────────────
+# Papers are kept locally for research. Most are under publisher copyright and
+# must not be redistributed; the citable index lives in docs/01-research/library.md
+library/papers/
