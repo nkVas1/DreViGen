@@ -27,7 +27,9 @@
 pub mod generate;
 pub mod names;
 pub mod rng;
+pub mod sample;
 
 pub use generate::{Family, FamilyId, Person, PersonId, SyntheticTree, TreeSpec, TreeStats};
 pub use names::Sex;
 pub use rng::Rng;
+pub use sample::Subgraph;
