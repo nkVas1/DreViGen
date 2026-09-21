@@ -1,0 +1,16 @@
+{
+  "name": "drevigen",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local-first genealogy for every device.",
+  "license": "AGPL-3.0-only",
+  "repository": "https://github.com/nkVas1/DreViGen",
+  "packageManager": "pnpm@11.10.0",
+  "engines": {
+    "node": ">=24.11.1",
+    "pnpm": ">=11.10.0"
+  },
+  "scripts": {
+    "spike:s4": "pnpm --filter s4-opfs-concurrency start"
+  }
+}

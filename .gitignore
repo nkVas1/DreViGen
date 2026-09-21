@@ -81,3 +81,6 @@ dev-notes/
 # Papers are kept locally for research. Most are under publisher copyright and
 # must not be redistributed; the citable index lives in docs/01-research/library.md
 library/papers/
+
+# ── pnpm ──────────────────────────────────────────────────────────────────
+.pnpm-debug.log*

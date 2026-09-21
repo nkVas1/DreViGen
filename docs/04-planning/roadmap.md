@@ -52,7 +52,7 @@ from day one.
 | S1b | **The same spike on a mid-range Android device.** S1 produced desktop numbers only; the stated criterion is a phone. | 1 day | Merge < 2 s, retained < 300 MB on device. Fail → ADR 0006 is superseded, not amended |
 | S2 | ~~**WASM core size.**~~ **Done 2026-09-21.** Chosen dependencies compile to **606 KiB gzipped** against a 2 500 KiB budget — Loro is 589 KiB of it, the testkit 9 KiB. → [ADR 0007](../02-architecture/adr/0007-single-eager-wasm-module.md) | 2 days | **Passed**, 1 894 KiB of headroom. No lazy split. Re-measure as each core crate lands; Beider–Morse rule tables are the one to watch |
 | S3 | **MSDF atlas coverage.** How much Cyrillic + Latin + Greek can be pre-baked before atlas size dominates? | 3 days | Full Russian and German coverage < 4 MB, with a working on-demand path for the rest |
-| S4 | **OPFS concurrency.** Does the single-writer model hold under our access pattern, with `SQLITE_BUSY` handled? | 2 days | 10 000 writes with no data loss, no deadlock, under simulated contention |
+| S4 | ~~**OPFS concurrency.**~~ **Done 2026-09-21.** Integrity held in all five scenarios; throughput did not. `opfs-sahpool` is **7.1× faster** than `opfs` and needs no cross-origin isolation. → [ADR 0008](../02-architecture/adr/0008-opfs-sahpool-single-connection.md) | 2 days | **Passed.** Refutes two documented assumptions: COOP/COEP is dropped, and the model tightens from single-writer to single-*connection* |
 | S5 | ~~**Tauri mobile capability.**~~ **Done 2026-09-21.** Everything is covered by official plugins except **camera, photo library and share sheet**, where no maintained plugin exists. → [mobile-capabilities.md](../02-architecture/mobile-capabilities.md) | 3 days | **Passed.** 12 days of previously unplanned mobile work surfaced, scheduled into Phases 1 and 4 |
 
 ### Deliverables
@@ -112,7 +112,8 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 - [ ] Append-only operation log; undo and redo as log traversal
 - [ ] FTS5 search index with phonetic expansion
 - [ ] `.dvg` container: read and write, `.gdz`-compatible core
-- [ ] OPFS path for the web build, single writer, `SQLITE_BUSY` handled
+- [ ] Web build on `opfs-sahpool`, one connection in one worker, reads included
+- [ ] Web Locks arbitrate tab ownership; a second tab gets a plain-language screen, not a VFS error
 
 **1.5 · Layout engine** (`drevigen-layout`, 2.5 weeks)
 - [ ] Generation assignment by longest path

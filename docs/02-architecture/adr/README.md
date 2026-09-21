@@ -14,3 +14,4 @@ what it gives up has not been made yet.
 | [0005](./0005-assertion-conclusion-split.md) | Assertions and Conclusions as distinct model layers | Accepted |
 | [0006](./0006-loro-as-crdt-substrate.md) | Loro as the CRDT substrate | Accepted — pending on-device validation |
 | [0007](./0007-single-eager-wasm-module.md) | Ship the web core as one eager WASM module, no lazy split | Accepted — re-measured each phase |
+| [0008](./0008-opfs-sahpool-single-connection.md) | One SQLite connection on `opfs-sahpool`; no cross-origin isolation | Accepted |

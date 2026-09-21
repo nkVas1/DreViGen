@@ -70,8 +70,9 @@ against Electron's hundred-plus. **[current]**
 **The PWA is not a lesser tier.** It is how a relative in Chicago opens the tree on a borrowed
 laptop without installing anything, and how the "always at hand" requirement is met on devices
 we cannot ship to. It carries the full feature set except OS integrations that the web cannot
-express. Its one operational requirement is **cross-origin isolation** (COOP/COEP), needed for
-`SharedArrayBuffer` and therefore for SQLite WASM at full speed.
+express. **It does not need cross-origin isolation** — spike S4 found that the OPFS VFS which
+avoids `SharedArrayBuffer` is also the faster one, so COOP/COEP is dropped. See
+[ADR 0008](./adr/0008-opfs-sahpool-single-connection.md).
 
 ## 4. Front-end stack, with reasons
 
@@ -208,8 +209,9 @@ theatre.
    loaded modules (ML, GEDCOM, layout).
 3. **MSDF atlas coverage.** How much of the Cyrillic + Latin + Greek range can be pre-baked
    before atlas size becomes the bottleneck, and what is the on-demand rasterisation path.
-4. **OPFS concurrency.** Confirm the single-writer model holds under our access patterns, with
-   explicit `SQLITE_BUSY` handling.
+4. ~~**OPFS concurrency.**~~ **Answered 2026-09-21** —
+   [ADR 0008](./adr/0008-opfs-sahpool-single-connection.md). Integrity holds everywhere;
+   throughput does not. One connection on `opfs-sahpool`, Web Locks for multi-tab.
 5. ~~**Tauri mobile plugin coverage.**~~ **Answered 2026-09-21** —
    [mobile-capabilities.md](./mobile-capabilities.md). Official plugins cover everything except
    camera, photo library and share sheet; we write those, 12 days total.

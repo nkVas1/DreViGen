@@ -1,0 +1,13 @@
+{
+  "name": "s4-opfs-concurrency",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Spike S4 — does the single-writer OPFS model hold, and what happens when it is violated?",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "3.53.4-build1"
+  }
+}

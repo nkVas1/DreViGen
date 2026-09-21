@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spike S4 — OPFS concurrency</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; padding: 24px;
+    font: 14px/1.6 ui-monospace, "JetBrains Mono", Consolas, monospace;
+    background: #FBF7EE; color: #1E232B;
+  }
+  @media (prefers-color-scheme: dark) { body { background: #1B1813; color: #EFE7D6; } }
+  h1 { font: 600 18px/1.3 system-ui, sans-serif; margin: 0 0 4px; }
+  p.sub { margin: 0 0 20px; opacity: .7; }
+  pre { white-space: pre-wrap; word-break: break-word; margin: 0; }
+  .pass { color: #4F7A3F; font-weight: 700; }
+  .fail { color: #A63D34; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>Spike S4 — OPFS concurrency</h1>
+<p class="sub">Does the single-writer model hold, and what happens when it is violated?</p>
+<pre id="out">starting…</pre>
+
+<script type="module">
+const out = document.getElementById('out');
+const lines = [];
+function log(text = '') { lines.push(text); out.textContent = lines.join('\n'); }
+
+/** Total rows every scenario writes. The pass criterion names this number. */
+const TOTAL_ROWS = 10_000;
+const READERS = 6;
+
+/** A worker wrapped in a promise-returning call interface. */
+function spawn(name) {
+  const worker = new Worker('./db-worker.mjs', { type: 'module', name });
+  const pending = new Map();
+  let nextId = 0;
+  worker.onmessage = (event) => {
+    const { id, ok, result, error } = event.data;
+    const entry = pending.get(id);
+    pending.delete(id);
+    if (ok) entry.resolve(result); else entry.reject(new Error(error));
+  };
+  worker.onerror = (event) => {
+    for (const entry of pending.values()) entry.reject(new Error(event.message || 'worker error'));
+    pending.clear();
+  };
+  return {
+    name,
+    call(cmd, args) {
+      const id = nextId++;
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        worker.postMessage({ id, cmd, args });
+      });
+    },
+    terminate: () => worker.terminate(),
+  };
+}
+
+const results = [];
+
+// The opfs VFS reports lock-acquisition trouble through console.error rather than by failing a
+// call, so the count only shows up if we watch for it. It is the most diagnostic number here.
+let lockErrors = 0;
+const realError = console.error.bind(console);
+console.error = (...args) => {
+  if (/GetSyncHandleError|xLock\(\)/.test(args.map(String).join(' '))) lockErrors += 1;
+  realError(...args);
+};
+
+async function scenario({ title, vfs, writers, readers, note }) {
+  log();
+  log(`── ${title} ${'─'.repeat(Math.max(0, 58 - title.length))}`);
+  if (note) log(`   ${note}`);
+
+  const file = `/s4-${vfs}-${writers}w${readers}r.sqlite3`;
+  lockErrors = 0;
+  const all = [];
+  const record = { title, vfs, writers, readers };
+
+  try {
+    // sahpool gives each connection its own pool, so a multi-writer run against it is not a
+    // meaningful test — the harness skips that combination rather than reporting a fake pass.
+    if (vfs === 'opfs-sahpool' && writers > 1) {
+      log('   skipped: opfs-sahpool is single-connection by construction');
+      record.skipped = true;
+      results.push(record);
+      return;
+    }
+
+    const writerWorkers = [];
+    for (let i = 0; i < writers; i += 1) {
+      const w = spawn(`w${i}`);
+      all.push(w);
+      writerWorkers.push(w);
+      const info = await w.call('open', {
+        vfs, file, busyTimeoutMs: 5000, name: `${vfs}-w${i}`,
+      });
+      if (i === 0) {
+        log(`   sqlite ${info.version}, journal_mode=${info.journal}, vfs=${vfs}`);
+        await w.call('createSchema');
+      }
+    }
+
+    const readerWorkers = [];
+    for (let i = 0; i < readers; i += 1) {
+      const r = spawn(`r${i}`);
+      all.push(r);
+      readerWorkers.push(r);
+      await r.call('open', { vfs, file, busyTimeoutMs: 5000, name: `${vfs}-r${i}` });
+    }
+
+    const perWriter = Math.floor(TOTAL_ROWS / writers);
+    const started = performance.now();
+
+    const reading = readerWorkers.map((r) => r.call('read', { rounds: 400 }));
+    const writing = writerWorkers.map((w, i) =>
+      w.call('write', { from: i * perWriter, count: perWriter, writer: `w${i}` }));
+
+    const written = await Promise.all(writing);
+    const read = await Promise.all(reading);
+    const elapsed = performance.now() - started;
+
+    const rows = written.reduce((n, r) => n + r.count, 0);
+    const busy = written.reduce((n, r) => n + r.busy, 0) + read.reduce((n, r) => n + r.busy, 0);
+    const check = await writerWorkers[0].call('verify', { expected: rows });
+
+    Object.assign(record, {
+      rows, busy, elapsed, check, lockErrors,
+      perSecond: Math.round(rows / (elapsed / 1000)),
+      intact: check.intact,
+    });
+
+    log(`   wrote ${rows} rows in ${elapsed.toFixed(0)} ms  (${record.perSecond}/s)`);
+    if (readers) log(`   readers completed ${read.reduce((n, r) => n + r.rounds, 0)} queries`);
+    log(`   SQLITE_BUSY: ${busy}   VFS lock failures: ${lockErrors}`);
+    log(`   verify: total=${check.total} distinct=${check.distinct} gaps=${check.gaps}`);
+    log(`   integrity: ${check.intact ? 'INTACT' : 'DATA LOST'}`);
+  } catch (error) {
+    record.error = String(error?.message ?? error);
+    log(`   ERROR: ${record.error}`);
+  } finally {
+    for (const w of all) {
+      try { await w.call('close'); } catch { /* already gone */ }
+      w.terminate();
+    }
+    if (!record.skipped) results.push(record);
+  }
+}
+
+async function main() {
+  log(`crossOriginIsolated: ${self.crossOriginIsolated}`);
+  log(`SharedArrayBuffer:   ${typeof SharedArrayBuffer !== 'undefined'}`);
+  log(`navigator.storage:   ${!!navigator.storage?.getDirectory}`);
+  log(`hardwareConcurrency: ${navigator.hardwareConcurrency}`);
+
+  await scenario({
+    title: 'A · opfs, 1 connection — the VFS on its own',
+    vfs: 'opfs', writers: 1, readers: 0,
+    note: 'Baseline: one connection, nothing to contend with.',
+  });
+
+  await scenario({
+    title: 'B · opfs, 1 writer + 6 readers — extra connections',
+    vfs: 'opfs', writers: 1, readers: READERS,
+    note: 'Readers are separate connections to the same file. What does that cost?',
+  });
+
+  await scenario({
+    title: 'C · opfs, 4 writers + 6 readers — model violated',
+    vfs: 'opfs', writers: 4, readers: READERS,
+    note: 'What a second and third browser tab would do.',
+  });
+
+  await scenario({
+    title: 'D · opfs-sahpool, 1 connection — no isolation needed',
+    vfs: 'opfs-sahpool', writers: 1, readers: 0,
+    note: 'The VFS that needs no cross-origin isolation.',
+  });
+
+  // What a second tab actually experiences. Not a throughput test — a behaviour test.
+  log();
+  log('── E · opfs-sahpool, a second connection ─────────────────────');
+  log('   Can two connections share one pool? Determines multi-tab handling.');
+  try {
+    const first = spawn('pool-a');
+    await first.call('open', {
+      vfs: 'opfs-sahpool', file: '/s4-pool-shared.sqlite3', busyTimeoutMs: 2000,
+      name: 'pool-a', poolName: 's4-shared-pool',
+    });
+    await first.call('createSchema');
+    let secondFailed = null;
+    const second = spawn('pool-b');
+    try {
+      await second.call('open', {
+        vfs: 'opfs-sahpool', file: '/s4-pool-shared.sqlite3', busyTimeoutMs: 2000,
+        name: 'pool-b', poolName: 's4-shared-pool',
+      });
+      log('   second connection opened — pools are shareable');
+    } catch (error) {
+      secondFailed = String(error.message ?? error);
+      log(`   second connection refused: ${secondFailed.slice(0, 120)}`);
+    }
+    results.push({ title: 'E · second sahpool connection', vfs: 'opfs-sahpool', secondFailed });
+    await first.call('close').catch(() => {});
+    first.terminate();
+    second.terminate();
+  } catch (error) {
+    log(`   ERROR: ${error.message ?? error}`);
+    results.push({ title: 'E · second sahpool connection', error: String(error) });
+  }
+
+  log();
+  log('═'.repeat(64));
+  const failures = results.filter((r) => r.error || r.intact === false);
+  const verdict = failures.length === 0 ? 'PASS' : 'FAIL';
+  log(`VERDICT: ${verdict} — ${results.length} scenario(s), ${failures.length} failure(s)`);
+  out.insertAdjacentHTML('beforeend',
+    `\n<span class="${verdict === 'PASS' ? 'pass' : 'fail'}">${verdict}</span>`);
+
+  // Picked up by the harness driving this page.
+  globalThis.__S4__ = { verdict, results };
+  document.title = `S4 ${verdict}`;
+}
+
+main().catch((error) => {
+  log(`\nFATAL: ${error?.stack ?? error}`);
+  globalThis.__S4__ = { verdict: 'FAIL', error: String(error) };
+  document.title = 'S4 FAIL';
+});
+</script>
+</body>
+</html>
