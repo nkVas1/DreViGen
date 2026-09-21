@@ -84,6 +84,42 @@ Read the full system in [art-direction.md](./docs/03-design/art-direction.md).
 Every choice is argued in [`docs/02-architecture/`](./docs/02-architecture/), and the research
 behind it in [`docs/01-research/`](./docs/01-research/).
 
+## Building it
+
+There is no release yet — see the status note above — but the application builds and opens
+today, on Windows and in a browser, from one front end.
+
+You need [Rust](https://rustup.rs) (the version in `rust-toolchain.toml` is installed
+automatically), [Node 24](https://nodejs.org) and [pnpm 11](https://pnpm.io). A native build
+additionally needs the
+[Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for your platform.
+
+```sh
+pnpm install
+
+pnpm --filter @drevigen/web dev      # the web build, on http://localhost:5173
+pnpm --filter @drevigen/shell dev    # the native window, same front end
+```
+
+Everything that gates a pull request runs locally in one line each:
+
+```sh
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+cargo deny check                      # licences, bans, sources, advisories
+cargo run -p drevigen-tokens -- check # every colour pair is readable
+pnpm --filter @drevigen/web typecheck
+```
+
+Two things in the repository are **generated and committed**, so that a change to either is
+visible in a pull request rather than at release time:
+
+```sh
+cargo run -p drevigen-tokens -- generate                                   # the palette
+cargo run -p drevigen-mark --features render -- assets/identity apps/web/public  # the mark
+```
+
 ## Documentation
 
 | | |

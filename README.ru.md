@@ -85,6 +85,41 @@ DreViGen выглядит как научный атлас XIX века, и эт
 Каждое решение обосновано в [`docs/02-architecture/`](./docs/02-architecture/), а исследование
 под ним — в [`docs/01-research/`](./docs/01-research/).
 
+## Сборка
+
+Релиза пока нет — см. статус выше, — но приложение уже собирается и открывается: на Windows и
+в браузере, из одного фронтенда.
+
+Нужны [Rust](https://rustup.rs) (версия из `rust-toolchain.toml` ставится сама),
+[Node 24](https://nodejs.org) и [pnpm 11](https://pnpm.io). Для нативной сборки дополнительно
+нужны [требования Tauri](https://v2.tauri.app/start/prerequisites/) для вашей платформы.
+
+```sh
+pnpm install
+
+pnpm --filter @drevigen/web dev      # веб-сборка, http://localhost:5173
+pnpm --filter @drevigen/shell dev    # нативное окно, тот же фронтенд
+```
+
+Всё, что проверяется в pull request, запускается локально одной строкой:
+
+```sh
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+cargo deny check                      # лицензии, баны, источники, уязвимости
+cargo run -p drevigen-tokens -- check # каждая пара цветов читается
+pnpm --filter @drevigen/web typecheck
+```
+
+Две вещи в репозитории **генерируются и коммитятся**, чтобы изменение любой из них было видно
+в pull request, а не при релизе:
+
+```sh
+cargo run -p drevigen-tokens -- generate                                   # палитра
+cargo run -p drevigen-mark --features render -- assets/identity apps/web/public  # знак
+```
+
 ## Лицензия
 
 [GNU Affero General Public License v3.0](./LICENSE). DreViGen поставляет self-hosted сервер
