@@ -76,6 +76,28 @@ export function applyTheme(choice: ThemeChoice): void {
     // A private window, or blocked site data. The choice still applies for this session; it
     // simply will not be remembered, which is a smaller failure than not applying it.
   }
+  tellShell(choice);
+}
+
+/**
+ * Tells the native shell which theme the page settled on.
+ *
+ * The webview colours everything inside itself, and nothing outside it. On Windows the title
+ * bar would keep the system accent colour — a bright bar above a vellum page. So the shell is
+ * told, and it repaints the frame to match.
+ *
+ * Deliberately a dynamic import: in a browser the module is never fetched, and in an older
+ * shell that does not know the command the rejection is swallowed. A window frame is not worth
+ * a broken theme switch.
+ */
+function tellShell(choice: ThemeChoice): void {
+  if (typeof window === 'undefined' || window.__TAURI_INTERNALS__ === undefined) return;
+
+  void import('@tauri-apps/api/core')
+    .then(({ invoke }) => invoke('set_window_theme', { theme: choice }))
+    .catch(() => {
+      // The frame keeps the system colour, which is where it started.
+    });
 }
 
 /** Reads the remembered theme, defaulting to following the system. */

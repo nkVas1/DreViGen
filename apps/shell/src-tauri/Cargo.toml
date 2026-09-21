@@ -20,11 +20,17 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.6.3", features = [] }
 
 [dependencies]
+drevigen-tokens = { version = "0.0.0", path = "../../../crates/drevigen-tokens" }
 log = "0.4.30"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 tauri = { version = "2.11.6", features = [] }
 tauri-plugin-log = "2.9.2"
+
+[target.'cfg(windows)'.dependencies]
+# Only for DwmSetWindowAttribute: Windows 11 lets an application colour its own title bar, and
+# 0.60 is already in Tauri's tree, so this adds no second copy.
+windows-sys = { version = "0.60.2", features = ["Win32_Foundation", "Win32_Graphics_Dwm"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 # Desktop only: both plugins are meaningless on a phone, where the OS owns window placement

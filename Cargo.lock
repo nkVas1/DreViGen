@@ -1121,6 +1121,7 @@ dependencies = [
 name = "drevigen-shell"
 version = "0.0.0"
 dependencies = [
+ "drevigen-tokens",
  "log",
  "serde",
  "serde_json",
@@ -1129,6 +1130,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-single-instance",
  "tauri-plugin-window-state",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
