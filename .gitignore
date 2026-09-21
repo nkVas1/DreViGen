@@ -84,3 +84,8 @@ library/papers/
 
 # ── pnpm ──────────────────────────────────────────────────────────────────
 .pnpm-debug.log*
+
+# Generated design tokens are committed on purpose: a colour change has to be visible in a
+# pull request, and a clean clone has to build without running the generator first.
+!packages/tokens/dist/
+!packages/tokens/dist/**

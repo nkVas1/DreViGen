@@ -1,0 +1,358 @@
+/* The application shell.
+ *
+ * Colours come from @drevigen/tokens, generated from crates/drevigen-tokens/src/palette.rs and
+ * gated on contrast. Typefaces come from assets/fonts, chosen by the audit in
+ * docs/03-design/typefaces.md. Nothing here invents a colour or names a font family directly.
+ */
+
+@import '@drevigen/tokens/tokens.css';
+@import '../../../assets/fonts/fonts.css';
+
+/* ── ground ──────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light dark;
+  /* platform.ts sets the concrete value; this is the floor the art direction specifies. */
+  font-size: 17px;
+
+  /* Spacing is a scale, not a set of guesses. In rem so the text-scale control reflows it. */
+  --dv-space-1: 0.25rem;
+  --dv-space-2: 0.5rem;
+  --dv-space-3: 0.75rem;
+  --dv-space-4: 1rem;
+  --dv-space-6: 1.5rem;
+  --dv-space-8: 2rem;
+  --dv-space-12: 3rem;
+
+  /* The five line weights the whole product is cut with. */
+  --dv-line-hair: 0.5px;
+  --dv-line-thin: 0.75px;
+  --dv-line: 1px;
+  --dv-line-bold: 1.5px;
+  --dv-line-heavy: 2px;
+
+  /* WCAG 2.2 §2.5.8 asks for 24px. The project floor is 44, and 48 for primary actions. */
+  --dv-target: 2.75rem;
+  --dv-target-primary: 3rem;
+
+  --dv-ease-out: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --dv-duration: 240ms;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--dv-vellum);
+  color: var(--dv-ink);
+  font-family: var(--dv-font-text);
+  font-size: 1.118rem; /* 19px at 100 % — the body default from the art direction */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  /* The phone's system bars. The content runs edge to edge and clears them. */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Paper grain. One tiled surface, never animated, never behind text — see art-direction §4. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='0.42'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.055;
+}
+
+:root[data-theme='dark'] body::before {
+  mix-blend-mode: screen;
+  opacity: 0.035;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):not([data-theme='contrast']) body::before {
+    mix-blend-mode: screen;
+    opacity: 0.035;
+  }
+}
+
+/* Texture is suppressed in high contrast and at large text — art-direction §4 and §10. */
+:root[data-theme='contrast'] body::before {
+  display: none;
+}
+
+/* ── focus ───────────────────────────────────────────────────────────────── */
+
+/* WCAG 2.2 §2.4.13: at least 2px, contrasting 3:1 against both the component and the ground.
+   Two rings, so it is visible whichever side it lands on. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--dv-line-heavy) solid var(--dv-sanguine);
+  outline-offset: var(--dv-line-heavy);
+  border-radius: 2px;
+}
+
+/* ── motion ──────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 120ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── layout ──────────────────────────────────────────────────────────────── */
+
+.dv-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.dv-chrome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dv-space-4);
+  padding: var(--dv-space-3) var(--dv-space-4);
+  border-bottom: var(--dv-line) solid var(--dv-rule);
+  background: var(--dv-vellum-deep);
+}
+
+.dv-wordmark {
+  font-family: var(--dv-font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+}
+
+.dv-wordmark span {
+  color: var(--dv-sanguine);
+}
+
+.dv-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dv-space-4);
+}
+
+.dv-field {
+  display: flex;
+  align-items: center;
+  gap: var(--dv-space-2);
+}
+
+/* Every control carries a visible text label, never an icon alone. The evidence on older
+   users is unambiguous, and this is the rule the lint enforces at build time. */
+.dv-field > .dv-label {
+  font-family: var(--dv-font-data);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--dv-ink-soft);
+  white-space: nowrap;
+}
+
+.dv-choice {
+  display: flex;
+  border: var(--dv-line) solid var(--dv-rule);
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--dv-vellum);
+}
+
+.dv-choice button {
+  min-height: var(--dv-target);
+  min-width: var(--dv-target);
+  padding-inline: var(--dv-space-3);
+  border: 0;
+  border-inline-end: var(--dv-line) solid var(--dv-rule-soft);
+  background: transparent;
+  color: var(--dv-ink-soft);
+  font-family: var(--dv-font-data);
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--dv-duration) var(--dv-ease-out), color var(--dv-duration) var(--dv-ease-out);
+}
+
+.dv-choice button:last-child {
+  border-inline-end: 0;
+}
+
+.dv-choice button:hover {
+  background: var(--dv-vellum-deep);
+  color: var(--dv-ink);
+}
+
+.dv-choice button[aria-pressed='true'] {
+  background: var(--dv-sanguine-fill);
+  color: var(--dv-vellum);
+}
+
+/* At phone width the label and its buttons cannot sit side by side: four 44 px targets plus a
+   Russian label is wider than the screen, and the targets are a requirement rather than a
+   preference. So the label moves above the group and the group spans the width. */
+@media (max-width: 40rem) {
+  .dv-chrome {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-controls {
+    flex-direction: column;
+    gap: var(--dv-space-3);
+  }
+
+  .dv-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--dv-space-1);
+  }
+
+  .dv-choice {
+    width: 100%;
+  }
+
+  .dv-choice button {
+    flex: 1 1 0;
+    min-width: 0; /* the flex basis keeps them equal; 44 px of height is what the rule needs */
+    padding-inline: var(--dv-space-2);
+  }
+}
+
+.dv-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--dv-space-8) var(--dv-space-4);
+}
+
+/* ── the plate ───────────────────────────────────────────────────────────── */
+
+.dv-plate {
+  width: min(44rem, 100%);
+  padding: var(--dv-space-8) var(--dv-space-6);
+  background: var(--dv-vellum);
+  border: var(--dv-line) solid var(--dv-rule);
+  /* The plate mark: a second rule inset from the first, as a copperplate press leaves. */
+  box-shadow:
+    inset 0 0 0 var(--dv-space-2) var(--dv-vellum),
+    inset 0 0 0 calc(var(--dv-space-2) + var(--dv-line-hair)) var(--dv-rule-soft);
+  text-align: center;
+}
+
+.dv-seedling {
+  display: block;
+  width: min(11rem, 50vw);
+  height: auto;
+  margin: 0 auto var(--dv-space-6);
+  color: var(--dv-ink);
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dv-seedling .hair {
+  stroke-width: 0.6;
+  color: var(--dv-ink-faint);
+}
+
+.dv-seedling .soil {
+  stroke: var(--dv-rule);
+}
+
+.dv-title {
+  margin: 0 0 var(--dv-space-4);
+  font-family: var(--dv-font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 1.2rem + 2.4vw, 2.8rem);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.dv-lede {
+  max-width: 34rem;
+  margin: 0 auto var(--dv-space-6);
+  color: var(--dv-ink-soft);
+  text-wrap: pretty;
+}
+
+.dv-divider {
+  width: 60%;
+  margin: var(--dv-space-8) auto var(--dv-space-6);
+  border: 0;
+  border-top: var(--dv-line-hair) solid var(--dv-rule);
+}
+
+/* ── the build note ──────────────────────────────────────────────────────── */
+
+.dv-state {
+  margin: 0 auto;
+  max-width: 34rem;
+  text-align: start;
+  font-family: var(--dv-font-data);
+  font-size: 0.9rem;
+  color: var(--dv-ink-soft);
+}
+
+.dv-state dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--dv-space-2) var(--dv-space-4);
+  margin: var(--dv-space-4) 0 0;
+}
+
+.dv-state dt {
+  color: var(--dv-ink-faint);
+  white-space: nowrap;
+}
+
+.dv-state dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-state code {
+  font-family: var(--dv-font-mono);
+  font-size: 0.85rem;
+}
+
+.dv-specimen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dv-space-4);
+  justify-content: center;
+  margin-top: var(--dv-space-6);
+}
+
+.dv-swatch {
+  width: 3rem;
+  height: 3rem;
+  border: var(--dv-line-hair) solid var(--dv-rule);
+  border-radius: 2px;
+}

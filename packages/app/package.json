@@ -1,0 +1,23 @@
+{
+  "name": "@drevigen/app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The shared front end. Both the Tauri shell and the web build render this.",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./platform": "./src/platform.ts",
+    "./app.css": "./src/app.css"
+  },
+  "dependencies": {
+    "@drevigen/tokens": "workspace:*",
+    "react": "19.3.0",
+    "react-aria-components": "1.21.1",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

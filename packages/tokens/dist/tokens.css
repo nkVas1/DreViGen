@@ -1,0 +1,157 @@
+/* DreViGen design tokens — GENERATED, do not edit.
+*
+* Source: crates/drevigen-tokens/src/palette.rs
+* Regenerate: cargo run -p drevigen-tokens -- generate
+*
+* Every colour is authored in OKLCH and emitted twice: the oklch() value a modern
+* browser uses directly, and a gamut-mapped hex fallback computed with the same CSS
+* Color 4 algorithm the browser applies, so the two agree.
+*/
+
+/* light — «Дневной свет» */
+:root {
+  --dv-vellum:        oklch(0.9650 0.0120 85.00);    /* #F7F3EB · the page; every surface starts here */
+  --dv-vellum-deep:   oklch(0.9320 0.0160 82.00);    /* #EEE8DD · recessed panels, plate wells */
+  --dv-well:          oklch(0.9020 0.0180 82.00);    /* #E5DED2 · the recess a photograph sits in */
+  --dv-ink:           oklch(0.1850 0.0220 250.00);   /* #0B131C · primary text and engraved line; iron-gall, never pure black */
+  --dv-ink-soft:      oklch(0.4300 0.0200 250.00);   /* #48515B · secondary text */
+  --dv-ink-faint:     oklch(0.5600 0.0160 250.00);   /* #6E757E · captions and hairline labels */
+  --dv-rule:          oklch(0.5800 0.0140 82.00);    /* #7E7A71 · structural rules and borders; must be perceivable */
+  --dv-rule-soft:     oklch(0.8700 0.0120 82.00);    /* #D8D4CC · the quietest divider */
+  --dv-sanguine:      oklch(0.4680 0.1500 40.00);    /* #9B3300 · the single accent as ink: focus, current person */
+  --dv-sanguine-fill: oklch(0.3720 0.1300 40.00);    /* #722000 · the accent as a surface, so its label can be read */
+  --dv-sage:          oklch(0.4700 0.0650 142.00);   /* #456442 · verified, sourced, confirmed */
+  --dv-sepia:         oklch(0.4600 0.0750 66.00);    /* #744F27 · inferred, approximate, uncertain */
+  --dv-verdigris:     oklch(0.4700 0.0720 186.00);   /* #1D6861 · places and geography */
+  --dv-indigo:        oklch(0.4100 0.0920 266.00);   /* #33487C · the historical strata layer */
+  --dv-madder:        oklch(0.4600 0.1550 25.00);    /* #9C2527 · conflict, contradiction, open question */
+}
+
+/* dark — «Лампа» */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --dv-vellum:        oklch(0.1900 0.0120 62.00);    /* #18130E · lamplit desk */
+    --dv-vellum-deep:   oklch(0.1500 0.0100 62.00);    /* #0E0A07 · recesses */
+    --dv-well:          oklch(0.2300 0.0120 62.00);    /* #211C17 · the recess a photograph sits in */
+    --dv-ink:           oklch(0.9300 0.0140 85.00);    /* #ECE7DE · warm light text */
+    --dv-ink-soft:      oklch(0.7900 0.0140 85.00);    /* #BFBAB1 · secondary text */
+    --dv-ink-faint:     oklch(0.7000 0.0120 85.00);    /* #A29E96 · captions and hairline labels */
+    --dv-rule:          oklch(0.6950 0.0100 70.00);    /* #A19C96 · structural rules and borders; must be perceivable */
+    --dv-rule-soft:     oklch(0.2800 0.0080 70.00);    /* #2B2825 · the quietest divider */
+    --dv-sanguine:      oklch(0.8750 0.0820 50.00);    /* #FFC8A9 · the single accent as ink, lifted for a dark ground */
+    --dv-sanguine-fill: oklch(0.9400 0.0620 52.00);    /* #FFE3CF · the accent as a surface, so its dark label can be read */
+    --dv-sage:          oklch(0.7600 0.0580 142.00);   /* #9DBB99 · verified, sourced, confirmed */
+    --dv-sepia:         oklch(0.7700 0.0700 70.00);    /* #D1AD84 · inferred, approximate, uncertain */
+    --dv-verdigris:     oklch(0.7700 0.0650 186.00);   /* #84C2BA · places and geography */
+    --dv-indigo:        oklch(0.8100 0.0750 266.00);   /* #AAC0F2 · the historical strata layer */
+    --dv-madder:        oklch(0.8200 0.1150 25.00);    /* #FFA8A1 · conflict, contradiction, open question */
+  }
+}
+
+/* dark — explicit choice */
+[data-theme="dark"] {
+  --dv-vellum:        oklch(0.1900 0.0120 62.00);
+  --dv-vellum-deep:   oklch(0.1500 0.0100 62.00);
+  --dv-well:          oklch(0.2300 0.0120 62.00);
+  --dv-ink:           oklch(0.9300 0.0140 85.00);
+  --dv-ink-soft:      oklch(0.7900 0.0140 85.00);
+  --dv-ink-faint:     oklch(0.7000 0.0120 85.00);
+  --dv-rule:          oklch(0.6950 0.0100 70.00);
+  --dv-rule-soft:     oklch(0.2800 0.0080 70.00);
+  --dv-sanguine:      oklch(0.8750 0.0820 50.00);
+  --dv-sanguine-fill: oklch(0.9400 0.0620 52.00);
+  --dv-sage:          oklch(0.7600 0.0580 142.00);
+  --dv-sepia:         oklch(0.7700 0.0700 70.00);
+  --dv-verdigris:     oklch(0.7700 0.0650 186.00);
+  --dv-indigo:        oklch(0.8100 0.0750 266.00);
+  --dv-madder:        oklch(0.8200 0.1150 25.00);
+}
+
+/* contrast — «Высокий контраст» */
+[data-theme="contrast"] {
+  --dv-vellum:        oklch(1.0000 0.0000 0.00);     /* #FFFFFF · pure page */
+  --dv-vellum-deep:   oklch(0.9650 0.0060 85.00);    /* #F5F3EF · recessed panels */
+  --dv-well:          oklch(0.9300 0.0080 85.00);    /* #EAE7E2 · the recess a photograph sits in */
+  --dv-ink:           oklch(0.1200 0.0100 250.00);   /* #040609 · primary text */
+  --dv-ink-soft:      oklch(0.2800 0.0120 250.00);   /* #25292F · secondary text */
+  --dv-ink-faint:     oklch(0.3800 0.0120 250.00);   /* #3E4349 · captions */
+  --dv-rule:          oklch(0.4200 0.0100 250.00);   /* #494E52 · borders, at 1.5 px minimum */
+  --dv-sanguine-fill: oklch(0.3400 0.1500 38.00);    /* #651A00 · the accent as a surface */
+  --dv-rule-soft:     oklch(0.5600 0.0080 250.00);   /* #717579 · the quietest divider */
+  --dv-sanguine:      oklch(0.4200 0.1600 38.00);    /* #882600 · the single accent */
+  --dv-sage:          oklch(0.3800 0.0700 142.00);   /* #2B4C28 · verified */
+  --dv-sepia:         oklch(0.3800 0.0800 66.00);    /* #5F3807 · inferred */
+  --dv-verdigris:     oklch(0.3800 0.0780 186.00);   /* #004E48 · places */
+  --dv-indigo:        oklch(0.3300 0.1000 266.00);   /* #1D3168 · historical strata */
+  --dv-madder:        oklch(0.3800 0.1700 25.00);    /* #83000D · conflict */
+}
+
+/* Eleven-stop ramps. Theme-independent: a ramp is a scale, not a mood. */
+:root {
+  --dv-sanguine-50:       oklch(0.9720 0.0144 40.00);    /* #FFF3EF */
+  --dv-sanguine-100:      oklch(0.9360 0.0337 40.00);    /* #FFE3D9 */
+  --dv-sanguine-200:      oklch(0.8730 0.0705 40.00);    /* #FFC6B3 */
+  --dv-sanguine-300:      oklch(0.8000 0.1102 40.00);    /* #FBA587 */
+  --dv-sanguine-400:      oklch(0.7150 0.1334 40.00);    /* #E88460 */
+  --dv-sanguine-500:      oklch(0.6200 0.1450 40.00);    /* #CD633C */
+  --dv-sanguine-600:      oklch(0.5300 0.1421 40.00);    /* #AD4821 */
+  --dv-sanguine-700:      oklch(0.4370 0.1305 40.00);    /* #8A3009 */
+  --dv-sanguine-800:      oklch(0.3450 0.1083 40.00);    /* #651E00 */
+  --dv-sanguine-900:      oklch(0.2580 0.0810 40.00);    /* #421100 */
+  --dv-sanguine-950:      oklch(0.1960 0.0615 40.00);    /* #2B0800 */
+  --dv-sage-50:           oklch(0.9720 0.0130 142.00);   /* #F1F8F0 */
+  --dv-sage-100:          oklch(0.9360 0.0221 142.00);   /* #E2EEE0 */
+  --dv-sage-200:          oklch(0.8730 0.0364 142.00);   /* #C8DCC6 */
+  --dv-sage-300:          oklch(0.8000 0.0494 142.00);   /* #ACC6A9 */
+  --dv-sage-400:          oklch(0.7150 0.0598 142.00);   /* #8EAD8A */
+  --dv-sage-500:          oklch(0.6200 0.0650 142.00);   /* #70906C */
+  --dv-sage-600:          oklch(0.5300 0.0637 142.00);   /* #577553 */
+  --dv-sage-700:          oklch(0.4370 0.0585 142.00);   /* #3F5A3C */
+  --dv-sage-800:          oklch(0.3450 0.0507 142.00);   /* #2A4027 */
+  --dv-sage-900:          oklch(0.2580 0.0416 142.00);   /* #172916 */
+  --dv-sage-950:          oklch(0.1960 0.0351 142.00);   /* #0B190A */
+  --dv-sepia-50:          oklch(0.9720 0.0150 66.00);    /* #FDF4EB */
+  --dv-sepia-100:         oklch(0.9360 0.0255 66.00);    /* #F6E7D8 */
+  --dv-sepia-200:         oklch(0.8730 0.0420 66.00);    /* #E9D0B9 */
+  --dv-sepia-300:         oklch(0.8000 0.0570 66.00);    /* #D8B797 */
+  --dv-sepia-400:         oklch(0.7150 0.0690 66.00);    /* #C19B75 */
+  --dv-sepia-500:         oklch(0.6200 0.0750 66.00);    /* #A57D55 */
+  --dv-sepia-600:         oklch(0.5300 0.0735 66.00);    /* #89633C */
+  --dv-sepia-700:         oklch(0.4370 0.0675 66.00);    /* #6B4A27 */
+  --dv-sepia-800:         oklch(0.3450 0.0585 66.00);    /* #4E3315 */
+  --dv-sepia-900:         oklch(0.2580 0.0480 66.00);    /* #331E07 */
+  --dv-sepia-950:         oklch(0.1960 0.0405 66.00);    /* #211101 */
+  --dv-verdigris-50:      oklch(0.9720 0.0144 186.00);   /* #ECF9F7 */
+  --dv-verdigris-100:     oklch(0.9360 0.0245 186.00);   /* #D9F0EC */
+  --dv-verdigris-200:     oklch(0.8730 0.0403 186.00);   /* #B9DED9 */
+  --dv-verdigris-300:     oklch(0.8000 0.0547 186.00);   /* #96CAC3 */
+  --dv-verdigris-400:     oklch(0.7150 0.0662 186.00);   /* #72B1A9 */
+  --dv-verdigris-500:     oklch(0.6200 0.0720 186.00);   /* #4F948D */
+  --dv-verdigris-600:     oklch(0.5300 0.0706 186.00);   /* #347972 */
+  --dv-verdigris-700:     oklch(0.4370 0.0648 186.00);   /* #1D5D57 */
+  --dv-verdigris-800:     oklch(0.3450 0.0562 186.00);   /* #09433E */
+  --dv-verdigris-900:     oklch(0.2580 0.0452 186.00);   /* #002A27 */
+  --dv-verdigris-950:     oklch(0.1960 0.0344 186.00);   /* #001A17 */
+  --dv-indigo-50:         oklch(0.9720 0.0131 266.00);   /* #F2F6FF */
+  --dv-indigo-100:        oklch(0.9360 0.0304 266.00);   /* #E0EAFF */
+  --dv-indigo-200:        oklch(0.8730 0.0515 266.00);   /* #C5D5F8 */
+  --dv-indigo-300:        oklch(0.8000 0.0699 266.00);   /* #A9BDEC */
+  --dv-indigo-400:        oklch(0.7150 0.0846 266.00);   /* #8AA2D9 */
+  --dv-indigo-500:        oklch(0.6200 0.0920 266.00);   /* #6C85BE */
+  --dv-indigo-600:        oklch(0.5300 0.0902 266.00);   /* #536AA0 */
+  --dv-indigo-700:        oklch(0.4370 0.0828 266.00);   /* #3C507F */
+  --dv-indigo-800:        oklch(0.3450 0.0718 266.00);   /* #27375E */
+  --dv-indigo-900:        oklch(0.2580 0.0589 266.00);   /* #162240 */
+  --dv-indigo-950:        oklch(0.1960 0.0497 266.00);   /* #0A142B */
+  --dv-madder-50:         oklch(0.9720 0.0137 25.00);    /* #FFF2F1 */
+  --dv-madder-100:        oklch(0.9360 0.0322 25.00);    /* #FFE2DF */
+  --dv-madder-200:        oklch(0.8730 0.0676 25.00);    /* #FFC5BF */
+  --dv-madder-300:        oklch(0.8000 0.1144 25.00);    /* #FFA098 */
+  --dv-madder-400:        oklch(0.7150 0.1426 25.00);    /* #EF7C75 */
+  --dv-madder-500:        oklch(0.6200 0.1550 25.00);    /* #D35A55 */
+  --dv-madder-600:        oklch(0.5300 0.1519 25.00);    /* #B33F3C */
+  --dv-madder-700:        oklch(0.4370 0.1395 25.00);    /* #8F2727 */
+  --dv-madder-800:        oklch(0.3450 0.1209 25.00);    /* #6A1315 */
+  --dv-madder-900:        oklch(0.2580 0.0992 25.00);    /* #480307 */
+  --dv-madder-950:        oklch(0.1960 0.0795 25.00);    /* #300002 */
+}

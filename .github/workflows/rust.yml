@@ -49,12 +49,16 @@ jobs:
 
       # The generated files are committed so a colour change is visible in a pull request.
       # If regenerating moves them, the commit is stale.
+      # `git diff` cannot see an untracked file, so this gate was vacuous while the output
+      # directory was still git-ignored: it regenerated the files and compared them against
+      # nothing. `status --porcelain` catches modified and untracked alike.
       - name: Generated tokens are up to date
         run: |
           cargo run -p drevigen-tokens -- generate
-          if ! git diff --quiet -- packages/tokens/dist; then
-            echo "::error::packages/tokens/dist is stale. Run: cargo run -p drevigen-tokens -- generate"
-            git diff --stat -- packages/tokens/dist
+          changed=$(git status --porcelain -- packages/tokens/dist)
+          if [ -n "$changed" ]; then
+            echo "::error::packages/tokens/dist is stale or untracked. Run: cargo run -p drevigen-tokens -- generate"
+            echo "$changed"
             exit 1
           fi
 
