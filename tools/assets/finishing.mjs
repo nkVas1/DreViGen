@@ -43,8 +43,17 @@ export async function finishing(assets,manifest){
       out[i]=colour[0];out[i+1]=colour[1];out[i+2]=colour[2];out[i+3]=Math.round(data[i+3]*coverage);
     }
     const rel=`generated/${item.group}/${item.id}-ink-overlay.png`;
-    await write(path.join(assets,rel),await sharp(out,{raw:{width:info.width,height:info.height,channels:4}}).png().toBuffer());
+    const overlay=await sharp(out,{raw:{width:info.width,height:info.height,channels:4}}).png().toBuffer();
+    await write(path.join(assets,rel),overlay);
     item.formats.overlay=rel;
+
+    // The shape is also written beside its master as a WebP alpha mask, because that is the
+    // form the interface uses: `mask-image` plus `background-color` lets one ornament take the
+    // theme's ink instead of being frozen in the grey it was drawn in. Committed rather than
+    // left in generated/, so a clean clone can build the front end.
+    const mask=`${item.path.replace(/@2x\.png$/,'')}-ink-mask.webp`;
+    await write(path.join(assets,mask),await sharp(overlay).webp({quality:90,effort:6,alphaQuality:100}).toBuffer());
+    item.formats.inkMask=mask;
     await write(path.join(assets,rel.replace('.png','.prompt.txt')),`Method: deterministic matte extraction and single-ink re-tint from ${item.path}.\nSource: tools/assets/finishing.mjs. Model: none. Seed: none.\nOriginal image prompt: see parent PNG sidecar. Separate derivative; native master alpha remains untouched.\n`);
   }
 }

@@ -306,7 +306,8 @@
       "formats": {
         "png": "source/ornament/05-foxing/05-foxing@2x.png",
         "webp": "generated/05/05-foxing@1x.webp",
-        "overlay": "generated/05/05-foxing-ink-overlay.png"
+        "overlay": "generated/05/05-foxing-ink-overlay.png",
+        "inkMask": "source/ornament/05-foxing/05-foxing-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -351,7 +352,8 @@
       "formats": {
         "png": "source/ornament/07-corners/07-corner-tl@2x.png",
         "webp": "generated/07/07-corner-tl@1x.webp",
-        "overlay": "generated/07/07-corner-tl-ink-overlay.png"
+        "overlay": "generated/07/07-corner-tl-ink-overlay.png",
+        "inkMask": "source/ornament/07-corners/07-corner-tl-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -374,7 +376,8 @@
       "formats": {
         "png": "source/ornament/07-corners/07-corner-tr@2x.png",
         "webp": "generated/07/07-corner-tr@1x.webp",
-        "overlay": "generated/07/07-corner-tr-ink-overlay.png"
+        "overlay": "generated/07/07-corner-tr-ink-overlay.png",
+        "inkMask": "source/ornament/07-corners/07-corner-tr-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -397,7 +400,8 @@
       "formats": {
         "png": "source/ornament/07-corners/07-corner-bl@2x.png",
         "webp": "generated/07/07-corner-bl@1x.webp",
-        "overlay": "generated/07/07-corner-bl-ink-overlay.png"
+        "overlay": "generated/07/07-corner-bl-ink-overlay.png",
+        "inkMask": "source/ornament/07-corners/07-corner-bl-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -420,7 +424,8 @@
       "formats": {
         "png": "source/ornament/07-corners/07-corner-br@2x.png",
         "webp": "generated/07/07-corner-br@1x.webp",
-        "overlay": "generated/07/07-corner-br-ink-overlay.png"
+        "overlay": "generated/07/07-corner-br-ink-overlay.png",
+        "inkMask": "source/ornament/07-corners/07-corner-br-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -443,7 +448,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-laurel@2x.png",
         "webp": "generated/08/08-divider-laurel@1x.webp",
-        "overlay": "generated/08/08-divider-laurel-ink-overlay.png"
+        "overlay": "generated/08/08-divider-laurel-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-laurel-ink-mask.webp"
       },
       "nativeSize": [
         1983,
@@ -466,7 +472,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-oak@2x.png",
         "webp": "generated/08/08-divider-oak@1x.webp",
-        "overlay": "generated/08/08-divider-oak-ink-overlay.png"
+        "overlay": "generated/08/08-divider-oak-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-oak-ink-mask.webp"
       },
       "nativeSize": [
         2161,
@@ -489,7 +496,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-wheat@2x.png",
         "webp": "generated/08/08-divider-wheat@1x.webp",
-        "overlay": "generated/08/08-divider-wheat-ink-overlay.png"
+        "overlay": "generated/08/08-divider-wheat-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-wheat-ink-mask.webp"
       },
       "nativeSize": [
         2206,
@@ -512,7 +520,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-fern@2x.png",
         "webp": "generated/08/08-divider-fern@1x.webp",
-        "overlay": "generated/08/08-divider-fern-ink-overlay.png"
+        "overlay": "generated/08/08-divider-fern-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-fern-ink-mask.webp"
       },
       "nativeSize": [
         2172,
@@ -535,7 +544,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-linden@2x.png",
         "webp": "generated/08/08-divider-linden@1x.webp",
-        "overlay": "generated/08/08-divider-linden-ink-overlay.png"
+        "overlay": "generated/08/08-divider-linden-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-linden-ink-mask.webp"
       },
       "nativeSize": [
         1983,
@@ -558,7 +568,8 @@
       "formats": {
         "png": "source/ornament/08-dividers/08-divider-vine@2x.png",
         "webp": "generated/08/08-divider-vine@1x.webp",
-        "overlay": "generated/08/08-divider-vine-ink-overlay.png"
+        "overlay": "generated/08/08-divider-vine-ink-overlay.png",
+        "inkMask": "source/ornament/08-dividers/08-divider-vine-ink-mask.webp"
       },
       "nativeSize": [
         2172,
@@ -581,7 +592,8 @@
       "formats": {
         "png": "source/ornament/09-seal/09-seal-even@2x.png",
         "webp": "generated/09/09-seal-even@1x.webp",
-        "overlay": "generated/09/09-seal-even-ink-overlay.png"
+        "overlay": "generated/09/09-seal-even-ink-overlay.png",
+        "inkMask": "source/ornament/09-seal/09-seal-even-ink-mask.webp"
       },
       "nativeSize": [
         1254,
@@ -604,7 +616,8 @@
       "formats": {
         "png": "source/ornament/09-seal/09-seal-uneven@2x.png",
         "webp": "generated/09/09-seal-uneven@1x.webp",
-        "overlay": "generated/09/09-seal-uneven-ink-overlay.png"
+        "overlay": "generated/09/09-seal-uneven-ink-overlay.png",
+        "inkMask": "source/ornament/09-seal/09-seal-uneven-ink-mask.webp"
       },
       "nativeSize": [
         1254,

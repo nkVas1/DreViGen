@@ -2,7 +2,7 @@
 .dv-paper-art {
   position: relative;
   isolation: isolate;
-  background: var(--dv-vellum, #FBF7EE);
+  background: var(--dv-vellum, #F7F3EB);
 }
 .dv-paper-art::before {
   content: '';
@@ -14,6 +14,7 @@
   mix-blend-mode: multiply;
   opacity: .055;
 }
+/* The system preference counts as dark too, which a `[data-theme]` selector alone misses. */
 [data-theme='dark'] .dv-paper-art::before {
   background-image: url('./source/textures/03-paper-grain/03-grain-dark@1x.png');
   mix-blend-mode: screen;
@@ -26,7 +27,7 @@
   object-fit: contain;
 }
 /* Paper-carrying illustrations retain a vellum well in the lamplit theme. */
-.dv-illustration-well { background: #FBF7EE; padding: 24px; }
+.dv-illustration-well { background: #F7F3EB; padding: 24px; }
 .dv-ornament { pointer-events: none; user-select: none; }
 .dv-divider { display: block; inline-size: min(100%, 800px); block-size: auto; margin-inline: auto; }
 .dv-icon-label { display: inline-flex; align-items: center; gap: .6em; min-block-size: 44px; }
@@ -36,8 +37,9 @@
   .dv-paper-art::before, .dv-ornament { display: none; }
   .dv-icon-label svg { stroke-width: 2; }
 }
-[data-theme='high-contrast'] .dv-paper-art::before,
-[data-theme='high-contrast'] .dv-ornament { display: none; }
+/* The stamped value is `contrast`; see packages/app/src/platform.ts. */
+[data-theme='contrast'] .dv-paper-art::before,
+[data-theme='contrast'] .dv-ornament { display: none; }
 @media print {
   .dv-paper-art::before { background-image: url('./source/textures/03-paper-grain/03-grain-print@1x.png'); opacity: .045; }
 }
