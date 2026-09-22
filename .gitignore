@@ -89,3 +89,6 @@ library/papers/
 # pull request, and a clean clone has to build without running the generator first.
 !packages/tokens/dist/
 !packages/tokens/dist/**
+
+# Reproducible visual asset derivatives, contact sheets and delivery ZIPs.
+/assets/generated/

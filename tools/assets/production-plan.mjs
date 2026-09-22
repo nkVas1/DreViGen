@@ -1,3 +1,13 @@
+// The prompts that produced the delivered raster plates, recorded verbatim.
+//
+// Two of the hex values in them — #1E232B for ink and #B4552C for the accent — predate the
+// gated palette and are NOT the project's colours; the current ones are #0B131C and #9B3300
+// (packages/tokens/dist/tokens.css). They are left as written because this file is the record
+// of what generated the images that exist, and rewriting it would misreport their provenance.
+//
+// Before regenerating any raster plate, update the hexes here to the gated values. The vector
+// generators were corrected in place; only prompt text still carries the old pair.
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,7 +23,7 @@ function add(group, name, title, subject, width, height, folder, extra = '', pho
   jobs.push({ id: `${group}-${name}`, group, name, title, prompt, width, height, folder, photographic });
 }
 add('01', 'engraved-emblem', 'Гравированный знак', 'A botanical cross-section of a seed.', 1024, 1024, 'source/identity/01-app-icon');
-jobs[0].prompt = 'REPLACED_WITH_EXACT_ORIGINAL_PROMPT';
+jobs[0].prompt = "Use case: logo-brand. Asset: DreViGen Herbarium Vivum plate 01, application emblem light edition, one finished standalone asset. A botanical cross-section of a seed, flat-on, rendered as exquisite 19th-century copperplate engraving. Three strong concentric growth rings, slightly irregular hand-cut organic contours, with restrained fine radial hatching running between them like medullary rays. Overall compact circular iconic silhouette, no outer ray halo. Deep blue-black iron gall ink #1E232B; at the exact centre a single small solid terracotta #B4552C circular seed dot, the ONLY colour accent. Thoughtful negative space between the rings; bold enough ring structure to stay recognisable when tiny, delicate engraved detail visible when enlarged. Highest quality museum botanical atlas, calm authority, no ornament around the emblem. Centre the emblem within 15% clear margins. A truly transparent RGBA background, no paper rectangle, no checkerboard baked into image, no shadow. 2048 by 2048 pixels if possible. No text, lettering, numbers, watermark, signature, 3D, gradients, shine, corporate clipart, green, photographic effects. Deliver exactly one image.";
 add('02', 'social-ground', 'Карточка репозитория', p('pr-2'), 1280, 640, 'source/identity/02-platform', 'Wide 2:1 composition. Match the three growth rings with single red centre seed emblem. Editorial museum quality, very subtle plate mark, rich natural laid vellum. The emblem occupies x=12–33% of the image, y=24–76%; the right two thirds stay completely blank. Opaque vellum background, no letters. Request a 2560 by 1280 image if available.');
 add('05', 'foxing', 'Пятна времени', p('pr-5'), 1500, 1500, 'source/ornament/05-foxing', 'This is a material texture, not a drawing of an object: believable aged laid-paper surface. Delicate pale muted sepia foxing near outer 15%, clear centre. Square, 3000 by 3000 if available.');
 add('06', 'deckle-plate', 'Рваный край и оттиск', p('pr-6'), 1600, 2000, 'source/ornament/06-deckle', 'One complete upright sheet, 4:5 portrait aspect, all four deckled edges visible within 4% margins. True transparent RGBA outside the sheet instead of a white backdrop. The sheet interior is warm cream #FBF7EE. A beautiful subtle plate impression, no printed black frame. 4000 by 5000 if available.');
