@@ -39,6 +39,10 @@ updates:
       # benchmarks attached, not a dependency bump.
       - dependency-name: 'loro'
         update-types: ['version-update:semver-major']
+      # windows-sys deliberately tracks the version already in Tauri's tree rather than the
+      # newest one: the shell needs it for a single call, and a third copy of the Windows
+      # bindings in the graph is a worse outcome than being a major behind.
+      - dependency-name: 'windows-sys'
 
   - package-ecosystem: npm
     directory: /
@@ -61,3 +65,9 @@ updates:
       web-minor:
         update-types: ['minor', 'patch']
         exclude-patterns: ['react', 'react-dom', '@types/react', '@types/react-dom', 'react-aria-components', '@tauri-apps/*', 'vite', '@vitejs/*', 'vite-plugin-*', 'typescript']
+    ignore:
+      # The Node type definitions track the Node we actually run, which is the version in the
+      # workflows. Typing against a newer runtime than the one that executes the build is how
+      # a green type-check ships a call that does not exist.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
