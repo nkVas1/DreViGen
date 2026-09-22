@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "checks": [
+    "Manifest completeness: 138 primary assets, 14 plates",
+    "Every delivery path, format and source recipe exists",
+    "Exactly 80 labelled 24px SVG icons, seven categories",
+    "Three grayscale grain tiles: 512px, 8 bit, seamless statistics",
+    "Hatching and halftone have 20/40/60% area coverage",
+    "Transparent art and single-colour ornament overlays",
+    "All 12 synthetic portraits: segregated, metadata, XMP, visible watermark strip",
+    "Nine-slice coordinates reconstruct the original rectangle without gaps",
+    "Optical favicon set has seven true pixel sizes; ICO has five frames"
+  ],
+  "errors": []
+}

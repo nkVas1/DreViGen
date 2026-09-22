@@ -1,0 +1,14 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1254 × 1254.
+Delivered: 800 × 800.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 07.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: A single restrained botanical corner ornament anchored in the lower-left corner: four small softly lobed oak-like leaves on an ascending delicate curved stem, one small closed terminal bud, twig flowing upward and right. Botanically plausible, delicate fine copperplate hatching ONLY on the leaf undersides, thin confident organic contour, no flowers or wreaths.
+True transparent RGBA background. Ink #1E232B only, no colour or paper rectangle, no grey cast behind drawing. Entire twig visible, 8% breathing margin, composition travels diagonally inward and fills roughly 60% of canvas. Square 2000 pixels if available.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.

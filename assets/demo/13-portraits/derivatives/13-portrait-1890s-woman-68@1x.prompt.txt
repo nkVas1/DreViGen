@@ -1,0 +1,3 @@
+Method: WebP derivative of demo/13-portraits/13-portrait-1890s-woman-68@2x.png.
+Model and exact prompt: see parent PNG prompt sidecar.
+Synthetic: true. Usage: demo-only. Watermark preserved; embedded XMP preserved.

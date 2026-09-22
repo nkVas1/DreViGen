@@ -1,0 +1,19 @@
+{
+  "id": "07-corner-br",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "c47085c0a53c201b6367e31d6315149df83dd3c8b38f6ecb54da7c01f60190da"
+  },
+  "output": {
+    "width": 800,
+    "height": 800,
+    "sha256": "a67419e2507a3971a8c1ec2b4ba35c7722b3f1dff630830d81b2df689b68a2a1"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

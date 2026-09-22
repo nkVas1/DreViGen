@@ -1,0 +1,19 @@
+{
+  "id": "09-seal-uneven",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "87536fdf88ed40f46acd8db599c72ee6b0415f3ead64ea4d1b09b8e2a57d542d"
+  },
+  "output": {
+    "width": 800,
+    "height": 800,
+    "sha256": "3f94eec0760f449ccedf858b2dbd6f8622c3fd4d3a4f25faf5f8123de2eb5835"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

@@ -1,0 +1,12 @@
+{
+  "desktop": "1440x1080",
+  "mobile": "390x844",
+  "brokenImages": 0,
+  "javascriptErrors": [],
+  "sectionOrder": "01-14",
+  "search": "passed",
+  "dialogAndEscape": "passed",
+  "surfaceSwitch": "passed",
+  "mobileOverflow": "none",
+  "reducedMotion": "passed"
+}

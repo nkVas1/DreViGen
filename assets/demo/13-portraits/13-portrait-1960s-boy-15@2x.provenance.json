@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1960s-boy-15",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "b79abc7289ee7d48c37adec6fbd029d6f296fb2318da16a217431a06c72291d6"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "0285b99355d456cf77f82f512e7fd0b22592538b00e0209ca7dff61172174ed3"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

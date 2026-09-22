@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1890s-man-42",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "47600c4bd1fb29c9c3d47b95b1c1cd760f7425d67c4faa16645d0331f336509c"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "99d2053cc5c4792ed7dd3a882fddd6f46d78e27af4901f167fdc2410fad4ba51"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

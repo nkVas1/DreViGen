@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1930s-man-63",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "d30ca0aec4904c24d5187244b1c9e11c5fdb0b5e6a44ae31d95bc47c85b8d6fa"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "1c7c662f3afa4ae9237cf19e610687ecb4e28fec351988b464705bf25b7c8c6d"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

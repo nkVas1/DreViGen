@@ -1,0 +1,5 @@
+Method: deterministic SVG authored for DreViGen.
+Model: none. Seed: not applicable.
+Source: tools/assets/vectors.mjs or existing assets/identity/ generator.
+Specification: Знак · монохром. Three growth rings; original Rust mark geometry. Transparent except the vellum edition.
+Palette: the gated tokens only — currentColor for ink, #9B3300 for the single accent.

@@ -1,0 +1,21 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1448 × 1086.
+Delivered: 960 × 720.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: precise-object-edit. Image 1 is the edit target, Image 2 is the continuity reference of the same herbarium sheet from step 1. On Image 1 replace ONLY the small BOTTOM child plant with a reduced version of the exact four-ovate-leaf closed-bud branch from Image 2. Keep the two top parent specimens, two connecting lineage lines, all blank labels, outer sheet border, sheet placement, transparent background and engraved drawing quality unchanged. The child must visibly be the same botanical branch as step 1, with four leaves and a single closed bud, not flowers. All engraving monochrome iron-gall ink #1E232B with one small terracotta mounting tab on the bottom branch. No text. One landscape 4:3 image.
+
+INITIAL GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 11.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: An upright herbarium sheet carrying three pressed plant specimens: one small specimen below, two slightly larger parent specimens above, joined to the first by two fine hand-ruled lineage lines. One blank little specimen label beneath each plant. One tiny terracotta mounting tab on the bottom specimen.
+One image, landscape 4:3, 2400 by 1800 if available. Flat-on composition, NO perspective tilt or isometric. Paper sheet approximately 5:7 portrait proportions, softly cream filled paper, fine double hairline perimeter, specimen botanical engravings. True transparent background outside the objects. Whole group occupies centre 60% width and 75% height with clear margins, no cropping. Fine consistent blue-black engraved lines, one muted terracotta accent only. No numbers, words or writing anywhere. Patient calm nineteenth century scientific archive.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.
+
+REFERENCE ASSETS
+11-onboarding-parents
+11-onboarding-start

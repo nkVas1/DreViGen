@@ -1,0 +1,2383 @@
+{
+  "schemaVersion": 1,
+  "collection": "Herbarium Vivum",
+  "date": "2026-09-22",
+  "brief": "docs/03-design/asset-brief.html",
+  "primaryCount": 138,
+  "assets": [
+    {
+      "id": "01-icon-light",
+      "group": "01",
+      "name": "icon-light",
+      "title": "Знак · дневной свет",
+      "path": "source/identity/01-app-icon/01-icon-light.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/01-app-icon/01-icon-light.svg",
+        "png": "source/identity/01-app-icon/01-icon-light@2x.png",
+        "webp": "generated/01/01-icon-light@1x.webp"
+      },
+      "width": 1024,
+      "height": 1024,
+      "spec": "Three growth rings; original Rust mark geometry. Transparent except the vellum edition."
+    },
+    {
+      "id": "01-icon-dark",
+      "group": "01",
+      "name": "icon-dark",
+      "title": "Знак · лампа",
+      "path": "source/identity/01-app-icon/01-icon-dark.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/01-app-icon/01-icon-dark.svg",
+        "png": "source/identity/01-app-icon/01-icon-dark@2x.png",
+        "webp": "generated/01/01-icon-dark@1x.webp"
+      },
+      "width": 1024,
+      "height": 1024,
+      "spec": "Three growth rings; original Rust mark geometry. Transparent except the vellum edition."
+    },
+    {
+      "id": "01-icon-monochrome",
+      "group": "01",
+      "name": "icon-monochrome",
+      "title": "Знак · монохром",
+      "path": "source/identity/01-app-icon/01-icon-monochrome.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/01-app-icon/01-icon-monochrome.svg",
+        "png": "source/identity/01-app-icon/01-icon-monochrome@2x.png",
+        "webp": "generated/01/01-icon-monochrome@1x.webp"
+      },
+      "width": 1024,
+      "height": 1024,
+      "spec": "Three growth rings; original Rust mark geometry. Transparent except the vellum edition."
+    },
+    {
+      "id": "01-icon-vellum",
+      "group": "01",
+      "name": "icon-vellum",
+      "title": "Знак · на вельме",
+      "path": "source/identity/01-app-icon/01-icon-vellum.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/01-app-icon/01-icon-vellum.svg",
+        "png": "source/identity/01-app-icon/01-icon-vellum@2x.png",
+        "webp": "generated/01/01-icon-vellum@1x.webp"
+      },
+      "width": 1024,
+      "height": 1024,
+      "spec": "Three growth rings; original Rust mark geometry. Transparent except the vellum edition."
+    },
+    {
+      "id": "02-adaptive-foreground",
+      "group": "02",
+      "name": "adaptive-foreground",
+      "title": "Android · передний слой",
+      "path": "source/identity/02-platform/02-adaptive-foreground.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/02-platform/02-adaptive-foreground.svg",
+        "png": "source/identity/02-platform/02-adaptive-foreground@2x.png",
+        "webp": "generated/02/02-adaptive-foreground@1x.webp"
+      },
+      "width": 432,
+      "height": 432,
+      "safeZone": 0.66
+    },
+    {
+      "id": "02-adaptive-background",
+      "group": "02",
+      "name": "adaptive-background",
+      "title": "Android · фон",
+      "path": "source/identity/02-platform/02-adaptive-background.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/identity/02-platform/02-adaptive-background.svg",
+        "png": "source/identity/02-platform/02-adaptive-background@2x.png",
+        "webp": "generated/02/02-adaptive-background@1x.webp"
+      },
+      "width": 432,
+      "height": 432,
+      "safeZone": null
+    },
+    {
+      "id": "02-social-card",
+      "group": "02",
+      "name": "social-card",
+      "title": "Карточка репозитория",
+      "path": "source/identity/02-platform/02-social-card.svg",
+      "method": "vector",
+      "width": 1280,
+      "height": 640,
+      "formats": {
+        "svg": "source/identity/02-platform/02-social-card.svg",
+        "png": "source/identity/02-platform/02-social-card@1x.png",
+        "webp": "generated/02/02-social-card@1x.webp"
+      }
+    },
+    {
+      "id": "03-grain-light",
+      "group": "03",
+      "name": "grain-light",
+      "title": "Бумага · дневной свет",
+      "path": "source/textures/03-paper-grain/03-grain-light@1x.png",
+      "method": "procedural",
+      "width": 512,
+      "height": 512,
+      "seamless": true,
+      "formats": {
+        "png": "source/textures/03-paper-grain/03-grain-light@1x.png",
+        "webp": "generated/03/03-grain-light@1x.webp"
+      }
+    },
+    {
+      "id": "03-grain-dark",
+      "group": "03",
+      "name": "grain-dark",
+      "title": "Бумага · лампа",
+      "path": "source/textures/03-paper-grain/03-grain-dark@1x.png",
+      "method": "procedural",
+      "width": 512,
+      "height": 512,
+      "seamless": true,
+      "formats": {
+        "png": "source/textures/03-paper-grain/03-grain-dark@1x.png",
+        "webp": "generated/03/03-grain-dark@1x.webp"
+      }
+    },
+    {
+      "id": "03-grain-print",
+      "group": "03",
+      "name": "grain-print",
+      "title": "Бумага · печать",
+      "path": "source/textures/03-paper-grain/03-grain-print@1x.png",
+      "method": "procedural",
+      "width": 512,
+      "height": 512,
+      "seamless": true,
+      "formats": {
+        "png": "source/textures/03-paper-grain/03-grain-print@1x.png",
+        "webp": "generated/03/03-grain-print@1x.webp"
+      }
+    },
+    {
+      "id": "04-hatch-20",
+      "group": "04",
+      "name": "hatch-20",
+      "title": "Штриховка · 20%",
+      "path": "source/textures/04-hatching/04-hatch-20.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-hatch-20.svg",
+        "png": "source/textures/04-hatching/04-hatch-20@2x.png",
+        "webp": "generated/04/04-hatch-20@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.2,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "04-hatch-40",
+      "group": "04",
+      "name": "hatch-40",
+      "title": "Штриховка · 40%",
+      "path": "source/textures/04-hatching/04-hatch-40.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-hatch-40.svg",
+        "png": "source/textures/04-hatching/04-hatch-40@2x.png",
+        "webp": "generated/04/04-hatch-40@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.4,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "04-hatch-60",
+      "group": "04",
+      "name": "hatch-60",
+      "title": "Штриховка · 60%",
+      "path": "source/textures/04-hatching/04-hatch-60.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-hatch-60.svg",
+        "png": "source/textures/04-hatching/04-hatch-60@2x.png",
+        "webp": "generated/04/04-hatch-60@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.6,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "04-halftone-20",
+      "group": "04",
+      "name": "halftone-20",
+      "title": "Растр · 20%",
+      "path": "source/textures/04-hatching/04-halftone-20.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-halftone-20.svg",
+        "png": "source/textures/04-hatching/04-halftone-20@2x.png",
+        "webp": "generated/04/04-halftone-20@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.2,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "04-halftone-40",
+      "group": "04",
+      "name": "halftone-40",
+      "title": "Растр · 40%",
+      "path": "source/textures/04-hatching/04-halftone-40.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-halftone-40.svg",
+        "png": "source/textures/04-hatching/04-halftone-40@2x.png",
+        "webp": "generated/04/04-halftone-40@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.4,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "04-halftone-60",
+      "group": "04",
+      "name": "halftone-60",
+      "title": "Растр · 60%",
+      "path": "source/textures/04-hatching/04-halftone-60.svg",
+      "method": "procedural",
+      "formats": {
+        "svg": "source/textures/04-hatching/04-halftone-60.svg",
+        "png": "source/textures/04-hatching/04-halftone-60@2x.png",
+        "webp": "generated/04/04-halftone-60@1x.webp"
+      },
+      "width": 128,
+      "height": 128,
+      "seamless": true,
+      "coverage": 0.6,
+      "spec": "Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°."
+    },
+    {
+      "id": "01-engraved-emblem",
+      "group": "01",
+      "name": "engraved-emblem",
+      "title": "Гравированный знак",
+      "path": "source/identity/01-app-icon/01-engraved-emblem@2x.png",
+      "method": "image_gen",
+      "width": 1024,
+      "height": 1024,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": true,
+      "formats": {
+        "png": "source/identity/01-app-icon/01-engraved-emblem@2x.png",
+        "webp": "generated/01/01-engraved-emblem@1x.webp"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "05-foxing",
+      "group": "05",
+      "name": "foxing",
+      "title": "Пятна времени",
+      "path": "source/ornament/05-foxing/05-foxing@2x.png",
+      "method": "image_gen",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/05-foxing/05-foxing@2x.png",
+        "webp": "generated/05/05-foxing@1x.webp",
+        "overlay": "generated/05/05-foxing-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "06-deckle-plate",
+      "group": "06",
+      "name": "deckle-plate",
+      "title": "Рваный край и оттиск",
+      "path": "source/ornament/06-deckle/06-deckle-plate@2x.png",
+      "method": "image_gen",
+      "width": 1122,
+      "height": 1402,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/06-deckle/06-deckle-plate@2x.png",
+        "webp": "generated/06/06-deckle-plate@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "print-only"
+    },
+    {
+      "id": "07-corner-tl",
+      "group": "07",
+      "name": "corner-tl",
+      "title": "Верхняя левая виньетка",
+      "path": "source/ornament/07-corners/07-corner-tl@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/07-corners/07-corner-tl@2x.png",
+        "webp": "generated/07/07-corner-tl@1x.webp",
+        "overlay": "generated/07/07-corner-tl-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "07-corner-tr",
+      "group": "07",
+      "name": "corner-tr",
+      "title": "Верхняя правая виньетка",
+      "path": "source/ornament/07-corners/07-corner-tr@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/07-corners/07-corner-tr@2x.png",
+        "webp": "generated/07/07-corner-tr@1x.webp",
+        "overlay": "generated/07/07-corner-tr-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "07-corner-bl",
+      "group": "07",
+      "name": "corner-bl",
+      "title": "Нижняя левая виньетка",
+      "path": "source/ornament/07-corners/07-corner-bl@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/07-corners/07-corner-bl@2x.png",
+        "webp": "generated/07/07-corner-bl@1x.webp",
+        "overlay": "generated/07/07-corner-bl-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "07-corner-br",
+      "group": "07",
+      "name": "corner-br",
+      "title": "Нижняя правая виньетка",
+      "path": "source/ornament/07-corners/07-corner-br@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/07-corners/07-corner-br@2x.png",
+        "webp": "generated/07/07-corner-br@1x.webp",
+        "overlay": "generated/07/07-corner-br-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-laurel",
+      "group": "08",
+      "name": "divider-laurel",
+      "title": "Лавровый разделитель",
+      "path": "source/ornament/08-dividers/08-divider-laurel@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-laurel@2x.png",
+        "webp": "generated/08/08-divider-laurel@1x.webp",
+        "overlay": "generated/08/08-divider-laurel-ink-overlay.png"
+      },
+      "nativeSize": [
+        1983,
+        793
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-oak",
+      "group": "08",
+      "name": "divider-oak",
+      "title": "Дубовый разделитель",
+      "path": "source/ornament/08-dividers/08-divider-oak@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-oak@2x.png",
+        "webp": "generated/08/08-divider-oak@1x.webp",
+        "overlay": "generated/08/08-divider-oak-ink-overlay.png"
+      },
+      "nativeSize": [
+        2161,
+        728
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-wheat",
+      "group": "08",
+      "name": "divider-wheat",
+      "title": "Колосовой разделитель",
+      "path": "source/ornament/08-dividers/08-divider-wheat@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-wheat@2x.png",
+        "webp": "generated/08/08-divider-wheat@1x.webp",
+        "overlay": "generated/08/08-divider-wheat-ink-overlay.png"
+      },
+      "nativeSize": [
+        2206,
+        713
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-fern",
+      "group": "08",
+      "name": "divider-fern",
+      "title": "Папоротниковый разделитель",
+      "path": "source/ornament/08-dividers/08-divider-fern@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-fern@2x.png",
+        "webp": "generated/08/08-divider-fern@1x.webp",
+        "overlay": "generated/08/08-divider-fern-ink-overlay.png"
+      },
+      "nativeSize": [
+        2172,
+        724
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-linden",
+      "group": "08",
+      "name": "divider-linden",
+      "title": "Липовый разделитель",
+      "path": "source/ornament/08-dividers/08-divider-linden@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-linden@2x.png",
+        "webp": "generated/08/08-divider-linden@1x.webp",
+        "overlay": "generated/08/08-divider-linden-ink-overlay.png"
+      },
+      "nativeSize": [
+        1983,
+        793
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "08-divider-vine",
+      "group": "08",
+      "name": "divider-vine",
+      "title": "Усиковый разделитель",
+      "path": "source/ornament/08-dividers/08-divider-vine@2x.png",
+      "method": "image_gen",
+      "width": 1600,
+      "height": 200,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/08-dividers/08-divider-vine@2x.png",
+        "webp": "generated/08/08-divider-vine@1x.webp",
+        "overlay": "generated/08/08-divider-vine-ink-overlay.png"
+      },
+      "nativeSize": [
+        2172,
+        724
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "09-seal-even",
+      "group": "09",
+      "name": "seal-even",
+      "title": "Печать · ровный оттиск",
+      "path": "source/ornament/09-seal/09-seal-even@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/09-seal/09-seal-even@2x.png",
+        "webp": "generated/09/09-seal-even@1x.webp",
+        "overlay": "generated/09/09-seal-even-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "09-seal-uneven",
+      "group": "09",
+      "name": "seal-uneven",
+      "title": "Печать · мягкий прижим",
+      "path": "source/ornament/09-seal/09-seal-uneven@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 800,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/ornament/09-seal/09-seal-uneven@2x.png",
+        "webp": "generated/09/09-seal-uneven@1x.webp",
+        "overlay": "generated/09/09-seal-uneven-ink-overlay.png"
+      },
+      "nativeSize": [
+        1254,
+        1254
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "10-empty-tree",
+      "group": "10",
+      "name": "empty-tree",
+      "title": "Пока никого нет",
+      "path": "source/illustration/10-empty-states/10-empty-tree@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/10-empty-states/10-empty-tree@2x.png",
+        "webp": "generated/10/10-empty-tree@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "10-no-results",
+      "group": "10",
+      "name": "no-results",
+      "title": "Ничего не найдено",
+      "path": "source/illustration/10-empty-states/10-no-results@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/10-empty-states/10-no-results@2x.png",
+        "webp": "generated/10/10-no-results@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "10-unsourced",
+      "group": "10",
+      "name": "unsourced",
+      "title": "Факт без источника",
+      "path": "source/illustration/10-empty-states/10-unsourced@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/10-empty-states/10-unsourced@2x.png",
+        "webp": "generated/10/10-unsourced@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "10-offline",
+      "group": "10",
+      "name": "offline",
+      "title": "Нет связи",
+      "path": "source/illustration/10-empty-states/10-offline@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/10-empty-states/10-offline@2x.png",
+        "webp": "generated/10/10-offline@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "11-onboarding-start",
+      "group": "11",
+      "name": "onboarding-start",
+      "title": "Начните с себя",
+      "path": "source/illustration/11-onboarding/11-onboarding-start@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/11-onboarding/11-onboarding-start@2x.png",
+        "webp": "generated/11/11-onboarding-start@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "11-onboarding-parents",
+      "group": "11",
+      "name": "onboarding-parents",
+      "title": "Добавьте родителей",
+      "path": "source/illustration/11-onboarding/11-onboarding-parents@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/11-onboarding/11-onboarding-parents@2x.png",
+        "webp": "generated/11/11-onboarding-parents@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "11-onboarding-documents",
+      "group": "11",
+      "name": "onboarding-documents",
+      "title": "Приложите документы",
+      "path": "source/illustration/11-onboarding/11-onboarding-documents@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/11-onboarding/11-onboarding-documents@2x.png",
+        "webp": "generated/11/11-onboarding-documents@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "11-onboarding-family",
+      "group": "11",
+      "name": "onboarding-family",
+      "title": "Позовите семью",
+      "path": "source/illustration/11-onboarding/11-onboarding-family@2x.png",
+      "method": "image_gen",
+      "width": 960,
+      "height": 720,
+      "alpha": true,
+      "synthetic": false,
+      "supplemental": false,
+      "formats": {
+        "png": "source/illustration/11-onboarding/11-onboarding-family@2x.png",
+        "webp": "generated/11/11-onboarding-family@1x.webp"
+      },
+      "nativeSize": [
+        1448,
+        1086
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1890s-woman-28",
+      "group": "13",
+      "name": "portrait-1890s-woman-28",
+      "title": "Женщина, 28 лет · 1890-е",
+      "path": "demo/13-portraits/13-portrait-1890s-woman-28@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1890s-woman-28@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1890s-woman-28@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1890s-man-42",
+      "group": "13",
+      "name": "portrait-1890s-man-42",
+      "title": "Мужчина, 42 года · 1890-е",
+      "path": "demo/13-portraits/13-portrait-1890s-man-42@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1890s-man-42@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1890s-man-42@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1890s-woman-68",
+      "group": "13",
+      "name": "portrait-1890s-woman-68",
+      "title": "Женщина, 68 лет · 1890-е",
+      "path": "demo/13-portraits/13-portrait-1890s-woman-68@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1890s-woman-68@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1890s-woman-68@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1890s-boy-12",
+      "group": "13",
+      "name": "portrait-1890s-boy-12",
+      "title": "Мальчик, 12 лет · 1890-е",
+      "path": "demo/13-portraits/13-portrait-1890s-boy-12@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1890s-boy-12@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1890s-boy-12@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1930s-woman-24",
+      "group": "13",
+      "name": "portrait-1930s-woman-24",
+      "title": "Женщина, 24 года · 1930-е",
+      "path": "demo/13-portraits/13-portrait-1930s-woman-24@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1930s-woman-24@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1930s-woman-24@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1930s-man-36",
+      "group": "13",
+      "name": "portrait-1930s-man-36",
+      "title": "Мужчина, 36 лет · 1930-е",
+      "path": "demo/13-portraits/13-portrait-1930s-man-36@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1930s-man-36@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1930s-man-36@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1930s-man-63",
+      "group": "13",
+      "name": "portrait-1930s-man-63",
+      "title": "Мужчина, 63 года · 1930-е",
+      "path": "demo/13-portraits/13-portrait-1930s-man-63@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1930s-man-63@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1930s-man-63@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1930s-girl-10",
+      "group": "13",
+      "name": "portrait-1930s-girl-10",
+      "title": "Девочка, 10 лет · 1930-е",
+      "path": "demo/13-portraits/13-portrait-1930s-girl-10@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1930s-girl-10@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1930s-girl-10@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1960s-woman-31",
+      "group": "13",
+      "name": "portrait-1960s-woman-31",
+      "title": "Женщина, 31 год · 1960-е",
+      "path": "demo/13-portraits/13-portrait-1960s-woman-31@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1960s-woman-31@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1960s-woman-31@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1960s-man-45",
+      "group": "13",
+      "name": "portrait-1960s-man-45",
+      "title": "Мужчина, 45 лет · 1960-е",
+      "path": "demo/13-portraits/13-portrait-1960s-man-45@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1960s-man-45@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1960s-man-45@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1960s-woman-72",
+      "group": "13",
+      "name": "portrait-1960s-woman-72",
+      "title": "Женщина, 72 года · 1960-е",
+      "path": "demo/13-portraits/13-portrait-1960s-woman-72@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1960s-woman-72@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1960s-woman-72@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "13-portrait-1960s-boy-15",
+      "group": "13",
+      "name": "portrait-1960s-boy-15",
+      "title": "Юноша, 15 лет · 1960-е",
+      "path": "demo/13-portraits/13-portrait-1960s-boy-15@2x.png",
+      "method": "image_gen",
+      "width": 800,
+      "height": 1000,
+      "alpha": true,
+      "synthetic": true,
+      "supplemental": false,
+      "formats": {
+        "png": "demo/13-portraits/13-portrait-1960s-boy-15@2x.png",
+        "webp": "demo/13-portraits/derivatives/13-portrait-1960s-boy-15@1x.webp"
+      },
+      "nativeSize": [
+        1122,
+        1402
+      ],
+      "theme": "light"
+    },
+    {
+      "id": "12-mode-atlas",
+      "group": "12",
+      "name": "mode-atlas",
+      "title": "Атлас",
+      "path": "source/modes/12-display-modes/12-mode-atlas.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-atlas.svg",
+        "png": "source/modes/12-display-modes/12-mode-atlas@2x.png",
+        "webp": "generated/12/12-mode-atlas@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-fan",
+      "group": "12",
+      "name": "mode-fan",
+      "title": "Веер",
+      "path": "source/modes/12-display-modes/12-mode-fan.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-fan.svg",
+        "png": "source/modes/12-display-modes/12-mode-fan@2x.png",
+        "webp": "generated/12/12-mode-fan@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-hourglass",
+      "group": "12",
+      "name": "mode-hourglass",
+      "title": "Песочные часы",
+      "path": "source/modes/12-display-modes/12-mode-hourglass.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-hourglass.svg",
+        "png": "source/modes/12-display-modes/12-mode-hourglass@2x.png",
+        "webp": "generated/12/12-mode-hourglass@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-strata",
+      "group": "12",
+      "name": "mode-strata",
+      "title": "Стратиграфия",
+      "path": "source/modes/12-display-modes/12-mode-strata.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-strata.svg",
+        "png": "source/modes/12-display-modes/12-mode-strata@2x.png",
+        "webp": "generated/12/12-mode-strata@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-flows",
+      "group": "12",
+      "name": "mode-flows",
+      "title": "Потоки",
+      "path": "source/modes/12-display-modes/12-mode-flows.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-flows.svg",
+        "png": "source/modes/12-display-modes/12-mode-flows@2x.png",
+        "webp": "generated/12/12-mode-flows@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-kinship",
+      "group": "12",
+      "name": "mode-kinship",
+      "title": "Родство",
+      "path": "source/modes/12-display-modes/12-mode-kinship.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-kinship.svg",
+        "png": "source/modes/12-display-modes/12-mode-kinship@2x.png",
+        "webp": "generated/12/12-mode-kinship@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-genogram",
+      "group": "12",
+      "name": "mode-genogram",
+      "title": "Генограмма",
+      "path": "source/modes/12-display-modes/12-mode-genogram.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-genogram.svg",
+        "png": "source/modes/12-display-modes/12-mode-genogram@2x.png",
+        "webp": "generated/12/12-mode-genogram@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "12-mode-geography",
+      "group": "12",
+      "name": "mode-geography",
+      "title": "География",
+      "path": "source/modes/12-display-modes/12-mode-geography.svg",
+      "method": "vector",
+      "formats": {
+        "svg": "source/modes/12-display-modes/12-mode-geography.svg",
+        "png": "source/modes/12-display-modes/12-mode-geography@2x.png",
+        "webp": "generated/12/12-mode-geography@1x.webp"
+      },
+      "width": 600,
+      "height": 600
+    },
+    {
+      "id": "14-home",
+      "group": "14",
+      "name": "home",
+      "title": "Домой",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-home.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Домой",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-home.svg"
+      }
+    },
+    {
+      "id": "14-search",
+      "group": "14",
+      "name": "search",
+      "title": "Поиск",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-search.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Поиск",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-search.svg"
+      }
+    },
+    {
+      "id": "14-overview",
+      "group": "14",
+      "name": "overview",
+      "title": "Обзор",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-overview.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Обзор",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-overview.svg"
+      }
+    },
+    {
+      "id": "14-legend",
+      "group": "14",
+      "name": "legend",
+      "title": "Легенда",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-legend.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Легенда",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-legend.svg"
+      }
+    },
+    {
+      "id": "14-back",
+      "group": "14",
+      "name": "back",
+      "title": "Назад",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-back.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Назад",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-back.svg"
+      }
+    },
+    {
+      "id": "14-forward",
+      "group": "14",
+      "name": "forward",
+      "title": "Вперёд",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-forward.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Вперёд",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-forward.svg"
+      }
+    },
+    {
+      "id": "14-up",
+      "group": "14",
+      "name": "up",
+      "title": "На уровень выше",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-up.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "На уровень выше",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-up.svg"
+      }
+    },
+    {
+      "id": "14-history",
+      "group": "14",
+      "name": "history",
+      "title": "Недавнее",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-history.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Недавнее",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-history.svg"
+      }
+    },
+    {
+      "id": "14-bookmark",
+      "group": "14",
+      "name": "bookmark",
+      "title": "Закладки",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-bookmark.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Закладки",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-bookmark.svg"
+      }
+    },
+    {
+      "id": "14-zoom-in",
+      "group": "14",
+      "name": "zoom-in",
+      "title": "Приблизить",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-zoom-in.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Приблизить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-zoom-in.svg"
+      }
+    },
+    {
+      "id": "14-zoom-out",
+      "group": "14",
+      "name": "zoom-out",
+      "title": "Отдалить",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-zoom-out.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Отдалить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-zoom-out.svg"
+      }
+    },
+    {
+      "id": "14-fit",
+      "group": "14",
+      "name": "fit",
+      "title": "Показать всё",
+      "path": "../packages/ui/icons/14-interface/01-navigation/01-fit.svg",
+      "method": "vector",
+      "category": "navigation",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Показать всё",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/01-navigation/01-fit.svg"
+      }
+    },
+    {
+      "id": "14-person",
+      "group": "14",
+      "name": "person",
+      "title": "Персона",
+      "path": "../packages/ui/icons/14-interface/02-family/02-person.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Персона",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-person.svg"
+      }
+    },
+    {
+      "id": "14-person-add",
+      "group": "14",
+      "name": "person-add",
+      "title": "Добавить человека",
+      "path": "../packages/ui/icons/14-interface/02-family/02-person-add.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Добавить человека",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-person-add.svg"
+      }
+    },
+    {
+      "id": "14-person-edit",
+      "group": "14",
+      "name": "person-edit",
+      "title": "Изменить данные",
+      "path": "../packages/ui/icons/14-interface/02-family/02-person-edit.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Изменить данные",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-person-edit.svg"
+      }
+    },
+    {
+      "id": "14-parents",
+      "group": "14",
+      "name": "parents",
+      "title": "Родители",
+      "path": "../packages/ui/icons/14-interface/02-family/02-parents.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Родители",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-parents.svg"
+      }
+    },
+    {
+      "id": "14-children",
+      "group": "14",
+      "name": "children",
+      "title": "Дети",
+      "path": "../packages/ui/icons/14-interface/02-family/02-children.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Дети",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-children.svg"
+      }
+    },
+    {
+      "id": "14-partners",
+      "group": "14",
+      "name": "partners",
+      "title": "Партнёры",
+      "path": "../packages/ui/icons/14-interface/02-family/02-partners.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Партнёры",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-partners.svg"
+      }
+    },
+    {
+      "id": "14-siblings",
+      "group": "14",
+      "name": "siblings",
+      "title": "Братья и сёстры",
+      "path": "../packages/ui/icons/14-interface/02-family/02-siblings.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Братья и сёстры",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-siblings.svg"
+      }
+    },
+    {
+      "id": "14-ancestor",
+      "group": "14",
+      "name": "ancestor",
+      "title": "Предок",
+      "path": "../packages/ui/icons/14-interface/02-family/02-ancestor.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Предок",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-ancestor.svg"
+      }
+    },
+    {
+      "id": "14-descendants",
+      "group": "14",
+      "name": "descendants",
+      "title": "Потомки",
+      "path": "../packages/ui/icons/14-interface/02-family/02-descendants.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Потомки",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-descendants.svg"
+      }
+    },
+    {
+      "id": "14-living",
+      "group": "14",
+      "name": "living",
+      "title": "Живущий человек",
+      "path": "../packages/ui/icons/14-interface/02-family/02-living.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Живущий человек",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-living.svg"
+      }
+    },
+    {
+      "id": "14-deceased",
+      "group": "14",
+      "name": "deceased",
+      "title": "Умерший человек",
+      "path": "../packages/ui/icons/14-interface/02-family/02-deceased.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Умерший человек",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-deceased.svg"
+      }
+    },
+    {
+      "id": "14-birth",
+      "group": "14",
+      "name": "birth",
+      "title": "Рождение",
+      "path": "../packages/ui/icons/14-interface/02-family/02-birth.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Рождение",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-birth.svg"
+      }
+    },
+    {
+      "id": "14-marriage",
+      "group": "14",
+      "name": "marriage",
+      "title": "Брак",
+      "path": "../packages/ui/icons/14-interface/02-family/02-marriage.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Брак",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-marriage.svg"
+      }
+    },
+    {
+      "id": "14-relationship",
+      "group": "14",
+      "name": "relationship",
+      "title": "Родственная связь",
+      "path": "../packages/ui/icons/14-interface/02-family/02-relationship.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Родственная связь",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-relationship.svg"
+      }
+    },
+    {
+      "id": "14-pin",
+      "group": "14",
+      "name": "pin",
+      "title": "Закрепить",
+      "path": "../packages/ui/icons/14-interface/02-family/02-pin.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Закрепить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-pin.svg"
+      }
+    },
+    {
+      "id": "14-family-tree",
+      "group": "14",
+      "name": "family-tree",
+      "title": "Семейное древо",
+      "path": "../packages/ui/icons/14-interface/02-family/02-family-tree.svg",
+      "method": "vector",
+      "category": "family",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Семейное древо",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/02-family/02-family-tree.svg"
+      }
+    },
+    {
+      "id": "14-source",
+      "group": "14",
+      "name": "source",
+      "title": "Источник",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-source.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Источник",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-source.svg"
+      }
+    },
+    {
+      "id": "14-source-add",
+      "group": "14",
+      "name": "source-add",
+      "title": "Добавить источник",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-source-add.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Добавить источник",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-source-add.svg"
+      }
+    },
+    {
+      "id": "14-archive",
+      "group": "14",
+      "name": "archive",
+      "title": "Архив",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-archive.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Архив",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-archive.svg"
+      }
+    },
+    {
+      "id": "14-book",
+      "group": "14",
+      "name": "book",
+      "title": "Книга",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-book.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Книга",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-book.svg"
+      }
+    },
+    {
+      "id": "14-document",
+      "group": "14",
+      "name": "document",
+      "title": "Документ",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-document.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Документ",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-document.svg"
+      }
+    },
+    {
+      "id": "14-citation",
+      "group": "14",
+      "name": "citation",
+      "title": "Цитата",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-citation.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Цитата",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-citation.svg"
+      }
+    },
+    {
+      "id": "14-verified",
+      "group": "14",
+      "name": "verified",
+      "title": "Подтверждено",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-verified.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Подтверждено",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-verified.svg"
+      }
+    },
+    {
+      "id": "14-uncertain",
+      "group": "14",
+      "name": "uncertain",
+      "title": "Предположительно",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-uncertain.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Предположительно",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-uncertain.svg"
+      }
+    },
+    {
+      "id": "14-conflict",
+      "group": "14",
+      "name": "conflict",
+      "title": "Разночтение",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-conflict.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Разночтение",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-conflict.svg"
+      }
+    },
+    {
+      "id": "14-research",
+      "group": "14",
+      "name": "research",
+      "title": "Исследование",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-research.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Исследование",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-research.svg"
+      }
+    },
+    {
+      "id": "14-note",
+      "group": "14",
+      "name": "note",
+      "title": "Заметка",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-note.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Заметка",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-note.svg"
+      }
+    },
+    {
+      "id": "14-folder",
+      "group": "14",
+      "name": "folder",
+      "title": "Папка",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-folder.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Папка",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-folder.svg"
+      }
+    },
+    {
+      "id": "14-link",
+      "group": "14",
+      "name": "link",
+      "title": "Связать",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-link.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Связать",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-link.svg"
+      }
+    },
+    {
+      "id": "14-transcript",
+      "group": "14",
+      "name": "transcript",
+      "title": "Расшифровка",
+      "path": "../packages/ui/icons/14-interface/03-sources/03-transcript.svg",
+      "method": "vector",
+      "category": "sources",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Расшифровка",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/03-sources/03-transcript.svg"
+      }
+    },
+    {
+      "id": "14-image",
+      "group": "14",
+      "name": "image",
+      "title": "Фотография",
+      "path": "../packages/ui/icons/14-interface/04-media/04-image.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Фотография",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-image.svg"
+      }
+    },
+    {
+      "id": "14-image-add",
+      "group": "14",
+      "name": "image-add",
+      "title": "Добавить фотографию",
+      "path": "../packages/ui/icons/14-interface/04-media/04-image-add.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Добавить фотографию",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-image-add.svg"
+      }
+    },
+    {
+      "id": "14-scan",
+      "group": "14",
+      "name": "scan",
+      "title": "Сканировать",
+      "path": "../packages/ui/icons/14-interface/04-media/04-scan.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Сканировать",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-scan.svg"
+      }
+    },
+    {
+      "id": "14-crop",
+      "group": "14",
+      "name": "crop",
+      "title": "Обрезать",
+      "path": "../packages/ui/icons/14-interface/04-media/04-crop.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Обрезать",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-crop.svg"
+      }
+    },
+    {
+      "id": "14-rotate",
+      "group": "14",
+      "name": "rotate",
+      "title": "Повернуть",
+      "path": "../packages/ui/icons/14-interface/04-media/04-rotate.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Повернуть",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-rotate.svg"
+      }
+    },
+    {
+      "id": "14-download",
+      "group": "14",
+      "name": "download",
+      "title": "Скачать",
+      "path": "../packages/ui/icons/14-interface/04-media/04-download.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Скачать",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-download.svg"
+      }
+    },
+    {
+      "id": "14-upload",
+      "group": "14",
+      "name": "upload",
+      "title": "Загрузить",
+      "path": "../packages/ui/icons/14-interface/04-media/04-upload.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Загрузить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-upload.svg"
+      }
+    },
+    {
+      "id": "14-print",
+      "group": "14",
+      "name": "print",
+      "title": "Печать",
+      "path": "../packages/ui/icons/14-interface/04-media/04-print.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Печать",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-print.svg"
+      }
+    },
+    {
+      "id": "14-original",
+      "group": "14",
+      "name": "original",
+      "title": "Оригинал",
+      "path": "../packages/ui/icons/14-interface/04-media/04-original.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Оригинал",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-original.svg"
+      }
+    },
+    {
+      "id": "14-attachment",
+      "group": "14",
+      "name": "attachment",
+      "title": "Вложение",
+      "path": "../packages/ui/icons/14-interface/04-media/04-attachment.svg",
+      "method": "vector",
+      "category": "media",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Вложение",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/04-media/04-attachment.svg"
+      }
+    },
+    {
+      "id": "14-sync",
+      "group": "14",
+      "name": "sync",
+      "title": "Синхронизация",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-sync.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Синхронизация",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-sync.svg"
+      }
+    },
+    {
+      "id": "14-offline",
+      "group": "14",
+      "name": "offline",
+      "title": "Нет связи",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-offline.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Нет связи",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-offline.svg"
+      }
+    },
+    {
+      "id": "14-cloud",
+      "group": "14",
+      "name": "cloud",
+      "title": "Облако",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-cloud.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Облако",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-cloud.svg"
+      }
+    },
+    {
+      "id": "14-local",
+      "group": "14",
+      "name": "local",
+      "title": "На устройстве",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-local.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "На устройстве",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-local.svg"
+      }
+    },
+    {
+      "id": "14-contribution",
+      "group": "14",
+      "name": "contribution",
+      "title": "Предложить изменение",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-contribution.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Предложить изменение",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-contribution.svg"
+      }
+    },
+    {
+      "id": "14-review",
+      "group": "14",
+      "name": "review",
+      "title": "Проверить изменения",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-review.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Проверить изменения",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-review.svg"
+      }
+    },
+    {
+      "id": "14-accept",
+      "group": "14",
+      "name": "accept",
+      "title": "Принять",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-accept.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Принять",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-accept.svg"
+      }
+    },
+    {
+      "id": "14-reject",
+      "group": "14",
+      "name": "reject",
+      "title": "Отклонить",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-reject.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Отклонить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-reject.svg"
+      }
+    },
+    {
+      "id": "14-merge",
+      "group": "14",
+      "name": "merge",
+      "title": "Объединить",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-merge.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Объединить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-merge.svg"
+      }
+    },
+    {
+      "id": "14-compare",
+      "group": "14",
+      "name": "compare",
+      "title": "Сравнить",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-compare.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Сравнить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-compare.svg"
+      }
+    },
+    {
+      "id": "14-backup",
+      "group": "14",
+      "name": "backup",
+      "title": "Резервная копия",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-backup.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Резервная копия",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-backup.svg"
+      }
+    },
+    {
+      "id": "14-restore",
+      "group": "14",
+      "name": "restore",
+      "title": "Восстановить",
+      "path": "../packages/ui/icons/14-interface/05-sync/05-restore.svg",
+      "method": "vector",
+      "category": "sync",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Восстановить",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/05-sync/05-restore.svg"
+      }
+    },
+    {
+      "id": "14-atlas",
+      "group": "14",
+      "name": "atlas",
+      "title": "Атлас",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-atlas.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Атлас",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-atlas.svg"
+      }
+    },
+    {
+      "id": "14-fan",
+      "group": "14",
+      "name": "fan",
+      "title": "Веер",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-fan.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Веер",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-fan.svg"
+      }
+    },
+    {
+      "id": "14-hourglass",
+      "group": "14",
+      "name": "hourglass",
+      "title": "Песочные часы",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-hourglass.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Песочные часы",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-hourglass.svg"
+      }
+    },
+    {
+      "id": "14-strata",
+      "group": "14",
+      "name": "strata",
+      "title": "Стратиграфия",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-strata.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Стратиграфия",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-strata.svg"
+      }
+    },
+    {
+      "id": "14-flows",
+      "group": "14",
+      "name": "flows",
+      "title": "Потоки",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-flows.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Потоки",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-flows.svg"
+      }
+    },
+    {
+      "id": "14-kinship",
+      "group": "14",
+      "name": "kinship",
+      "title": "Родство",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-kinship.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Родство",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-kinship.svg"
+      }
+    },
+    {
+      "id": "14-genogram",
+      "group": "14",
+      "name": "genogram",
+      "title": "Генограмма",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-genogram.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Генограмма",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-genogram.svg"
+      }
+    },
+    {
+      "id": "14-geography",
+      "group": "14",
+      "name": "geography",
+      "title": "География",
+      "path": "../packages/ui/icons/14-interface/06-modes/06-geography.svg",
+      "method": "vector",
+      "category": "modes",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "География",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/06-modes/06-geography.svg"
+      }
+    },
+    {
+      "id": "14-settings",
+      "group": "14",
+      "name": "settings",
+      "title": "Настройки",
+      "path": "../packages/ui/icons/14-interface/07-system/07-settings.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Настройки",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-settings.svg"
+      }
+    },
+    {
+      "id": "14-help",
+      "group": "14",
+      "name": "help",
+      "title": "Помощь",
+      "path": "../packages/ui/icons/14-interface/07-system/07-help.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Помощь",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-help.svg"
+      }
+    },
+    {
+      "id": "14-accessibility",
+      "group": "14",
+      "name": "accessibility",
+      "title": "Доступность",
+      "path": "../packages/ui/icons/14-interface/07-system/07-accessibility.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Доступность",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-accessibility.svg"
+      }
+    },
+    {
+      "id": "14-theme",
+      "group": "14",
+      "name": "theme",
+      "title": "Свет и лампа",
+      "path": "../packages/ui/icons/14-interface/07-system/07-theme.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Свет и лампа",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-theme.svg"
+      }
+    },
+    {
+      "id": "14-language",
+      "group": "14",
+      "name": "language",
+      "title": "Язык",
+      "path": "../packages/ui/icons/14-interface/07-system/07-language.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Язык",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-language.svg"
+      }
+    },
+    {
+      "id": "14-lock",
+      "group": "14",
+      "name": "lock",
+      "title": "Закрытый доступ",
+      "path": "../packages/ui/icons/14-interface/07-system/07-lock.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Закрытый доступ",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-lock.svg"
+      }
+    },
+    {
+      "id": "14-export",
+      "group": "14",
+      "name": "export",
+      "title": "Экспорт",
+      "path": "../packages/ui/icons/14-interface/07-system/07-export.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Экспорт",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-export.svg"
+      }
+    },
+    {
+      "id": "14-import",
+      "group": "14",
+      "name": "import",
+      "title": "Импорт",
+      "path": "../packages/ui/icons/14-interface/07-system/07-import.svg",
+      "method": "vector",
+      "category": "system",
+      "width": 24,
+      "height": 24,
+      "visibleLabel": "Импорт",
+      "formats": {
+        "svg": "../packages/ui/icons/14-interface/07-system/07-import.svg"
+      }
+    }
+  ],
+  "pending": [],
+  "notes": [
+    "Image generator chose its native output dimensions; no fabricated 4× masters. See each provenance sidecar.",
+    "Original masters remain outside the repository; source contains optimized production sizes.",
+    "Synthetic portrait pixels, XMP and sidecar are marked. A future archive importer must reject demo-only assets.",
+    "App identity uses its existing Rust geometry and resolved palette; engraved emblem is a supplemental print asset."
+  ]
+}

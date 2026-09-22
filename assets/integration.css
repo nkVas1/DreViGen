@@ -1,0 +1,43 @@
+/* Herbarium Vivum asset recipes. All paths are relative to this stylesheet. */
+.dv-paper-art {
+  position: relative;
+  isolation: isolate;
+  background: var(--dv-vellum, #FBF7EE);
+}
+.dv-paper-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('./source/textures/03-paper-grain/03-grain-light@1x.png') repeat;
+  mix-blend-mode: multiply;
+  opacity: .055;
+}
+[data-theme='dark'] .dv-paper-art::before {
+  background-image: url('./source/textures/03-paper-grain/03-grain-dark@1x.png');
+  mix-blend-mode: screen;
+  opacity: .035;
+}
+.dv-engraved-illustration {
+  display: block;
+  inline-size: min(100%, 480px);
+  block-size: auto;
+  object-fit: contain;
+}
+/* Paper-carrying illustrations retain a vellum well in the lamplit theme. */
+.dv-illustration-well { background: #FBF7EE; padding: 24px; }
+.dv-ornament { pointer-events: none; user-select: none; }
+.dv-divider { display: block; inline-size: min(100%, 800px); block-size: auto; margin-inline: auto; }
+.dv-icon-label { display: inline-flex; align-items: center; gap: .6em; min-block-size: 44px; }
+.dv-icon-label svg { inline-size: 24px; block-size: 24px; flex: none; color: currentColor; }
+.dv-seal { inline-size: 80px; block-size: 80px; object-fit: contain; }
+@media (prefers-contrast: more), (forced-colors: active) {
+  .dv-paper-art::before, .dv-ornament { display: none; }
+  .dv-icon-label svg { stroke-width: 2; }
+}
+[data-theme='high-contrast'] .dv-paper-art::before,
+[data-theme='high-contrast'] .dv-ornament { display: none; }
+@media print {
+  .dv-paper-art::before { background-image: url('./source/textures/03-paper-grain/03-grain-print@1x.png'); opacity: .045; }
+}

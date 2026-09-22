@@ -1,0 +1,14 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1254 × 1254.
+Delivered: 800 × 800.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 09.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: A circular seal impression, engraved rather than photographed: a ring of twelve small wheat ears encircling a simple central emblem of a seed in cross-section. Rendered as a hand-cut stamp pressed into paper, with a slightly uneven and partly broken outer edge where the ink did not take evenly. Single colour throughout — terracotta red — with no shading beyond the line work itself. Isolated and centred on plain cream vellum. Firm even impression, crisp dark lines. Exactly twelve small separate wheat ears, twelve evenly spaced around the ring.
+True transparent RGBA background. All visible linework a single terracotta ink #B4552C, no black, white or other ink, no shaded filled disc, no paper background, no text. Negative areas transparent. The seed has three concentric growth rings and a central dot. Square, 2000px if available.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.

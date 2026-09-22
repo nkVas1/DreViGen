@@ -1,0 +1,77 @@
+{
+  "source": "source/ornament/06-deckle/06-deckle-plate@2x.png",
+  "insets": {
+    "top": 210,
+    "right": 202,
+    "bottom": 210,
+    "left": 202
+  },
+  "edgeMode": "stretch",
+  "centreMode": "stretch",
+  "usage": "Print only. Preserve corner dimensions. For large-format print use native master, never silently upscale.",
+  "slices": {
+    "topLeft": {
+      "path": "generated/06/nine-slice/06-deckle-topLeft.png",
+      "x": 0,
+      "y": 0,
+      "width": 202,
+      "height": 210
+    },
+    "top": {
+      "path": "generated/06/nine-slice/06-deckle-top.png",
+      "x": 202,
+      "y": 0,
+      "width": 718,
+      "height": 210
+    },
+    "topRight": {
+      "path": "generated/06/nine-slice/06-deckle-topRight.png",
+      "x": 920,
+      "y": 0,
+      "width": 202,
+      "height": 210
+    },
+    "left": {
+      "path": "generated/06/nine-slice/06-deckle-left.png",
+      "x": 0,
+      "y": 210,
+      "width": 202,
+      "height": 982
+    },
+    "centre": {
+      "path": "generated/06/nine-slice/06-deckle-centre.png",
+      "x": 202,
+      "y": 210,
+      "width": 718,
+      "height": 982
+    },
+    "right": {
+      "path": "generated/06/nine-slice/06-deckle-right.png",
+      "x": 920,
+      "y": 210,
+      "width": 202,
+      "height": 982
+    },
+    "bottomLeft": {
+      "path": "generated/06/nine-slice/06-deckle-bottomLeft.png",
+      "x": 0,
+      "y": 1192,
+      "width": 202,
+      "height": 210
+    },
+    "bottom": {
+      "path": "generated/06/nine-slice/06-deckle-bottom.png",
+      "x": 202,
+      "y": 1192,
+      "width": 718,
+      "height": 210
+    },
+    "bottomRight": {
+      "path": "generated/06/nine-slice/06-deckle-bottomRight.png",
+      "x": 920,
+      "y": 1192,
+      "width": 202,
+      "height": 210
+    }
+  }
+}

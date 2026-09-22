@@ -1,0 +1,4 @@
+Method: seeded periodic value noise; 256, 80, 8 cells per 512px tile; weights .65/.25/.10.
+Model: none. Seed: 3571912706.
+Source: tools/textures/generate-grain.mjs
+Variant: dark. 8-bit grayscale; multiply .04–.07 (dark: screen .035). Never animate.

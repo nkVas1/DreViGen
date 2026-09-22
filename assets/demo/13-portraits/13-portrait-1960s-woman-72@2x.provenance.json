@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1960s-woman-72",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "306344838d05d9e1bf93c032052b322c63b6ef48f699075f2d62a9a0b5bf9300"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "182b74d0aff6b8c5ee4c639956f1ad6196dd069fd1fb7198a354bf7bbd53c2ed"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

@@ -1,0 +1,19 @@
+{
+  "id": "11-onboarding-start",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1448,
+    "height": 1086,
+    "sha256": "947f52a83e22c7e1be52d2da3b8d3805c3c6defe2508f972840e751db130f79f"
+  },
+  "output": {
+    "width": 960,
+    "height": 720,
+    "sha256": "eff9fad5ca57702f2164386278df17e688c059fdefee21e8a9e037dfd2247cae"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

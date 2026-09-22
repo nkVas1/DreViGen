@@ -1,0 +1,3 @@
+Method: automated raster derivative of source/textures/04-hatching/04-halftone-60.svg.
+Model: none. Seed: not applicable.
+Source: tools/assets/build.mjs; rendered at 128 × 128.

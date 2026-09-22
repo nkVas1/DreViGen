@@ -1,0 +1,14 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1122 × 1402.
+Delivered: 1122 × 1402.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 06.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: A rectangular sheet of handmade cream vellum paper photographed flat-on against pure white, showing its four natural deckle edges — soft, feathered, slightly irregular torn fibres, different on every side. Inside the sheet, a faint rectangular plate-mark impression about four centimetres in from each edge, as left by a copperplate press: a shallow indentation catching the light, not a printed line. Completely blank paper otherwise. Even diffuse lighting, no drop shadow, no curl, no objects.
+One complete upright sheet, 4:5 portrait aspect, all four deckled edges visible within 4% margins. True transparent RGBA outside the sheet instead of a white backdrop. The sheet interior is warm cream #FBF7EE. A beautiful subtle plate impression, no printed black frame. 4000 by 5000 if available.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.

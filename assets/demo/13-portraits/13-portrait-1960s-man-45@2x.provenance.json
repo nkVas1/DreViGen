@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1960s-man-45",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "46978900e54702a63b8666eb912159663ce74fa6870c4638c84875d3eb236de3"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "7dd03227c7cc21d91c577ec865f049a3161520719e8671313b8ac9eec8a1bbcf"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

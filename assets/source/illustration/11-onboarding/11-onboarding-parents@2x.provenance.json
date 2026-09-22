@@ -1,0 +1,19 @@
+{
+  "id": "11-onboarding-parents",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1448,
+    "height": 1086,
+    "sha256": "a85af9b5c96b210caad81be9f3397c0f49fb256ebb15872359b53ecd049c41aa"
+  },
+  "output": {
+    "width": 960,
+    "height": 720,
+    "sha256": "f471d0c98f927db8f68cad1f484e37e3ea520a6a4bd5ae4165a0df9f3fe739f9"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

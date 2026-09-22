@@ -1,0 +1,19 @@
+{
+  "id": "01-engraved-emblem",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-21",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "81dda6d141deea3b92ac6eec6a1e71c0143b5e40aa357077248d2d1530a1e738"
+  },
+  "output": {
+    "width": 1024,
+    "height": 1024,
+    "sha256": "ffe77539aaf951dfb564841d71973fb3467e9032f742f48209961412d4e22c0d"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

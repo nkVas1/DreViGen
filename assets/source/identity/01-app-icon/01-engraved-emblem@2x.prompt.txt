@@ -1,0 +1,10 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-21.
+Native master: 1254 × 1254.
+Delivered: 1024 × 1024.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: logo-brand. Asset: DreViGen Herbarium Vivum plate 01, application emblem light edition, one finished standalone asset. A botanical cross-section of a seed, flat-on, rendered as exquisite 19th-century copperplate engraving. Three strong concentric growth rings, slightly irregular hand-cut organic contours, with restrained fine radial hatching running between them like medullary rays. Overall compact circular iconic silhouette, no outer ray halo. Deep blue-black iron gall ink #1E232B; at the exact centre a single small solid terracotta #B4552C circular seed dot, the ONLY colour accent. Thoughtful negative space between the rings; bold enough ring structure to stay recognisable when tiny, delicate engraved detail visible when enlarged. Highest quality museum botanical atlas, calm authority, no ornament around the emblem. Centre the emblem within 15% clear margins. A truly transparent RGBA background, no paper rectangle, no checkerboard baked into image, no shadow. 2048 by 2048 pixels if possible. No text, lettering, numbers, watermark, signature, 3D, gradients, shine, corporate clipart, green, photographic effects. Deliver exactly one image.

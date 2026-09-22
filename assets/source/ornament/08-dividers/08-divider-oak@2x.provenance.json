@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-oak",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 2161,
+    "height": 728,
+    "sha256": "d265ac08ced02b6748c0178ef192a939ad36a95f640c97f73f0e874cced6b5d2"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "5831a7abe0ff8347f744e163ce5ccbc94d80cc2152a2d18cf08614f85966b2fc"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

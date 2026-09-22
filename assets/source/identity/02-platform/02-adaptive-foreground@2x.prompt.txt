@@ -1,0 +1,3 @@
+Method: automated raster derivative of source/identity/02-platform/02-adaptive-foreground.svg.
+Model: none. Seed: not applicable.
+Source: tools/assets/build.mjs; rendered at 432 × 432.

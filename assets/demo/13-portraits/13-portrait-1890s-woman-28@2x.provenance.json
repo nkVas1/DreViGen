@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1890s-woman-28",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "3c82463b9f40aba36955f6a53b13e5319994476bc7a22d8622eb43ff19850c47"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "fbb31645dcd126d75ac5973e7811c9597f98c2e68d450e73f21cf4ec6b2522be"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-fern",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 2172,
+    "height": 724,
+    "sha256": "ebe1b2347aafabb6f1e68dc2aac41a58feeedebedd28e0c2943cb368dc21b304"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "b184266a9f2a531d213293743e434c8f7fddbffef6f96dae0b44a3129b0c6824"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

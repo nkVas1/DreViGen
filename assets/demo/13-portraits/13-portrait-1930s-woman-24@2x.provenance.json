@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1930s-woman-24",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "5c4f6a7f076cbb4aacd19763452ad65e3f3ee1f8d20c7721aefb46fda1fe5162"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "e4cc9f94561a1798a6112c3e0d82d35698f6d00ea743fc4f38f025f8a6f89db8"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

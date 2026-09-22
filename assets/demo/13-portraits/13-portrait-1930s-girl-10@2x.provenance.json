@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1930s-girl-10",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "0036f00964acf40fd2a71360c0e4386a27951016e2a4ceb95d405fdb820cf6bc"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "1950d0c9ba1c32c4c5e0256a27b3e2c4314fcba873b03b2d4301d6b6317483da"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

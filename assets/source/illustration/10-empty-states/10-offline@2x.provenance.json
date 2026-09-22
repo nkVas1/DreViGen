@@ -1,0 +1,19 @@
+{
+  "id": "10-offline",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1448,
+    "height": 1086,
+    "sha256": "1f1c6ab2a52e3d991582bf38a063f8bc06ffa1298b0bb2556589573ba94790e6"
+  },
+  "output": {
+    "width": 960,
+    "height": 720,
+    "sha256": "f677e9f5fcb887fcc59b1eb224c713e411e47a948605b76a24084f9fd9069045"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

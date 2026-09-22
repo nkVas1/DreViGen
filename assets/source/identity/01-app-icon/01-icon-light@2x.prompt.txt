@@ -1,0 +1,3 @@
+Method: automated raster derivative of source/identity/01-app-icon/01-icon-light.svg.
+Model: none. Seed: not applicable.
+Source: tools/assets/build.mjs; rendered at 1024 × 1024.

@@ -1,0 +1,19 @@
+{
+  "id": "09-seal-even",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "02d638299ae761c213c4d2d0175d2d5f08f6ad62819bd0f096cd0aaf664722d0"
+  },
+  "output": {
+    "width": 800,
+    "height": 800,
+    "sha256": "0368b281cfcfe7d6e958e7dfed022d0a7e405cc94ecca9c52fd59035276ca050"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

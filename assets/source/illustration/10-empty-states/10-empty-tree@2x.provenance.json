@@ -1,0 +1,19 @@
+{
+  "id": "10-empty-tree",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1448,
+    "height": 1086,
+    "sha256": "5c105aa5cce0e37160f9828c10627615532d3dccb0560641343cdaf3d4052d74"
+  },
+  "output": {
+    "width": 960,
+    "height": 720,
+    "sha256": "45fa5b50b48e73c3e342c133f1d6c4143c5c361c456bc9d6515b3ee8398e731e"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

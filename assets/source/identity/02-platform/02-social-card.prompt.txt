@@ -1,0 +1,3 @@
+Method: SVG composition of the existing mark, procedural grain and plate impression.
+Model: none. Seed: SVG feTurbulence default 0.
+Specification: 1280×640, mark in left third; right two thirds blank for live typography.

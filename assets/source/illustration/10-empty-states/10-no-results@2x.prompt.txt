@@ -1,0 +1,20 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1448 × 1086.
+Delivered: 960 × 720.
+Processing: automated contain/downsample via tools/assets/build.mjs. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: precise-object-edit. Edit only Image 1. Remove ALL plants, flowers, leaves, berries, stems and the ribbon around the empty mounting sheet. The result must show ONLY one empty herbarium sheet with four paper corner mounts and the same magnifying glass beside its lower-right corner. Keep the sheet shape, lighting, copperplate engraving style, fine ink linework, composition, size and truly transparent outer background. The mounting sheet remains completely blank, no text, no specimen. No new objects or ornament. Only #1E232B engraved ink and warm cream paper, no green, no terracotta. Generous empty transparent margins. Output one landscape 4:3 asset.
+
+INITIAL GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 10.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: An empty herbarium mounting sheet with four small paper corner-mounts but no specimen mounted in it, seen flat-on. A magnifying glass with a slender engraved handle rests beside it at an angle, partly overlapping the lower-right corner. Quiet and patient, never comic. Centred on plain cream vellum with generous empty margins. Hairline engraving with light hatching.
+Final standalone illustration, landscape 4:3, 2400 by 1800 if available. True transparent RGBA around objects, no paper background rectangle. In a centred composition, the subject fills middle 55% width and 65% height; broad equal clear margins. Fine dark confident engraved detail that survives at 480px wide, sparse cross hatching, same line density as an 1860 botanical atlas. Use ONLY dark ink and, for a ribbon if present, muted terracotta. No modern UI, no labels.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.
+
+REFERENCE ASSETS
+10-no-results

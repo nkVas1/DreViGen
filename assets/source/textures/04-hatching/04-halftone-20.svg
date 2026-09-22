@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><title>halftone 20%</title><defs><pattern id="halftone-20" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="4.03701" fill="#0B131C"/></pattern></defs><rect width="64" height="64" fill="url(#halftone-20)"/></svg>

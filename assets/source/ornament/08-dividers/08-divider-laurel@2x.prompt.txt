@@ -1,0 +1,14 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1983 × 793.
+Delivered: 1600 × 200.
+Processing: automated contain/downsample via tools/assets/build.mjs; trim transparent margins. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: stylized-concept. Final production asset for DreViGen, Herbarium Vivum, plate 08.
+19th-century scientific atlas illustration. Copperplate engraving and lithographic plate technique: fine hatching and cross-hatching, stippling for tone, confident varied line weight, no digital gradients, no airbrush, no glow, no bevel. Printed in iron-gall ink on warm vellum paper. Restrained natural palette — deep blue-black ink (#1E232B), terracotta red chalk (#B4552C), muted sage green (#6B8163), warm sepia (#8A6A44) — low saturation throughout, and never more than one accent colour in a single image. Flat-on, centred, specimen-like composition with generous margins. The feel of a plate from a botanical or zoological atlas of the 1840s–1880s: precise, patient, hand-cut, slightly imperfect. Absolutely no 3D render, no photorealism, no neon, no gradient mesh, no glassmorphism, no stock-illustration flat vector style, and no text or lettering anywhere in the image.
+Subject: A horizontal typographic divider ornament in the style of a 19th-century printed book: a slender symmetrical arrangement of engraved leaves, thin tendrils and a single small seed form at the exact centre, roughly eight times wider than it is tall. Drawn in hairline outline with fine hatching. Perfectly balanced left to right, thinning out to plain rules at both ends. Isolated and centred on plain cream vellum with empty space above and below. The specific motif in this divider is four pairs of long narrow laurel leaves, two small curled tendrils. Single small oval seed at exact centre.
+Ink #1E232B only. TRUE transparent RGBA, no cream or white canvas. The ornament itself is eight times wider than tall, centred with empty transparent space above and below, so it can be trimmed to an 8:1 strip. No border. Ultra-fine but clear and dark engraved outlines, absolutely symmetrical, 3200px wide if available.
+Avoid: text, letters, words, numbers, watermark, signature, logo, 3D render, photorealistic, glossy, plastic, neon, gradient background, glassmorphism, drop shadow, flat vector corporate illustration, clip art, AI-art sheen, oversaturated, busy background, modern UI elements, multiple accent colours.

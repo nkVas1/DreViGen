@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1890s-boy-12",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "e6ff93a56fbe8fb5fc97f84d654f054b8f145d7d63dfa46c5abee6f9a85107db"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "716f09779d98ec034b60b0aada82dfe662f613e5b59c0bdf845193de5d1f7bde"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

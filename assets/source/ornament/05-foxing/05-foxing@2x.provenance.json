@@ -1,0 +1,19 @@
+{
+  "id": "05-foxing",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "5a77fa809a289c83c3fdcd8fe213d9b46fa89f7c8b889cc662dbf65b3ffe7b4f"
+  },
+  "output": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "6c4eb5262555edc350a2db5e9419446cb7688f32f8782af90dea5300a6fe2414"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

@@ -1,0 +1,5 @@
+Method: deterministic SVG authored for DreViGen.
+Model: none. Seed: not applicable.
+Source: tools/assets/vectors.mjs or existing assets/identity/ generator.
+Specification: Штриховка · 20%. Analytic density, seamless 16px period, 45° hatching; 60% crossed 45°/135°.
+Palette: the gated tokens only — currentColor for ink, #9B3300 for the single accent.

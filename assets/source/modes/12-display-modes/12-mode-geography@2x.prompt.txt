@@ -1,0 +1,3 @@
+Method: automated raster derivative of source/modes/12-display-modes/12-mode-geography.svg.
+Model: none. Seed: not applicable.
+Source: tools/assets/build.mjs; rendered at 600 × 600.

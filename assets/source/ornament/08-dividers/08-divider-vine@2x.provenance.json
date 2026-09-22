@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-vine",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 2172,
+    "height": 724,
+    "sha256": "760fb9d47e891ad60d5874f68e858a46a287fa446c63165ad71a9adba23b64d2"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "7a0d6203d4965836d8689ce6343dab56258c03eb1457605a0c6d0043d9c67ee6"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

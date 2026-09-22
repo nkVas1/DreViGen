@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-wheat",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 2206,
+    "height": 713,
+    "sha256": "6ef02405fe1a4f8b7ee4425439a8c5116446d089618fa58ff58434e62b50923d"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "63f0ec715a2a8874a5d0e261b05097c75eaf5d387641072f6e86257df9a1e574"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

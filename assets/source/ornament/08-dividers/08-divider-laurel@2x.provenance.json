@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-laurel",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1983,
+    "height": 793,
+    "sha256": "9b20cb22ad2efb5add8da41b98181e5f803d6473094bccfaaf183bdae0366a0f"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "a79b5ee80d77c2aa3103462414aaa67cd24c77abb301052521c0e720ee475a13"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

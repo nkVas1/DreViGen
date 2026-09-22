@@ -1,0 +1,19 @@
+{
+  "id": "08-divider-linden",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1983,
+    "height": 793,
+    "sha256": "af3c43973db4c7f75750a0ad74ad0948a9015925925f516a554c6a6e9e9d6df1"
+  },
+  "output": {
+    "width": 1600,
+    "height": 200,
+    "sha256": "f6c7af4e30a8f7f6391a4312963d4868030d5016e4868e5fbe7e589a51c045d2"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

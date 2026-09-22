@@ -1,0 +1,19 @@
+{
+  "id": "06-deckle-plate",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "6698b7216537a0d5a41744c4b3ab61dfeae66d68b4accfd0150b8a398ebdc89f"
+  },
+  "output": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "14fd3ad9e475f9b12d4bd348fb500e07daa326737a2db1efb69bf342350bddfa"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

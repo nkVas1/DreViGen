@@ -1,5 +1,10 @@
 # Assets
 
+The produced **Herbarium Vivum collection (plates 01–14)** is available in
+[`catalog.html`](catalog.html). See [`DELIVERY.md`](DELIVERY.md) for the numbered
+directories, build commands, native-resolution limits and demo-portrait metadata.
+[`manifest.json`](manifest.json) is the machine-readable entry point.
+
 Production specifications, prompts and sketches live in
 [`docs/03-design/asset-brief.md`](../docs/03-design/asset-brief.md). This file covers only
 **where files go and in what form**.

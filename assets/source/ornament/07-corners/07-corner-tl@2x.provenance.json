@@ -1,0 +1,19 @@
+{
+  "id": "07-corner-tl",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "7340e61efd4973b7e9004aaf6afab01c49f792d97e09b91293afbc75d96c8d96"
+  },
+  "output": {
+    "width": 800,
+    "height": 800,
+    "sha256": "a6687dc586fc019e301ab4a68733b228a3c7b1d4313d49ebeda7af2b203a6879"
+  },
+  "synthetic": false,
+  "fullResolutionRequestHonoured": false
+}

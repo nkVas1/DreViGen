@@ -1,0 +1,19 @@
+{
+  "id": "13-portrait-1960s-woman-31",
+  "tool": "image_gen",
+  "model": "Built-in image_gen (exact model revision not exposed)",
+  "seed": null,
+  "createdAt": "2026-09-22",
+  "native": {
+    "width": 1122,
+    "height": 1402,
+    "sha256": "b0a826a11cfb3e57dbc302a4769db11f6bcae3b8b62fc46767115ce99cafab8b"
+  },
+  "output": {
+    "width": 800,
+    "height": 1000,
+    "sha256": "3008c321e6f88aafbf66c03cc6c3d5027b5e9efe5730a12c4116c8f34c5f69be"
+  },
+  "synthetic": true,
+  "fullResolutionRequestHonoured": false
+}

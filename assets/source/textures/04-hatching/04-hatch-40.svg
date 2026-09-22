@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><title>hatch 40%</title><defs><pattern id="hatch-40" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M-8 8 8-8 M0 16 16 0 M8 24 24 8" fill="none" stroke="#0B131C" stroke-width="4.52548"/></pattern></defs><rect width="64" height="64" fill="url(#hatch-40)"/></svg>

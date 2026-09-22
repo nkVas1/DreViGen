@@ -1,0 +1,10 @@
+Method: built-in image_gen.
+Model: Built-in image_gen (exact model revision not exposed).
+Seed: not exposed by the tool (not fabricated).
+Date: 2026-09-22.
+Native master: 1122 × 1402.
+Delivered: 800 × 1000.
+Processing: automated contain/downsample via tools/assets/build.mjs; visible synthetic watermark and embedded XMP. Native alpha preserved.
+
+EXACT GENERATION PROMPT
+Use case: photorealistic-natural. One studio portrait of an entirely fictional synthetic person, not a real historical individual, for a clearly labelled genealogy app demo. a 72-year-old woman with carefully combed silver hair, a full lined face, a simple blouse and knitted cardigan, a provincial Russian family member. Photographic technique: late 1950s to early 1960s black-and-white silver-gelatin print, neutral greys without sepia, softer contrast, soft left window light. Period-accurate modest everyday clothing, authentic fabric and skin, natural age details. Head and shoulders, upright 4:5 portrait, entire head and both shoulders within frame. Subject facing slightly off-camera, dignified neutral unsmiling expression. Consistent head scale: head from y=15% to 58%, shoulders at 72%. Visible subtle emulsion grain, slight edge vignette, at most one very fine scratch, faint natural print age. High quality restoration-grade scan of a believable historical studio photo. No modern glamor, beauty retouch, cinematic colour, fantasy costume, uniforms, medals, hat, text, captions, border, watermark or modern objects. Do not engrave or draw: this asset is a PHOTO, not illustration. 1600 by 2000 pixels if available.
