@@ -31,9 +31,13 @@ mod day;
 pub mod french;
 pub mod gregorian;
 pub mod hebrew;
+pub mod interval;
 pub mod julian;
+pub mod value;
 
 pub use day::{Day, Weekday};
+pub use interval::{Span, Trivalent};
+pub use value::{Approximation, DateValue};
 
 /// The calendars a source may have been written in.
 ///
