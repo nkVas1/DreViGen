@@ -1,0 +1,562 @@
+[
+  {
+    "name": "home",
+    "label": "Домой",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-home.svg"
+  },
+  {
+    "name": "search",
+    "label": "Поиск",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-search.svg"
+  },
+  {
+    "name": "overview",
+    "label": "Обзор",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-overview.svg"
+  },
+  {
+    "name": "legend",
+    "label": "Легенда",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-legend.svg"
+  },
+  {
+    "name": "back",
+    "label": "Назад",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-back.svg"
+  },
+  {
+    "name": "forward",
+    "label": "Вперёд",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-forward.svg"
+  },
+  {
+    "name": "up",
+    "label": "На уровень выше",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-up.svg"
+  },
+  {
+    "name": "history",
+    "label": "Недавнее",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-history.svg"
+  },
+  {
+    "name": "bookmark",
+    "label": "Закладки",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-bookmark.svg"
+  },
+  {
+    "name": "zoom-in",
+    "label": "Приблизить",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-zoom-in.svg"
+  },
+  {
+    "name": "zoom-out",
+    "label": "Отдалить",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-zoom-out.svg"
+  },
+  {
+    "name": "fit",
+    "label": "Показать всё",
+    "category": "navigation",
+    "categoryTitle": "Навигация",
+    "path": "14-interface/01-navigation/01-fit.svg"
+  },
+  {
+    "name": "person",
+    "label": "Персона",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-person.svg"
+  },
+  {
+    "name": "person-add",
+    "label": "Добавить человека",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-person-add.svg"
+  },
+  {
+    "name": "person-edit",
+    "label": "Изменить данные",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-person-edit.svg"
+  },
+  {
+    "name": "parents",
+    "label": "Родители",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-parents.svg"
+  },
+  {
+    "name": "children",
+    "label": "Дети",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-children.svg"
+  },
+  {
+    "name": "partners",
+    "label": "Партнёры",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-partners.svg"
+  },
+  {
+    "name": "siblings",
+    "label": "Братья и сёстры",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-siblings.svg"
+  },
+  {
+    "name": "ancestor",
+    "label": "Предок",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-ancestor.svg"
+  },
+  {
+    "name": "descendants",
+    "label": "Потомки",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-descendants.svg"
+  },
+  {
+    "name": "living",
+    "label": "Живущий человек",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-living.svg"
+  },
+  {
+    "name": "deceased",
+    "label": "Умерший человек",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-deceased.svg"
+  },
+  {
+    "name": "birth",
+    "label": "Рождение",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-birth.svg"
+  },
+  {
+    "name": "marriage",
+    "label": "Брак",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-marriage.svg"
+  },
+  {
+    "name": "relationship",
+    "label": "Родственная связь",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-relationship.svg"
+  },
+  {
+    "name": "pin",
+    "label": "Закрепить",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-pin.svg"
+  },
+  {
+    "name": "family-tree",
+    "label": "Семейное древо",
+    "category": "family",
+    "categoryTitle": "Персона и семья",
+    "path": "14-interface/02-family/02-family-tree.svg"
+  },
+  {
+    "name": "source",
+    "label": "Источник",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-source.svg"
+  },
+  {
+    "name": "source-add",
+    "label": "Добавить источник",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-source-add.svg"
+  },
+  {
+    "name": "archive",
+    "label": "Архив",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-archive.svg"
+  },
+  {
+    "name": "book",
+    "label": "Книга",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-book.svg"
+  },
+  {
+    "name": "document",
+    "label": "Документ",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-document.svg"
+  },
+  {
+    "name": "citation",
+    "label": "Цитата",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-citation.svg"
+  },
+  {
+    "name": "verified",
+    "label": "Подтверждено",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-verified.svg"
+  },
+  {
+    "name": "uncertain",
+    "label": "Предположительно",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-uncertain.svg"
+  },
+  {
+    "name": "conflict",
+    "label": "Разночтение",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-conflict.svg"
+  },
+  {
+    "name": "research",
+    "label": "Исследование",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-research.svg"
+  },
+  {
+    "name": "note",
+    "label": "Заметка",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-note.svg"
+  },
+  {
+    "name": "folder",
+    "label": "Папка",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-folder.svg"
+  },
+  {
+    "name": "link",
+    "label": "Связать",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-link.svg"
+  },
+  {
+    "name": "transcript",
+    "label": "Расшифровка",
+    "category": "sources",
+    "categoryTitle": "Источники",
+    "path": "14-interface/03-sources/03-transcript.svg"
+  },
+  {
+    "name": "image",
+    "label": "Фотография",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-image.svg"
+  },
+  {
+    "name": "image-add",
+    "label": "Добавить фотографию",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-image-add.svg"
+  },
+  {
+    "name": "scan",
+    "label": "Сканировать",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-scan.svg"
+  },
+  {
+    "name": "crop",
+    "label": "Обрезать",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-crop.svg"
+  },
+  {
+    "name": "rotate",
+    "label": "Повернуть",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-rotate.svg"
+  },
+  {
+    "name": "download",
+    "label": "Скачать",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-download.svg"
+  },
+  {
+    "name": "upload",
+    "label": "Загрузить",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-upload.svg"
+  },
+  {
+    "name": "print",
+    "label": "Печать",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-print.svg"
+  },
+  {
+    "name": "original",
+    "label": "Оригинал",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-original.svg"
+  },
+  {
+    "name": "attachment",
+    "label": "Вложение",
+    "category": "media",
+    "categoryTitle": "Медиа",
+    "path": "14-interface/04-media/04-attachment.svg"
+  },
+  {
+    "name": "sync",
+    "label": "Синхронизация",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-sync.svg"
+  },
+  {
+    "name": "offline",
+    "label": "Нет связи",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-offline.svg"
+  },
+  {
+    "name": "cloud",
+    "label": "Облако",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-cloud.svg"
+  },
+  {
+    "name": "local",
+    "label": "На устройстве",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-local.svg"
+  },
+  {
+    "name": "contribution",
+    "label": "Предложить изменение",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-contribution.svg"
+  },
+  {
+    "name": "review",
+    "label": "Проверить изменения",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-review.svg"
+  },
+  {
+    "name": "accept",
+    "label": "Принять",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-accept.svg"
+  },
+  {
+    "name": "reject",
+    "label": "Отклонить",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-reject.svg"
+  },
+  {
+    "name": "merge",
+    "label": "Объединить",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-merge.svg"
+  },
+  {
+    "name": "compare",
+    "label": "Сравнить",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-compare.svg"
+  },
+  {
+    "name": "backup",
+    "label": "Резервная копия",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-backup.svg"
+  },
+  {
+    "name": "restore",
+    "label": "Восстановить",
+    "category": "sync",
+    "categoryTitle": "Синхронизация",
+    "path": "14-interface/05-sync/05-restore.svg"
+  },
+  {
+    "name": "atlas",
+    "label": "Атлас",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-atlas.svg"
+  },
+  {
+    "name": "fan",
+    "label": "Веер",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-fan.svg"
+  },
+  {
+    "name": "hourglass",
+    "label": "Песочные часы",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-hourglass.svg"
+  },
+  {
+    "name": "strata",
+    "label": "Стратиграфия",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-strata.svg"
+  },
+  {
+    "name": "flows",
+    "label": "Потоки",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-flows.svg"
+  },
+  {
+    "name": "kinship",
+    "label": "Родство",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-kinship.svg"
+  },
+  {
+    "name": "genogram",
+    "label": "Генограмма",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-genogram.svg"
+  },
+  {
+    "name": "geography",
+    "label": "География",
+    "category": "modes",
+    "categoryTitle": "Режимы",
+    "path": "14-interface/06-modes/06-geography.svg"
+  },
+  {
+    "name": "settings",
+    "label": "Настройки",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-settings.svg"
+  },
+  {
+    "name": "help",
+    "label": "Помощь",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-help.svg"
+  },
+  {
+    "name": "accessibility",
+    "label": "Доступность",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-accessibility.svg"
+  },
+  {
+    "name": "theme",
+    "label": "Свет и лампа",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-theme.svg"
+  },
+  {
+    "name": "language",
+    "label": "Язык",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-language.svg"
+  },
+  {
+    "name": "lock",
+    "label": "Закрытый доступ",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-lock.svg"
+  },
+  {
+    "name": "export",
+    "label": "Экспорт",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-export.svg"
+  },
+  {
+    "name": "import",
+    "label": "Импорт",
+    "category": "system",
+    "categoryTitle": "Система",
+    "path": "14-interface/07-system/07-import.svg"
+  }
+]

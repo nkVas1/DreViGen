@@ -1,0 +1,5 @@
+Method: original SVG geometry on a 24px grid.
+Model: none. Seed: not applicable.
+Source: tools/assets/vectors.mjs
+Stroke: 1.5px, round caps and joins; currentColor.
+Visible label (required): Предок.
