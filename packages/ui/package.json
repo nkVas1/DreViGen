@@ -1,0 +1,23 @@
+{
+  "name": "@drevigen/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The design system: components over React Aria, and the icon set from plate 14.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./icons": "./src/icons.generated.ts",
+    "./ui.css": "./src/ui.css"
+  },
+  "dependencies": {
+    "@drevigen/tokens": "workspace:*",
+    "react": "19.3.0",
+    "react-aria-components": "1.21.1",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

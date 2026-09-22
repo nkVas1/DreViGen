@@ -1,0 +1,34 @@
+/* The design system's own rules.
+ *
+ * Small on purpose. A component that needs more than a few lines here probably needs to be a
+ * component, and the tokens carry everything that is a value rather than a rule.
+ */
+
+@import '@drevigen/tokens/tokens.css';
+
+/* An icon and its label are one object: they align on the text baseline's centre, they never
+ * wrap apart, and the pair is at least 44 px tall because it is usually inside a control.
+ * WCAG 2.2 §2.5.8 asks for 24; this project's floor is 44, and 48 for primary actions. */
+.dv-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-block-size: 2.75rem;
+  white-space: nowrap;
+}
+
+.dv-icon-label > svg {
+  flex: none;
+}
+
+/* A hairline stroke disappears when the viewer has asked for more contrast, and at that point
+ * the glyph is worse than no glyph. */
+@media (prefers-contrast: more), (forced-colors: active) {
+  .dv-icon-label > svg {
+    stroke-width: 2;
+  }
+}
+
+:root[data-theme='contrast'] .dv-icon-label > svg {
+  stroke-width: 2;
+}
