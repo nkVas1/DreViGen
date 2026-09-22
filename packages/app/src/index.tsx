@@ -13,7 +13,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { IconLabel, type IconName } from '@drevigen/ui';
+import '@drevigen/ui/ui.css';
+
 import './app.css';
+import seedling from '../../../assets/source/illustration/10-empty-states/10-empty-tree@2x.png';
 import {
   TEXT_SCALES,
   type Platform,
@@ -77,33 +81,41 @@ function Choice<T extends string | number>({
   );
 }
 
-/** The seedling from the asset brief, drawn rather than generated: one specimen, much space. */
-function Seedling() {
+/**
+ * The specimen: plate 10 of the collection, an engraving with a transparent ground.
+ *
+ * Not decoration. The screen has one subject and a great deal of space around it, which is the
+ * composition of a botanical plate and the reason the art direction chose one.
+ */
+function Specimen() {
   return (
-    <svg
-      className="dv-seedling"
-      viewBox="0 0 100 100"
-      role="img"
-      aria-label="Проросток с двумя семядолями и корневой системой"
-    >
-      <line className="soil" x1="8" y1="52" x2="92" y2="52" />
-      <line x1="50" y1="52" x2="50" y2="28" />
-      <path d="M50 32 C42 22 30 22 26 30 C34 38 46 38 50 32 Z" />
-      <path d="M50 32 C58 22 70 22 74 30 C66 38 54 38 50 32 Z" />
-      <path className="hair" d="M31 27 C38 28 45 30 49 33 M69 27 C62 28 55 30 51 33" />
-      <g className="hair">
-        <path d="M50 52 C50 62 48 72 44 80" />
-        <path d="M50 56 C55 64 60 70 66 76" />
-        <path d="M50 60 C45 68 40 73 34 78" />
-        <path d="M50 64 C54 72 58 78 61 86" />
-        <path d="M46 72 C43 78 40 82 37 88" />
-        <path d="M52 70 C56 76 58 82 59 90" />
-      </g>
-    </svg>
+    <figure className="dv-specimen-plate">
+      <img
+        src={seedling}
+        width={960}
+        height={720}
+        alt="Проросток с двумя семядолями и корневой системой — гравюра"
+        decoding="async"
+      />
+    </figure>
   );
 }
 
 /** The semantic colours, shown so the palette can be verified on the device it runs on. */
+/**
+ * A sample of the icon set, shown for the same reason the colour swatches are: a glyph that has
+ * to read at 24 px on a phone is verified on a phone. One from each of the seven categories.
+ */
+const SPECIMEN_ICONS: IconName[] = [
+  'family-tree',
+  'person',
+  'source',
+  'image',
+  'sync',
+  'strata',
+  'accessibility',
+];
+
 const SEMANTIC = [
   ['sanguine', 'акцент'],
   ['sage', 'подтверждено'],
@@ -154,14 +166,14 @@ export function App() {
 
       <main className="dv-main">
         <article className="dv-plate">
-          <Seedling />
+          <Specimen />
           <h1 className="dv-title">Начните с себя</h1>
           <p className="dv-lede">
             Семейный архив, по которому можно путешествовать как по карте, хранить как реликвию
             и исследовать как учёный.
           </p>
 
-          <hr className="dv-divider" />
+          <hr className="dv-divider-ornament" />
 
           <section className="dv-state">
             <p>
@@ -205,6 +217,12 @@ export function App() {
                     {meaning}
                   </figcaption>
                 </figure>
+              ))}
+            </div>
+
+            <div className="dv-icon-specimen">
+              {SPECIMEN_ICONS.map((name) => (
+                <IconLabel key={name} name={name} size="small" />
               ))}
             </div>
           </section>

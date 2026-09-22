@@ -65,25 +65,41 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Paper grain. One tiled surface, never animated, never behind text — see art-direction §4. */
+/* Paper grain.
+ *
+ * A real tile now, not `feTurbulence`. The filter cost nothing and rendered differently in
+ * every engine: Chrome, WebKit and the Tauri webview each produced their own paper, which for a
+ * product whose whole surface is one sheet is a difference you can see between two of your own
+ * devices. The tile is seeded value noise, seamless on both axes, from
+ * tools/textures/generate-grain.mjs, and it is identical everywhere.
+ *
+ * One surface, never animated, never behind text — art-direction §4.
+ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='0.42'/></svg>");
+  background-image: url('../../../assets/source/textures/03-paper-grain/03-grain-light@1x.webp');
+  background-repeat: repeat;
+  /* One CSS pixel per texel: the grain reads as paper fibre rather than as a pattern. */
+  background-size: 512px 512px;
   mix-blend-mode: multiply;
   opacity: 0.055;
 }
 
+/* The lamplit tile is lighter than its ground and screens over it, so the paper catches light
+ * rather than collecting dirt. */
 :root[data-theme='dark'] body::before {
+  background-image: url('../../../assets/source/textures/03-paper-grain/03-grain-dark@1x.webp');
   mix-blend-mode: screen;
   opacity: 0.035;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']):not([data-theme='contrast']) body::before {
+    background-image: url('../../../assets/source/textures/03-paper-grain/03-grain-dark@1x.webp');
     mix-blend-mode: screen;
     opacity: 0.035;
   }
@@ -92,6 +108,21 @@ body::before {
 /* Texture is suppressed in high contrast and at large text — art-direction §4 and §10. */
 :root[data-theme='contrast'] body::before {
   display: none;
+}
+
+@media (prefers-contrast: more), (forced-colors: active) {
+  body::before {
+    display: none;
+  }
+}
+
+/* Paper printed on paper is a contradiction, and toner is expensive. The print tile is cut for
+ * it: coarser, so it survives a halftone screen. */
+@media print {
+  body::before {
+    background-image: url('../../../assets/source/textures/03-paper-grain/03-grain-print@1x.webp');
+    opacity: 0.045;
+  }
 }
 
 /* ── focus ───────────────────────────────────────────────────────────────── */
@@ -264,26 +295,81 @@ body::before {
   text-align: center;
 }
 
-.dv-seedling {
+/* The specimen.
+ *
+ * A real engraving rather than the shape sketched in code that stood here before: plate 10 of
+ * the Herbarium Vivum collection, transparent ground, drawn in ink.
+ *
+ * Ink on a lamplit ground would disappear, so in the dark theme it is laid on a sheet of
+ * vellum — a plate resting on the desk, which is the metaphor the whole interface is built on
+ * rather than a workaround for it.
+ */
+.dv-specimen-plate {
   display: block;
-  width: min(11rem, 50vw);
-  height: auto;
+  width: min(24rem, 66vw);
   margin: 0 auto var(--dv-space-6);
-  color: var(--dv-ink);
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 1.1;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  padding: 0;
 }
 
-.dv-seedling .hair {
-  stroke-width: 0.6;
-  color: var(--dv-ink-faint);
+.dv-specimen-plate img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.dv-seedling .soil {
-  stroke: var(--dv-rule);
+/* Only the lamplit theme needs the sheet. In high contrast the ground is already white, and a
+ * near-white box on it is a rectangle with nothing to say. */
+:root[data-theme='dark'] .dv-specimen-plate {
+  padding: var(--dv-space-4);
+  background: #F7F3EB;
+  box-shadow: 0 0 0 var(--dv-line-hair) var(--dv-rule);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .dv-specimen-plate {
+    padding: var(--dv-space-4);
+    background: #F7F3EB;
+    box-shadow: 0 0 0 var(--dv-line-hair) var(--dv-rule);
+  }
+}
+
+/* A botanical rule instead of a straight one.
+ *
+ * Drawn as a mask rather than shown as a picture, so the ornament takes the theme's rule colour
+ * instead of being frozen in the grey it was engraved in. That is also why it can be quiet: at
+ * `--dv-rule` it separates without competing.
+ */
+.dv-divider-ornament {
+  width: min(26rem, 78%);
+  height: 2rem;
+  margin: var(--dv-space-8) auto var(--dv-space-6);
+  border: 0;
+  background-color: var(--dv-rule);
+  -webkit-mask-image: url('../../../assets/source/ornament/08-dividers/08-divider-oak-ink-mask.webp');
+  mask-image: url('../../../assets/source/ornament/08-dividers/08-divider-oak-ink-mask.webp');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Ornament is the first thing to go when someone has asked for less. */
+@media (prefers-contrast: more), (forced-colors: active) {
+  .dv-divider-ornament {
+    height: 0;
+    background: none;
+    mask-image: none;
+    border-top: var(--dv-line) solid var(--dv-rule);
+  }
+}
+
+:root[data-theme='contrast'] .dv-divider-ornament {
+  height: 0;
+  background: none;
+  mask-image: none;
+  border-top: var(--dv-line) solid var(--dv-rule);
 }
 
 .dv-title {
@@ -300,13 +386,6 @@ body::before {
   margin: 0 auto var(--dv-space-6);
   color: var(--dv-ink-soft);
   text-wrap: pretty;
-}
-
-.dv-divider {
-  width: 60%;
-  margin: var(--dv-space-8) auto var(--dv-space-6);
-  border: 0;
-  border-top: var(--dv-line-hair) solid var(--dv-rule);
 }
 
 /* ── the build note ──────────────────────────────────────────────────────── */
@@ -355,4 +434,20 @@ body::before {
   height: 3rem;
   border: var(--dv-line-hair) solid var(--dv-rule);
   border-radius: 2px;
+}
+
+/* The icon specimen, for the same reason the colour swatches are here: a set that has to read
+ * at 24 px on a real screen is verified on a real screen, not in a catalogue. */
+.dv-icon-specimen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dv-space-2) var(--dv-space-4);
+  justify-content: center;
+  margin-top: var(--dv-space-6);
+  color: var(--dv-ink-soft);
+  font-size: 0.85rem;
+}
+
+.dv-icon-specimen .dv-icon-label {
+  min-block-size: 0;
 }
