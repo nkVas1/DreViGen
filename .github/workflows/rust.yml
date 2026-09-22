@@ -3,9 +3,9 @@ name: Rust
 on:
   push:
     branches: [main]
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'apps/shell/**', 'apps/web/public/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'apps/shell/**', 'apps/web/public/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', '.github/workflows/rust.yml']
   workflow_dispatch:
 
 permissions:
@@ -69,6 +69,13 @@ jobs:
             echo "$changed"
             exit 1
           fi
+
+      # The palette gate reaches the artwork too. Interface chrome is generated from the
+      # tokens and therefore cannot drift; a drawing carries hex literals and can. The first
+      # asset delivery did: #1E232B ink and #B4552C accent, two earlier values, in forty-four
+      # places across vectors the interface renders. Nothing catches that by eye.
+      - name: No artwork invents a colour
+        run: cargo run -p drevigen-tokens -- check-assets
 
       # The icons are generated and committed for the same reason the tokens are: a change to
       # the mark should be visible in a pull request rather than appearing at release time.

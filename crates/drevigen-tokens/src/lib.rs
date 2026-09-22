@@ -9,6 +9,7 @@
 //! binary exits non-zero on a failure, so a palette that cannot be read does not reach a
 //! branch. A rule enforced by review is a rule that is enforced when there is time.
 
+pub mod assets;
 pub mod css;
 pub mod palette;
 pub mod report;
