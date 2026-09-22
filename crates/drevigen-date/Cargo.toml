@@ -1,0 +1,19 @@
+[package]
+name = "drevigen-date"
+description = "Genealogical dates: four calendars, uncertainty, interval arithmetic, three-valued temporal logic."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+# No dependencies, deliberately. This crate is compiled into the WASM bundle, where every
+# kilobyte is in front of the first paint (ADR 0007), and there is no date library to depend
+# on anyway: the requirements in docs/01-research/data-standards.md §3 are not what
+# general-purpose date libraries are for.
+[dependencies]
+
+[lints]
+workspace = true
