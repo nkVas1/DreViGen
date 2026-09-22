@@ -74,7 +74,10 @@ from day one.
 - [x] Fonts vendored and subset; the type audit from the art direction resolved
 - [x] The mark, generated from the palette, at every size from a 16 px tab to a store listing
 - [x] The app opens on Windows and in a browser, shows one screen, and is installable
-- [ ] The same on Android. The build is wired and the icons are cut; it has not run on a device
+- [x] The Android package builds: a 7.6 MB APK with `libdrevigen_shell_lib.so` for arm64-v8a,
+      built locally on 2026-09-22 against NDK 30.0.16248370
+- [ ] The same package **runs** on a device. Building is not opening, and the three device-bound
+      verifications below are the reason this is still open
 - [ ] P0-S5a — Rust `std::fs` verified inside the app sandbox on both mobile platforms
 - [ ] P0-S5b — the Rust WebSocket client verified from both mobile platforms
 
@@ -83,10 +86,10 @@ from day one.
 Five ADRs written. The repository builds green on every target. A person can install the app on
 a phone and see a correctly typed, correctly coloured screen.
 
-**Open at 2026-09-22:** the phone. Everything else in this phase is done — the desktop shell
-opens on Windows with the frame in the palette, the web build installs, and both are the same
-front end. What remains is running it on real hardware: S1b, P0-S5a and P0-S5b are all
-device-bound, and none of them can be closed from a laptop.
+**Open at 2026-09-22:** the phone, and only the phone. Everything else in this phase is done —
+the desktop shell opens on Windows with the frame in the palette, the web build installs, the
+Android APK builds, and all three are the same front end. What remains needs hardware: S1b,
+P0-S5a and P0-S5b are device-bound, and none of them can be closed from a laptop.
 
 ---
 

@@ -20,6 +20,11 @@ the notes can be written and the downloads opened before anyone is told the rele
 | iOS | — | — | Not built |
 | Web | — | Served from the VDS | n/a |
 
+The Android row is the one that has been run end to end outside CI: 2026-09-22, NDK
+30.0.16248370, a 7.6 MB APK carrying `libdrevigen_shell_lib.so` for arm64-v8a. Tauri embeds the
+front end in the Rust library rather than in the APK's asset directory, which is why there is
+no `assets/` tree to inspect.
+
 The NSIS installer offers Russian, English and German with a language selector, which are the
 launch locales. The MSI does not: Windows Installer picks one language per package, and
 building three packages to gain a translated progress bar is not worth the confusion of three
