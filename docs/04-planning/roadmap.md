@@ -111,10 +111,13 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 - [ ] Property-based tests over generated family graphs
 
 **1.2 · Dates and calendars** (`drevigen-date`, 1.5 weeks)
-- [ ] GEDCOM 7 date grammar, complete
-- [ ] Julian ↔ Gregorian ↔ Hebrew ↔ French Republican conversion
-- [ ] Interval arithmetic and three-valued temporal predicates
-- [ ] Dual-dating (`1747/8`), phrases, all approximation qualifiers
+- [x] GEDCOM 7 date grammar, complete — checked against the specification source at
+      `FamilySearch/GEDCOM@512e38d`, not recalled; three rules differed from memory
+- [x] Julian ↔ Gregorian ↔ Hebrew ↔ French Republican conversion
+- [x] Interval arithmetic and three-valued temporal predicates
+- [x] Dual-dating (`1747/8`), phrases, all approximation qualifiers — 7.0 removed the slash
+      notation, so dual years are read by a lenient 5.5.1 reader that keeps the words and
+      states which of the three historical meanings it chose
 - [ ] Locale-aware formatting for ru / en / de
 
 **1.3 · GEDCOM** (`drevigen-gedcom`, 2 weeks)

@@ -29,6 +29,7 @@
 
 mod day;
 pub mod french;
+pub mod gedcom;
 pub mod gregorian;
 pub mod hebrew;
 pub mod interval;
@@ -36,6 +37,7 @@ pub mod julian;
 pub mod value;
 
 pub use day::{Day, Weekday};
+pub use gedcom::{Lenient, ParseError, ParseErrorKind, Repair};
 pub use interval::{Span, Trivalent};
 pub use value::{Approximation, DateValue, RecordedDate};
 

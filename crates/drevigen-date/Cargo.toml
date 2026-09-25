@@ -15,5 +15,10 @@ publish = false
 # general-purpose date libraries are for.
 [dependencies]
 
+# The round-trip and never-loses-text checks draw thousands of values from a seeded generator.
+# The testkit has no dependencies of its own and never reaches a release build.
+[dev-dependencies]
+drevigen-testkit = { version = "0.0.0", path = "../drevigen-testkit" }
+
 [lints]
 workspace = true
