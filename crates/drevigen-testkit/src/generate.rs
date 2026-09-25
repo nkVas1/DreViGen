@@ -375,12 +375,14 @@ impl Generator {
             if self.full() {
                 break;
             }
+            let (first_birth, last_birth) = self.birth_window(fid, birth_year);
             let count = i32::try_from(self.children_count(birth_year)).unwrap_or(i32::MAX);
             for i in 0..count {
-                if self.full() {
+                let year = first_birth + i * 2;
+                if self.full() || last_birth.is_some_and(|last| year > last) {
                     break;
                 }
-                let child = self.new_child(fid, child_generation, birth_year + i * 2);
+                let child = self.new_child(fid, child_generation, year);
                 cohort.push(child);
             }
         }
@@ -561,6 +563,39 @@ impl Generator {
     /// Russian peasant families of the early 19th century recorded six or more births; the
     /// figure falls through the 20th century. Modelling the decline matters because it shapes
     /// the tree: a constant rate produces an implausibly uniform pyramid.
+    /// The years a family's children can be born in, as `(first, last)`.
+    ///
+    /// Births used to be scheduled from the generation's year alone, which knew nothing of the
+    /// parents: a partner born later than the rest of their generation could have children older
+    /// than themselves, and a family went on having children after a parent died. The domain
+    /// model's audit found both on its first run over these trees. The window closes both:
+    ///
+    /// - **First**: no earlier than the generation's year, nor before the younger parent turns
+    ///   sixteen.
+    /// - **Last**: the mother's death, the year after the father's — a child can be born within
+    ///   ten months of its father's death — and the mother's forty-fifth year, whichever comes
+    ///   first. `None` when nothing closes it.
+    fn birth_window(&self, family: FamilyId, generation_year: i32) -> (i32, Option<i32>) {
+        let union = &self.families[family.0 as usize];
+        let person = |id: Option<PersonId>| id.map(|p| &self.people[p.0 as usize]);
+        let (father, mother) = (person(union.husband), person(union.wife));
+
+        let youngest_parent = father
+            .iter()
+            .chain(mother.iter())
+            .map(|parent| parent.birth_year)
+            .max();
+        let first = youngest_parent.map_or(generation_year, |born| generation_year.max(born + 16));
+
+        let limits = [
+            mother.and_then(|m| m.death_year),
+            father.and_then(|f| f.death_year).map(|year| year + 1),
+            mother.map(|m| m.birth_year + 45),
+        ];
+        let last = limits.into_iter().flatten().min();
+        (first, last)
+    }
+
     fn children_count(&mut self, year: i32) -> usize {
         let mean = if year < 1870 {
             6.2
