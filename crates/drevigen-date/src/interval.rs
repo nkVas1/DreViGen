@@ -176,6 +176,16 @@ impl Span {
         }
     }
 
+    /// The same span moved by a number of days: "thirteen years after this birth" is the birth
+    /// span shifted, keeping its uncertainty. Open ends stay open.
+    #[must_use]
+    pub fn shifted(self, days: i32) -> Self {
+        Self {
+            earliest: self.earliest.map(|d| d.offset(days)),
+            latest: self.latest.map(|d| d.offset(days)),
+        }
+    }
+
     /// The smallest span containing both.
     #[must_use]
     pub fn union(self, other: Self) -> Self {
@@ -407,6 +417,13 @@ mod tests {
 
         let both = Span::closed(day(100), day(200)).widened(10);
         assert_eq!(both, Span::closed(day(90), day(210)));
+    }
+
+    #[test]
+    fn shifting_keeps_the_width_and_the_open_ends() {
+        let birth = Span::closed(day(100), day(465));
+        assert_eq!(birth.shifted(1000), Span::closed(day(1100), day(1465)));
+        assert_eq!(Span::until(day(10)).shifted(5), Span::until(day(15)));
     }
 
     #[test]
