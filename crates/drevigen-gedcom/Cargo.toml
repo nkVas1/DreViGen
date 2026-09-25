@@ -1,0 +1,19 @@
+[package]
+name = "drevigen-gedcom"
+description = "GEDCOM 7 read and written exactly, and everything older read without losing a line."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+# No external dependencies, including for character encodings. The legacy encodings a family's
+# old files arrive in — windows-1251, windows-1252, ANSEL — are small tables, and this crate is
+# compiled into the web build, where a general encoding library would cost more than every table
+# we need together.
+[dependencies]
+
+[lints]
+workspace = true

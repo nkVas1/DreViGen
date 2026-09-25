@@ -50,6 +50,13 @@ jobs:
       - name: Test
         run: cargo test --workspace --all-features
 
+      # FamilySearch's own GEDCOM 7 test files: every standard structure, every escape rule. Fetched
+      # at a pinned revision rather than committed, because they carry no licence to redistribute.
+      - name: GEDCOM 7 against the official test files
+        run: |
+          tools/fetch-gedcom-testfiles.sh
+          cargo test -p drevigen-gedcom --test official -- --ignored
+
       # The palette gate. A colour pair that cannot be read fails the build here rather than
       # being noticed by a user, which is the only way a contrast rule survives a deadline.
       - name: Design tokens are readable
