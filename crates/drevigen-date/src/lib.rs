@@ -37,7 +37,7 @@ pub mod value;
 
 pub use day::{Day, Weekday};
 pub use interval::{Span, Trivalent};
-pub use value::{Approximation, DateValue};
+pub use value::{Approximation, DateValue, RecordedDate};
 
 /// The calendars a source may have been written in.
 ///
@@ -167,6 +167,12 @@ impl CalendarDate {
     ) -> Result<Self, DateError> {
         if !(-YEAR_LIMIT..=YEAR_LIMIT).contains(&year) {
             return Err(DateError::YearOutOfRange { given: year });
+        }
+
+        // Two of the calendars count from a first year. A Hebrew year 0 or a Republican year
+        // before the Republic is not an early date in them; it is not a date in them at all.
+        if matches!(calendar, Calendar::Hebrew | Calendar::FrenchRepublican) && year < 1 {
+            return Err(DateError::BeforeCalendarBegins);
         }
 
         let Some(month_number) = month else {
@@ -403,6 +409,20 @@ mod tests {
             month.to_calendar(Calendar::Gregorian),
             Err(DateError::DayWithoutMonth)
         );
+    }
+
+    #[test]
+    fn a_year_before_a_counted_calendar_begins_is_not_a_date_in_it() {
+        assert_eq!(
+            CalendarDate::new(Calendar::Hebrew, 0, None, None),
+            Err(DateError::BeforeCalendarBegins)
+        );
+        assert_eq!(
+            CalendarDate::new(Calendar::FrenchRepublican, 0, Some(1), Some(1)),
+            Err(DateError::BeforeCalendarBegins)
+        );
+        // The proleptic calendars have no first year: 0 is 1 BCE, and it exists.
+        assert!(CalendarDate::new(Calendar::Julian, 0, None, None).is_ok());
     }
 
     #[test]

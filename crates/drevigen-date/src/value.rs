@@ -1,11 +1,20 @@
 //! What a source says about when something happened.
 //!
-//! [`CalendarDate`] is a date. This is everything else a record actually contains: "about 1871",
-//! "before the 1897 census", "between 1869 and 1873", "from 1902 to 1914", and the entries that
-//! give a sentence instead of a date and still have to be stored as written.
+//! [`CalendarDate`] is a date. [`DateValue`] is everything else a record's date can be: "about
+//! 1871", "before the 1897 census", "between 1869 and 1873", "from 1902 to 1914".
+//! [`RecordedDate`] is what gets stored: the value that could be read, and the words the source
+//! used, either of which may be missing.
 //!
-//! The forms are GEDCOM 7's `DATE_VALUE`, which is not arbitrary — it is what a century of
+//! The forms are GEDCOM 7's `DateValue`, which is not arbitrary — it is what a century of
 //! genealogical practice settled on, and matching it means an import loses nothing.
+//!
+//! # The phrase is beside the date, not inside it
+//!
+//! GEDCOM 5.5.1 let a date payload contain free text. 7.0 moved the text into a `PHRASE`
+//! substructure next to the date, and this crate follows 7.0, because the older design had no
+//! way to say "the record reads *30 January 1648/49*, which means 30 January 1649". That needs
+//! both halves at once: the computable value and the words, kept apart so that neither
+//! overwrites the other.
 //!
 //! # A range and a period are not the same thing
 //!
@@ -21,15 +30,18 @@ use crate::{Calendar, CalendarDate};
 /// How approximate an approximate date is, and why.
 ///
 /// The three GEDCOM qualifiers are not synonyms, and the difference decides how much room to
-/// leave around the date.
+/// leave around the date. The definitions quoted are GEDCOM 7.0's own.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Approximation {
-    /// `ABT` — the source itself hedged, or the researcher is reading an imprecise record.
+    /// `ABT` — "exact date unknown, but near *x*". The source hedged, or it is imprecise by
+    /// nature: a census age, a recollection.
     About,
-    /// `CAL` — arithmetic from something else: a stated age at death, a marriage age, a
+    /// `CAL` — "*x* is calculated from other data". A stated age at death, a marriage age, a
     /// gravestone. The date is only as good as its input, and its own arithmetic is exact.
     Calculated,
-    /// `EST` — the researcher's inference from context, with no arithmetic under it.
+    /// `EST` — "exact date unknown, but near *x*; and *x* is calculated from other data". Both at
+    /// once: arithmetic whose input was itself approximate, such as a parent's birth put a
+    /// generation before the first child's.
     Estimated,
 }
 
@@ -53,8 +65,10 @@ impl Approximation {
     ///   by one or two years constantly.
     /// - **Calculated: none.** The arithmetic is exact. Any error came in with the input, and
     ///   inventing slop here would double-count it.
-    /// - **Estimated: five years.** An inference from context — "he must have been born before
-    ///   his first child" — is worth no more than that.
+    /// - **Estimated: five years.** The specification defines it as both near and calculated,
+    ///   so it carries the imprecision of an approximation compounded by an inference: a
+    ///   generation is twenty to forty years, and a parent placed "one generation before" the
+    ///   first child is not worth more than this.
     ///
     /// These widen a search; they never widen a stored date. [`DateValue::stated_span`] returns
     /// what the source wrote, with no tolerance at all.
@@ -72,7 +86,7 @@ impl Approximation {
 /// years into one in days without pretending to know which years they are.
 const LONGEST_YEAR: i32 = 385;
 
-/// A date as a record gives it.
+/// A date as a record gives it, in one of GEDCOM 7's forms.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DateValue {
     /// One date, to whatever precision the source gave: `17 APR 1871`, `APR 1871`, `1871`.
@@ -87,41 +101,43 @@ pub enum DateValue {
     },
 
     /// `BET x AND y` — it happened once, somewhere in here.
+    ///
+    /// Kept in the order written. A source that says "between 1873 and 1869" is still a source
+    /// that said it that way, and the span is computed correctly either way round.
     Between {
-        /// The earlier bound.
+        /// The first bound as written.
         earliest: CalendarDate,
-        /// The later bound.
+        /// The second bound as written.
         latest: CalendarDate,
     },
 
-    /// `BEF x` — it happened at some point before this, with no stated beginning.
+    /// `BEF x` — "exact date unknown, but no later than *x*". Under 7.0 that includes *x* itself:
+    /// `BEF 1850` reaches to 31 December 1850.
     Before(CalendarDate),
 
-    /// `AFT x` — at some point after this, with no stated end.
+    /// `AFT x` — "exact date unknown, but no earlier than *x*". `AFT 1850` begins on
+    /// 1 January 1850, which is a change from 5.5.1; see [`crate::gedcom`].
     After(CalendarDate),
 
-    /// `FROM x TO y` — it went on for this stretch. Either end may be missing, which is how a
-    /// record says "from 1902" about a residence nobody recorded the end of.
+    /// `FROM x TO y`, `FROM x`, `TO y` — it went on for this stretch. Either end may be missing,
+    /// which is how a record says "from 1902" about a residence nobody recorded the end of.
+    ///
+    /// At least one end is present in anything the parser produces; the grammar has no form for
+    /// a period with neither, because that is the empty date. A value built by hand with both
+    /// missing is treated as saying nothing, which is what it says.
     Period {
         /// When it began.
         from: Option<CalendarDate>,
         /// When it ended.
         to: Option<CalendarDate>,
     },
-
-    /// Something the grammar cannot read, stored exactly as written.
-    ///
-    /// "In the third year after the fire", "during the war", "при Александре III". A tool that
-    /// cannot hold these loses the only thing the record said, which is worse than holding
-    /// something it cannot compute with.
-    Phrase(String),
 }
 
 impl DateValue {
-    /// The calendar this value is written in, if it has one.
+    /// The calendar this value is written in.
     ///
-    /// A phrase has none. A period with two ends in different calendars reports the first,
-    /// which is the one a reader will see.
+    /// A period with two ends in different calendars reports the first, which is the one a
+    /// reader meets first. `None` only for a hand-built period with no ends.
     #[must_use]
     pub fn calendar(&self) -> Option<Calendar> {
         match self {
@@ -130,7 +146,19 @@ impl DateValue {
                 Some(date.calendar())
             }
             Self::Period { from, to } => from.or(*to).map(CalendarDate::calendar),
-            Self::Phrase(_) => None,
+        }
+    }
+
+    /// Every date the value mentions, in the order written.
+    #[must_use]
+    pub fn dates(&self) -> Vec<CalendarDate> {
+        match self {
+            Self::Exact(date)
+            | Self::Approximate { date, .. }
+            | Self::Before(date)
+            | Self::After(date) => vec![*date],
+            Self::Between { earliest, latest } => vec![*earliest, *latest],
+            Self::Period { from, to } => from.iter().chain(to.iter()).copied().collect(),
         }
     }
 
@@ -158,7 +186,11 @@ impl DateValue {
                 Span::closed(date.earliest(), date.latest())
             }
             Self::Between { earliest, latest } => {
-                Span::closed(earliest.earliest(), latest.latest())
+                // Either may be the later one; `closed` orders them, and the outer bounds of
+                // both are what "somewhere between" covers.
+                let low = earliest.earliest().min(latest.earliest());
+                let high = earliest.latest().max(latest.latest());
+                Span::closed(low, high)
             }
             Self::Before(date) => Span::until(date.latest()),
             Self::After(date) => Span::from(date.earliest()),
@@ -168,9 +200,6 @@ impl DateValue {
                 (None, Some(end)) => Span::until(end.latest()),
                 (None, None) => Span::unbounded(),
             },
-            // A phrase constrains nothing. Saying so is the honest answer; guessing a year from
-            // prose is how a tool invents evidence.
-            Self::Phrase(_) => Span::unbounded(),
         }
     }
 
@@ -190,11 +219,9 @@ impl DateValue {
     }
 
     /// Whether a day falls inside the stated span.
-    ///
-    /// `Unknown` for a phrase, which constrains nothing and therefore excludes nothing.
     #[must_use]
     pub fn contains(&self, day: Day) -> Trivalent {
-        if matches!(self, Self::Phrase(_)) {
+        if self.says_nothing() {
             return Trivalent::Unknown;
         }
         Trivalent::known(self.stated_span().contains(day))
@@ -229,9 +256,9 @@ impl DateValue {
 
     /// Restates the date in another calendar, where every part of it can be restated.
     ///
-    /// A phrase cannot. Neither can a partial date — "April 1871" has no counterpart in another
-    /// calendar, because its month boundaries fall inside two of the other's. In both cases the
-    /// value is returned unchanged rather than mangled.
+    /// A partial date cannot — "April 1871" has no counterpart in another calendar, because its
+    /// month boundaries fall inside two of the other's — and is returned unchanged rather than
+    /// mangled. So is a date before the target calendar begins.
     #[must_use]
     pub fn to_calendar(&self, target: Calendar) -> Self {
         let convert = |date: &CalendarDate| date.to_calendar(target).unwrap_or(*date);
@@ -251,7 +278,6 @@ impl DateValue {
                 from: from.as_ref().map(convert),
                 to: to.as_ref().map(convert),
             },
-            Self::Phrase(text) => Self::Phrase(text.clone()),
         }
     }
 
@@ -259,12 +285,110 @@ impl DateValue {
     fn says_nothing(&self) -> bool {
         matches!(
             self,
-            Self::Phrase(_)
-                | Self::Period {
-                    from: None,
-                    to: None
-                }
+            Self::Period {
+                from: None,
+                to: None
+            }
         )
+    }
+}
+
+/// A date as it is stored: the value that could be read, and the words the source used.
+///
+/// Either half may be missing, and the combinations mean different things:
+///
+/// | `value` | `phrase` | What the record held |
+/// |---|---|---|
+/// | some | none | A date, and nothing else to say about it |
+/// | some | some | A date *and* the words it was read from — "30 January 1648/49", stored as 1649 |
+/// | none | some | Words that are not a date: "in the third year after the fire" |
+/// | none | none | Nothing; an event whose date is unknown |
+///
+/// The third row is the one tools usually lose. A record that gives a sentence instead of a date
+/// still said something, and discarding it because it cannot be computed with discards the only
+/// evidence there was.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct RecordedDate {
+    /// What could be read as a date.
+    pub value: Option<DateValue>,
+    /// The words the source used, when they say more than the value does.
+    pub phrase: Option<String>,
+}
+
+impl RecordedDate {
+    /// A date with nothing further to say about it.
+    #[must_use]
+    pub const fn from_value(value: DateValue) -> Self {
+        Self {
+            value: Some(value),
+            phrase: None,
+        }
+    }
+
+    /// Words that are not a date, kept as written.
+    #[must_use]
+    pub fn from_phrase(phrase: impl Into<String>) -> Self {
+        Self {
+            value: None,
+            phrase: Some(phrase.into()),
+        }
+    }
+
+    /// Whether anything at all is recorded.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.value.is_none() && self.phrase.is_none()
+    }
+
+    /// The span the value states, or the span that says nothing when there is no value.
+    ///
+    /// A phrase constrains nothing. Saying so is the honest answer; guessing a year from prose is
+    /// how a tool invents evidence.
+    #[must_use]
+    pub fn stated_span(&self) -> Span {
+        self.value
+            .as_ref()
+            .map_or_else(Span::unbounded, DateValue::stated_span)
+    }
+
+    /// The span to search in; see [`DateValue::search_span`].
+    #[must_use]
+    pub fn search_span(&self) -> Span {
+        self.value
+            .as_ref()
+            .map_or_else(Span::unbounded, DateValue::search_span)
+    }
+
+    /// Whether a day falls inside the recorded date. `Unknown` when only a phrase is recorded.
+    #[must_use]
+    pub fn contains(&self, day: Day) -> Trivalent {
+        self.value
+            .as_ref()
+            .map_or(Trivalent::Unknown, |value| value.contains(day))
+    }
+
+    /// Whether this happened before another recorded date.
+    #[must_use]
+    pub fn before(&self, other: &Self) -> Trivalent {
+        match (&self.value, &other.value) {
+            (Some(this), Some(that)) => this.before(that),
+            _ => Trivalent::Unknown,
+        }
+    }
+
+    /// Whether this happened after another recorded date.
+    #[must_use]
+    pub fn after(&self, other: &Self) -> Trivalent {
+        other.before(self)
+    }
+
+    /// Whether the two could describe the same moment; see [`DateValue::could_coincide`].
+    #[must_use]
+    pub fn could_coincide(&self, other: &Self) -> Trivalent {
+        match (&self.value, &other.value) {
+            (Some(this), Some(that)) => this.could_coincide(that),
+            _ => Trivalent::Unknown,
+        }
     }
 }
 
@@ -272,7 +396,7 @@ impl DateValue {
 mod tests {
     #![allow(clippy::unwrap_used)]
 
-    use super::{Approximation, DateValue};
+    use super::{Approximation, DateValue, RecordedDate};
     use crate::interval::Trivalent;
     use crate::{Calendar, CalendarDate};
 
@@ -350,25 +474,77 @@ mod tests {
     }
 
     #[test]
+    fn before_and_after_include_the_stated_year_as_seven_point_zero_defines_them() {
+        // "BEF x: no later than x" and "AFT x: no earlier than x". The 5.5.1 reading excluded x,
+        // and the change is the reason importing an older file only ever widens a date.
+        let before = DateValue::Before(year(1850)).stated_span();
+        assert_eq!(before.latest, Some(crate::gregorian::to_day(1850, 12, 31)));
+        let after = DateValue::After(year(1850)).stated_span();
+        assert_eq!(after.earliest, Some(crate::gregorian::to_day(1850, 1, 1)));
+    }
+
+    #[test]
+    fn a_range_written_backwards_still_covers_the_years_between() {
+        let backwards = DateValue::Between {
+            earliest: year(1873),
+            latest: year(1869),
+        };
+        let forwards = DateValue::Between {
+            earliest: year(1869),
+            latest: year(1873),
+        };
+        assert_eq!(backwards.stated_span(), forwards.stated_span());
+        assert_ne!(
+            backwards, forwards,
+            "but it is stored as the source wrote it"
+        );
+    }
+
+    #[test]
     fn a_phrase_constrains_nothing_and_says_so() {
-        let phrase = DateValue::Phrase("в третий год после пожара".to_owned());
+        let phrase = RecordedDate::from_phrase("в третий год после пожара");
         assert_eq!(phrase.stated_span(), crate::Span::unbounded());
         assert_eq!(
             phrase.contains(crate::gregorian::to_day(1871, 1, 1)),
             Trivalent::Unknown
         );
-        assert_eq!(phrase.calendar(), None);
+        assert!(
+            !phrase.is_empty(),
+            "words are a record, even when they are not a date"
+        );
 
         // And it does not silently order itself against anything.
-        let known = DateValue::Exact(year(1871));
+        let known = RecordedDate::from_value(DateValue::Exact(year(1871)));
         assert_eq!(phrase.before(&known), Trivalent::Unknown);
         assert_eq!(known.before(&phrase), Trivalent::Unknown);
     }
 
     #[test]
+    fn a_phrase_beside_a_value_does_not_change_what_it_computes() {
+        // "30 January 1648/49" is stored as 1649 with the words kept. The words are for the
+        // reader; the arithmetic uses the value alone.
+        let dual = RecordedDate {
+            value: Some(DateValue::Exact(date(1649, Some(1), Some(30)))),
+            phrase: Some("30 January 1648/49".to_owned()),
+        };
+        let plain = RecordedDate::from_value(DateValue::Exact(date(1649, Some(1), Some(30))));
+        assert_eq!(dual.stated_span(), plain.stated_span());
+        assert_eq!(dual.could_coincide(&plain), Trivalent::Yes);
+    }
+
+    #[test]
+    fn nothing_recorded_is_distinguishable_from_a_phrase() {
+        assert!(RecordedDate::default().is_empty());
+        assert_eq!(
+            RecordedDate::default().stated_span(),
+            crate::Span::unbounded()
+        );
+    }
+
+    #[test]
     fn a_period_is_not_a_range() {
         // The distinction GEDCOM draws and the reason this enum has both: one event that lasted
-        // fourteen years, and one event that happened once somewhere inside four.
+        // twelve years, and one event that happened once somewhere inside four.
         let residence = DateValue::Period {
             from: Some(year(1902)),
             to: Some(year(1914)),
@@ -452,12 +628,9 @@ mod tests {
             "the October Revolution, restated"
         );
 
-        // A partial date has no counterpart, and a phrase has nothing to convert.
+        // A partial date has no counterpart in another calendar.
         let partial =
             DateValue::Exact(CalendarDate::new(Calendar::Julian, 1871, Some(4), None).unwrap());
         assert_eq!(partial.to_calendar(Calendar::Gregorian), partial);
-
-        let phrase = DateValue::Phrase("during the war".to_owned());
-        assert_eq!(phrase.to_calendar(Calendar::Gregorian), phrase);
     }
 }
