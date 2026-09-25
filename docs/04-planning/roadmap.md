@@ -118,7 +118,8 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 - [x] Dual-dating (`1747/8`), phrases, all approximation qualifiers — 7.0 removed the slash
       notation, so dual years are read by a lenient 5.5.1 reader that keeps the words and
       states which of the three historical meanings it chose
-- [ ] Locale-aware formatting for ru / en / de
+- [x] Locale-aware formatting for ru / en / de — in Rust rather than the message catalogues,
+      because the old-and-new-style pairing Russian readers expect needs the calendar arithmetic
 
 **1.3 · GEDCOM** (`drevigen-gedcom`, 2 weeks)
 - [ ] 7.0.18 parser, serializer, validator
