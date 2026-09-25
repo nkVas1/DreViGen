@@ -1109,6 +1109,14 @@ name = "drevigen-color"
 version = "0.0.0"
 
 [[package]]
+name = "drevigen-core"
+version = "0.0.0"
+dependencies = [
+ "drevigen-date",
+ "drevigen-testkit",
+]
+
+[[package]]
 name = "drevigen-date"
 version = "0.0.0"
 dependencies = [

@@ -1,0 +1,21 @@
+[package]
+name = "drevigen-core"
+description = "The domain model: people, families, events and places, as claims that sources make about them."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+# Nothing outside the workspace. This compiles into the WASM bundle (ADR 0007), and a domain model
+# has no business depending on anything a genealogist would not recognise.
+[dependencies]
+drevigen-date = { version = "0.0.0", path = "../drevigen-date" }
+
+[dev-dependencies]
+drevigen-testkit = { version = "0.0.0", path = "../drevigen-testkit" }
+
+[lints]
+workspace = true
