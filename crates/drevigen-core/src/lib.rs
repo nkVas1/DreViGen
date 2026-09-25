@@ -14,12 +14,14 @@
 //! [ADR 0005]: https://github.com/nkVas1/DreViGen/blob/main/docs/02-architecture/adr/0005-assertion-conclusion-split.md
 //! [ADR 0010]: https://github.com/nkVas1/DreViGen/blob/main/docs/02-architecture/adr/0010-claims-per-fact-agreement-is-compatibility.md
 
+pub mod archive;
 pub mod claim;
 pub mod id;
 pub mod model;
 pub mod name;
 pub mod value;
 
+pub use archive::{Archive, Entity, Refusal};
 pub use claim::{
     Assertion, ClaimError, Claimable, Claims, Conclusion, Confidence, Provenance, Resolution,
     Timestamp,
