@@ -16,6 +16,7 @@
 
 pub mod claim;
 pub mod id;
+pub mod model;
 pub mod name;
 pub mod value;
 
@@ -26,6 +27,11 @@ pub use claim::{
 pub use id::{
     AssertionId, CitationId, ConclusionId, ContributorId, EventId, FactId, FamilyId, Id, Kind,
     MediaId, NoteId, ParseIdError, PersonId, PlaceId, RepositoryId, SourceId,
+};
+pub use model::{
+    Attribute, AttributeKind, CallNumber, ChildRelation, Citation, Coordinates, Event, EventKind,
+    Fact, Family, Locator, Media, Membership, Note, Participation, Partnership, Person, Place,
+    PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
 };
 pub use name::{NameKind, NameOrder, PersonName, fold};
 pub use value::Sex;
