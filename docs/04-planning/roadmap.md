@@ -104,11 +104,16 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 
 **1.1 · Domain model** (`drevigen-core`, 2 weeks)
 - [ ] Person, Family, Event with roles, Place hierarchy, Source, Citation, Repository, Note,
-      Media, Tag, Attribute, Association
-- [ ] Assertion and Conclusion layers (ADR 0005), with the resolved-value projection
-- [ ] Domain invariants with informative errors: no cycles, no child before parent, no
-      contradictory role assignment
-- [ ] Property-based tests over generated family graphs
+      Media, Tag, Attribute, Association — all but Tag and Association, which arrive with the
+      Workshop features that use them
+- [x] Assertion and Conclusion layers (ADR 0005), with the resolved-value projection — and ADR
+      0010 settling what the projection means: agreement is compatibility, not equality
+- [x] Domain invariants with informative errors: no cycles, no child before parent, no
+      contradictory role assignment — refused at the moment of a hand edit, reported by the audit
+      for an import, never both
+- [x] Property-based tests over generated family graphs — three seeded 3 000-person lineages
+      through the checked edits, audited clean. The audit's first run found two defects in the
+      generator itself
 
 **1.2 · Dates and calendars** (`drevigen-date`, 1.5 weeks)
 - [x] GEDCOM 7 date grammar, complete — checked against the specification source at

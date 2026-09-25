@@ -19,7 +19,11 @@ pub mod claim;
 pub mod id;
 pub mod model;
 pub mod name;
+pub mod rules;
 pub mod value;
+
+#[cfg(test)]
+mod fixtures;
 
 pub use archive::{Archive, Entity, Refusal};
 pub use claim::{
@@ -36,4 +40,5 @@ pub use model::{
     PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
 };
 pub use name::{NameKind, NameOrder, PersonName, fold};
+pub use rules::{Finding, Rule, Severity, audit};
 pub use value::Sex;
