@@ -128,7 +128,9 @@ tree in it, import their existing GEDCOM, and show it to relatives.
 
 **1.3 · GEDCOM** (`drevigen-gedcom`, 2 weeks)
 - [ ] 7.0.18 parser, serializer, validator
-- [ ] Tolerant 5.5 / 5.5.1 import
+- [ ] Tolerant 5.5 / 5.5.1 import — character encodings done: UTF-8, UTF-16, ANSEL,
+      windows-1250/1251/1252, IBM437/850/866 and Mac OS Roman, with the header's `CHAR`
+      weighed against the bytes rather than trusted, since files that misdeclare are common
 - [ ] Verbatim preservation of unrepresentable structures, with a loss report shown on import
 - [ ] Golden-file round-trip tests against exports from Gramps, MyHeritage, MacFamilyTree,
       Ancestris and webtrees

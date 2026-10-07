@@ -12,11 +12,15 @@
 //!
 //! This crate is built in layers, lowest first:
 //!
+//! - [`mod@encoding`] — bytes into text: which encoding a file is in, declared or not, and what
+//!   could not be decoded.
 //! - [`mod@line`] — one line: level, cross-reference, tag, value.
 //! - [`mod@document`] — lines into a forest of structures and back, `CONT` included.
 
 pub mod document;
+pub mod encoding;
 pub mod line;
 
 pub use document::{Document, DocumentError, DocumentErrorKind, Payload, Structure};
+pub use encoding::{Decoded, Encoding};
 pub use line::{Line, LineError, Value};
