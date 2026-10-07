@@ -1,11 +1,13 @@
 name: Rust
 
+# Every file a step runs belongs in the paths, not only the Rust sources: when the GEDCOM test-file
+# fetcher was missing here, a fix to it never ran until the workflow was started by hand.
 on:
   push:
     branches: [main]
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', 'tools/fetch-gedcom-testfiles.sh', '.github/workflows/rust.yml']
   pull_request:
-    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', '.github/workflows/rust.yml']
+    paths: ['**.rs', '**/Cargo.toml', 'Cargo.lock', 'clippy.toml', 'rust-toolchain.toml', 'deny.toml', 'packages/tokens/**', 'assets/identity/**', 'assets/source/**', 'apps/shell/**', 'apps/web/public/**', 'packages/ui/**', 'tools/fetch-gedcom-testfiles.sh', '.github/workflows/rust.yml']
   workflow_dispatch:
 
 permissions:
