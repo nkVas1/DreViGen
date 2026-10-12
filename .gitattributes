@@ -9,3 +9,6 @@
 *.woff2 binary
 *.onnx binary
 *.ged  text eol=lf
+
+# Test corpora are kept byte for byte: some are UTF-16, and their line endings are what is tested.
+crates/drevigen-gedcom/tests/corpus/** -text
