@@ -17,26 +17,27 @@ name = "drevigen_shell_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.6.3", features = [] }
+tauri-build = { version = "2.7.1", features = [] }
 
 [dependencies]
 drevigen-tokens = { version = "0.0.0", path = "../../../crates/drevigen-tokens" }
 log = "0.4.30"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
-tauri = { version = "2.11.6", features = [] }
-tauri-plugin-log = "2.9.2"
+tauri = { version = "2.12.1", features = [] }
+tauri-plugin-log = "2.10.0"
 
 [target.'cfg(windows)'.dependencies]
-# Only for DwmSetWindowAttribute: Windows 11 lets an application colour its own title bar, and
-# 0.60 is already in Tauri's tree, so this adds no second copy.
-windows-sys = { version = "0.60.2", features = ["Win32_Foundation", "Win32_Graphics_Dwm"] }
+# Only for DwmSetWindowAttribute: Windows 11 lets an application colour its own title bar. The
+# version follows Tauri's tree — 0.61 since Tauri 2.12 — so this adds no second copy; move it
+# when Tauri does.
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Graphics_Dwm"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 # Desktop only: both plugins are meaningless on a phone, where the OS owns window placement
 # and already guarantees one instance.
-tauri-plugin-single-instance = "2.4.5"
-tauri-plugin-window-state = "2.4.1"
+tauri-plugin-single-instance = "2.5.2"
+tauri-plugin-window-state = "2.5.0"
 
 [lints.rust]
 # The workspace forbids unsafe code. This crate cannot: `tauri::mobile_entry_point` expands to
