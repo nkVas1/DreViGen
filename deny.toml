@@ -56,23 +56,17 @@ yanked = "deny"
 # here:
 #
 #   - `im` and its two children are a mandatory runtime dependency of loro-internal (ADR 0006).
-#   - The `unic-*` family arrives through urlpattern, which tauri-utils uses to match the
-#     capability scopes; `proc-macro-error` arrives through gtk, which only Linux builds reach.
-#     Both are Tauri's to replace, and both are build-time or parsing code rather than anything
-#     that touches archive data.
+#   - `proc-macro-error` arrives through gtk, which only Linux builds reach. It is Tauri's to
+#     replace, and it is build-time code rather than anything that touches archive data.
 #
-# Revisit whenever Loro or Tauri is upgraded.
+# Revisit whenever Loro or Tauri is upgraded: Tauri 2.12 moved to urlpattern 0.6, which dropped
+# the five `unic-*` crates this list used to carry.
 ignore = [
     { id = "RUSTSEC-2026-0248", reason = "im 15.1.0 — archived; mandatory runtime dep of loro-internal. Upstream's to replace. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2026-0251", reason = "sized-chunks 0.6.5 — archived; pulled in by im. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2026-0247", reason = "bitmaps 2.1.0 — archived; pulled in by im. Reviewed 2026-09-21." },
     { id = "RUSTSEC-2023-0089", reason = "atomic-polyfill 1.0.3 — archived; target-gated, absent from our host builds. Re-check when the WASM target lands. Reviewed 2026-09-21." },
-    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error 1.0.4 — unmaintained; build-time only, via glib-macros -> gtk -> muda/tao, so Linux builds only. Tauri's to replace. Reviewed 2026-09-22." },
-    { id = "RUSTSEC-2025-0075", reason = "unic-char-range 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
-    { id = "RUSTSEC-2025-0080", reason = "unic-common 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
-    { id = "RUSTSEC-2025-0081", reason = "unic-char-property 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
-    { id = "RUSTSEC-2025-0098", reason = "unic-ucd-version 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
-    { id = "RUSTSEC-2025-0100", reason = "unic-ucd-ident 0.9.0 — unmaintained; via urlpattern -> tauri-utils. Reviewed 2026-09-22." },
+    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error 1.0.4 — unmaintained; build-time only, via glib-macros -> gtk -> muda/tao, so Linux builds only. Tauri's to replace. Reviewed 2026-09-22; still present with Tauri 2.12, 2026-10-13." },
 ]
 
 [sources]
