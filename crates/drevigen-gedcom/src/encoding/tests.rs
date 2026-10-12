@@ -345,6 +345,12 @@ fn ascii_settles_nothing_and_overrules_nothing() {
     let decoded = decode(gedcom(Some("ANSI"), "0 @I1@ INDI\n").as_bytes());
     assert_eq!(decoded.encoding, Encoding::Ascii);
     assert!(!decoded.overrules_declaration());
+
+    // No declaration, as in every GEDCOM 7 file: UTF-8, so that a 7.0 file is never reported as
+    // being in anything else.
+    let decoded = decode(b"0 HEAD\n1 GEDC\n2 VERS 7.0\n0 TRLR\n");
+    assert_eq!(decoded.encoding, Encoding::Utf8);
+    assert_eq!(decoded.basis, Basis::Shape);
 }
 
 #[test]

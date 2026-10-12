@@ -14,7 +14,9 @@
 //! 1. **A byte-order mark** names UTF-8 or UTF-16 outright.
 //! 2. **UTF-16 without one** shows itself: a GEDCOM file begins `0 HEAD`, and in UTF-16 each of
 //!    those characters has a zero byte beside it.
-//! 3. **Bytes that are all ASCII** leave nothing to decide.
+//! 3. **Bytes that are all ASCII** leave nothing to decide. They are read as what the header
+//!    declares, or, when it declares nothing — no GEDCOM 7 file does — as UTF-8, 7.0's encoding,
+//!    of which ASCII is a part.
 //! 4. **Well-formed UTF-8** with anything beyond ASCII is UTF-8. Text in a single-byte encoding
 //!    practically never forms valid UTF-8 sequences: in windows-1251 a capital letter is followed
 //!    by a small one, never by the continuation byte UTF-8 would need.
@@ -237,7 +239,8 @@ pub fn decode(bytes: &[u8]) -> Decoded {
     if bytes.is_ascii() {
         let encoding = match claim {
             Claim::One(encoding) if encoding.keeps_ascii() => encoding,
-            _ => Encoding::Ascii,
+            Claim::Family(family) if !family.contains(&Encoding::Utf8) => Encoding::Ascii,
+            _ => Encoding::Utf8,
         };
         return read(bytes, encoding, Basis::Shape);
     }
