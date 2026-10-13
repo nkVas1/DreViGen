@@ -568,6 +568,7 @@ fn foreign_data_is_kept_under_its_subject() {
     let item = Foreign {
         id,
         subject: Entity::Person(t.ivan),
+        path: "INDI._MILT".to_owned(),
         format: "GEDCOM 5.5.1".to_owned(),
         text: "0 _MILT Served in the Imperial Army\n1 DATE 1904\n".to_owned(),
     };

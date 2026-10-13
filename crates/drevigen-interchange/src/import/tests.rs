@@ -243,6 +243,19 @@ fn what_the_archive_cannot_hold_is_kept_where_it_was() {
     assert!(records.iter().any(|line| line == "0 HEAD"));
     assert!(records.iter().any(|line| line.ends_with(" SUBM")));
     assert_eq!(file.report.kept.get("INDI._MILT"), Some(&1));
+
+    // Each item says where it was: a record of its own, or beneath one.
+    assert!(
+        archive
+            .foreign_on(Entity::Source(file.source))
+            .all(drevigen_core::Foreign::is_record)
+    );
+    let military = kept
+        .iter()
+        .find(|item| item.text.starts_with("0 _MILT"))
+        .unwrap();
+    assert_eq!(military.path, "INDI._MILT");
+    assert!(!military.is_record());
 }
 
 #[test]

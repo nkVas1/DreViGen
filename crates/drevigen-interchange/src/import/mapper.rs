@@ -432,7 +432,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 "SOUR" if named => {}
                 "FAMC" => self.link(id, child, true),
                 "FAMS" => self.link(id, child, false),
-                "NOTE" | "SNOTE" => self.annotation(subject, child),
+                "NOTE" | "SNOTE" => self.annotation(subject, child, "INDI"),
                 _ => match (person_event(tag), attribute_kind(tag)) {
                     (Some(kind), _) if plain_event(child) => events.push((child, kind)),
                     (_, Some(kind))
@@ -517,7 +517,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                     self.child(&mut family, person, record, Some(child), side);
                 }
                 ("HUSB" | "WIFE" | "CHIL", None) => self.unresolved(subject, child, "FAM"),
-                ("NOTE" | "SNOTE", _) => self.annotation(subject, child),
+                ("NOTE" | "SNOTE", _) => self.annotation(subject, child, "FAM"),
                 _ => self.keep(subject, child, "FAM"),
             }
         }
@@ -1156,11 +1156,11 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     /// A `NOTE` or `SNOTE` under a subject: the shared note it points at, or an inline one, which
     /// becomes a note of its own.
-    fn annotation(&mut self, subject: Entity, note: &'d Structure) {
+    fn annotation(&mut self, subject: Entity, note: &'d Structure, parent: &str) {
         let line = note.line;
         if note.payload.pointer().is_some() {
             let Some(Target::Note(id)) = self.pointer(note) else {
-                return self.unresolved(subject, note, "");
+                return self.unresolved(subject, note, parent);
             };
             self.deferred.push(Deferred::Annotate {
                 subject,
@@ -1169,13 +1169,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             });
             if !note.children.is_empty() {
                 let beyond = note.children.iter().collect();
-                self.keep_partly(subject, note, beyond, "");
+                self.keep_partly(subject, note, beyond, parent);
             }
             return;
         }
         let Some(text) = note.payload.text() else {
             if !note.children.is_empty() {
-                self.keep(subject, note, "");
+                self.keep(subject, note, parent);
             }
             return;
         };
@@ -1212,7 +1212,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
     fn rest(&mut self, subject: Entity, rest: Vec<&'d Structure>, parent: &str) {
         for structure in rest {
             match structure.tag.as_str() {
-                "NOTE" | "SNOTE" => self.annotation(subject, structure),
+                "NOTE" | "SNOTE" => self.annotation(subject, structure, parent),
                 _ => self.keep(subject, structure, parent),
             }
         }
@@ -1259,11 +1259,12 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         } else {
             format!("{parent}.{}", structure.tag)
         };
-        *self.report.kept.entry(path).or_default() += 1;
+        *self.report.kept.entry(path.clone()).or_default() += 1;
         self.deferred.push(Deferred::Keep {
             item: Foreign {
                 id,
                 subject,
+                path,
                 format: self.format.clone(),
                 text: kept.write(),
             },

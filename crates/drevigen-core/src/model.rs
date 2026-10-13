@@ -750,11 +750,24 @@ pub struct Foreign {
     pub id: ForeignId,
     /// What it was found under: the nearest entity or fact the model does represent.
     pub subject: Entity,
+    /// Where in the file it was, by tags from its record down: `INDI.FAMC._STATUS` for a
+    /// structure, the bare tag — `SUBM` — for a record of its own. The subject says which
+    /// person's `FAMC`; this says that it was the `FAMC` and not the family's `CHIL`, which an
+    /// export needs to put it back.
+    pub path: String,
     /// The format it is written in, with its version: `GEDCOM 5.5.1`.
     pub format: String,
     /// The text as that format writes it. For GEDCOM, the structure and everything beneath it as
     /// 7.0 lines, its own level written as 0.
     pub text: String,
+}
+
+impl Foreign {
+    /// Whether it was a record of its own in the file rather than a structure beneath one.
+    #[must_use]
+    pub fn is_record(&self) -> bool {
+        !self.path.contains('.')
+    }
 }
 
 /// Where a citation is written for a person to read: *ГАЯО ф. 230 оп. 1 д. 1437 л. 17 об.*
