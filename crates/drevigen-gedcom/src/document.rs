@@ -111,6 +111,44 @@ impl Structure {
         write_structure(&mut out, self, 0);
         out
     }
+
+    /// Reads back what [`Structure::write`] wrote: one structure as GEDCOM 7 lines, itself at
+    /// level 0. A fragment, not a document — no header or trailer, and pointers that lead outside
+    /// it are not followed.
+    ///
+    /// # Errors
+    ///
+    /// A [`DocumentError`] for the first line that breaks the line grammar or the container's
+    /// rules, or [`DocumentErrorKind::NotOneStructure`] when the text holds none, or several.
+    pub fn read(text: &str) -> Result<Self, DocumentError> {
+        let mut builder = Builder::default();
+        let mut pieces: Vec<&str> = lines(text).collect();
+        if text.ends_with(['\n', '\r']) && pieces.last() == Some(&"") {
+            pieces.pop();
+        }
+        for (index, raw) in pieces.into_iter().enumerate() {
+            let number = index + 1;
+            if let Some(banned) = raw.chars().find(|c| is_banned(*c)) {
+                return Err(DocumentError {
+                    kind: DocumentErrorKind::BannedCharacter(banned),
+                    line: number,
+                });
+            }
+            let line = Line::parse(raw).map_err(|error| DocumentError {
+                kind: DocumentErrorKind::Line(error),
+                line: number,
+            })?;
+            builder.push(&line, number)?;
+        }
+        let mut structures = builder.finish();
+        if structures.len() != 1 {
+            return Err(DocumentError {
+                kind: DocumentErrorKind::NotOneStructure,
+                line: 1,
+            });
+        }
+        Ok(structures.remove(0))
+    }
 }
 
 /// A whole data stream: the header first, then the records. The trailer is implied — it carries
@@ -153,6 +191,8 @@ pub enum DocumentErrorKind {
     NoHeader,
     /// The stream does not end with `TRLR`, or has something after it.
     NoTrailer,
+    /// A fragment that should hold exactly one structure holds none, or several.
+    NotOneStructure,
 }
 
 impl core::fmt::Display for DocumentError {
@@ -177,6 +217,9 @@ impl core::fmt::Display for DocumentError {
             DocumentErrorKind::DanglingPointer(xref) => write!(f, "nothing is @{xref}@"),
             DocumentErrorKind::NoHeader => f.write_str("the document does not begin with HEAD"),
             DocumentErrorKind::NoTrailer => f.write_str("the document does not end with TRLR"),
+            DocumentErrorKind::NotOneStructure => {
+                f.write_str("a fragment holds no structure, or more than one")
+            }
         }
     }
 }
@@ -624,6 +667,22 @@ mod tests {
         let twice = parse(&once.write());
         // Line numbers are where a structure was read from, and are allowed to differ.
         assert_eq!(strip_lines(once), strip_lines(twice));
+    }
+
+    #[test]
+    fn a_structure_reads_back_what_it_wrote() {
+        let kept = Structure::new("_MILT")
+            .with_text("Served\n@ the front")
+            .with_child(Structure::new("SOUR").with_child(Structure::new("PAGE").with_text("5")));
+        let read = Structure::read(&kept.write()).unwrap();
+        let read = strip_lines(Document {
+            records: vec![read],
+        });
+        assert_eq!(read.records, [kept]);
+        assert_eq!(
+            Structure::read("0 A\n0 B\n").unwrap_err().kind,
+            DocumentErrorKind::NotOneStructure
+        );
     }
 
     #[test]
