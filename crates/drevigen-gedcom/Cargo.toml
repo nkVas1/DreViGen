@@ -12,8 +12,10 @@ publish = false
 # No external dependencies, including for character encodings. The legacy encodings a family's
 # old files arrive in — windows-1251, windows-1252, ANSEL — are small tables, and this crate is
 # compiled into the web build, where a general encoding library would cost more than every table
-# we need together.
+# we need together. The date crate is the workspace's own, for the date grammar the validator
+# checks payloads against.
 [dependencies]
+drevigen-date = { version = "0.0.0", path = "../drevigen-date" }
 
 [lints]
 workspace = true

@@ -90,3 +90,22 @@ fn the_import_path_reads_every_official_file_as_the_strict_reader_does() {
         );
     }
 }
+
+#[test]
+#[ignore = "needs the official files; run tools/fetch-gedcom-testfiles.sh"]
+fn every_official_file_is_valid() {
+    for path in files() {
+        let document = Document::parse(&fs::read_to_string(&path).unwrap()).unwrap();
+        let violations = drevigen_gedcom::validate(&document);
+        assert!(
+            violations.is_empty(),
+            "{}:\n{}",
+            path.display(),
+            violations
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+    }
+}

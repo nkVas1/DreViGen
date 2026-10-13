@@ -127,7 +127,11 @@ tree in it, import their existing GEDCOM, and show it to relatives.
       because the old-and-new-style pairing Russian readers expect needs the calendar arithmetic
 
 **1.3 · GEDCOM** (`drevigen-gedcom`, 2 weeks)
-- [ ] 7.0.18 parser, serializer, validator
+- [x] 7.0.18 parser, serializer, validator — the validator checks the specification's own rules,
+      generated from the files FamilySearch extracts from it: placements, cardinalities, payload
+      grammars, pointer targets, enumerations. Every official test file is valid, and so is an
+      export of every 7.0 file. An export of a 5.5.1 file is not yet: what it kept, it keeps in
+      5.5.1's forms
 - [ ] Tolerant 5.5 / 5.5.1 import — character encodings done: UTF-8, UTF-16, ANSEL,
       windows-1250/1251/1252, IBM437/850/866 and Mac OS Roman, with the header's `CHAR`
       weighed against the bytes rather than trusted, since files that misdeclare are common.

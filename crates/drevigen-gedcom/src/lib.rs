@@ -18,13 +18,17 @@
 //! - [`mod@document`] — lines into a forest of structures and back, `CONT` included.
 //! - [`mod@lenient`] — the same forest from the files people have: 5.5.1 and older, read as 7.0
 //!   means them, with every repair reported.
+//! - [`mod@schema`] — what 7.0 asks beyond the container: which structures go where, how many,
+//!   with what payload.
 
 pub mod document;
 pub mod encoding;
 pub mod lenient;
 pub mod line;
+pub mod schema;
 
 pub use document::{Document, DocumentError, DocumentErrorKind, Payload, Structure};
 pub use encoding::{Decoded, Encoding};
 pub use lenient::Reading;
 pub use line::{Line, LineError, Value};
+pub use schema::{Violation, ViolationKind, validate};
