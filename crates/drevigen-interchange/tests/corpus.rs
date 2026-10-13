@@ -49,8 +49,20 @@ fn round_trip(path: &Path, file: &Import) {
     let text = drevigen_interchange::export(&file.archive, &options)
         .document
         .write();
-    drevigen_gedcom::Document::parse(&text)
+    let exported = drevigen_gedcom::Document::parse(&text)
         .unwrap_or_else(|error| panic!("{} exported: {error}\n{text}", path.display()));
+    // What was valid GEDCOM 7 going in is valid coming out.
+    let source = String::from_utf8_lossy(&std::fs::read(path).unwrap()).into_owned();
+    let valid = drevigen_gedcom::Document::parse(&source)
+        .is_ok_and(|document| drevigen_gedcom::validate(&document).is_empty());
+    if valid {
+        let violations = drevigen_gedcom::validate(&exported);
+        assert!(
+            violations.is_empty(),
+            "{} exported: {violations:#?}",
+            path.display()
+        );
+    }
     let mut counter = 0;
     let again = import(text.as_bytes(), &file_options(path), move || {
         counter += 1;
