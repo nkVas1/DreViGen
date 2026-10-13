@@ -7,9 +7,9 @@
 //! not only when they are identical.
 //!
 //! What lives here is the model and its rules. What does not: storage, which is
-//! `drevigen-store`; interchange, which is `drevigen-gedcom`; and anything that needs a clock or a
-//! random number generator, which the caller supplies so that this crate stays deterministic and
-//! its tests reproducible.
+//! `drevigen-store`; interchange, which is `drevigen-interchange`; and anything that needs a
+//! clock or a random number generator, which the caller supplies so that this crate stays
+//! deterministic and its tests reproducible.
 //!
 //! [ADR 0005]: https://github.com/nkVas1/DreViGen/blob/main/docs/02-architecture/adr/0005-assertion-conclusion-split.md
 //! [ADR 0010]: https://github.com/nkVas1/DreViGen/blob/main/docs/02-architecture/adr/0010-claims-per-fact-agreement-is-compatibility.md
@@ -31,13 +31,13 @@ pub use claim::{
     Timestamp,
 };
 pub use id::{
-    AssertionId, CitationId, ConclusionId, ContributorId, EventId, FactId, FamilyId, Id, Kind,
-    MediaId, NoteId, ParseIdError, PersonId, PlaceId, RepositoryId, SourceId,
+    AssertionId, CitationId, ConclusionId, ContributorId, EventId, FactId, FamilyId, ForeignId, Id,
+    Kind, MediaId, NoteId, ParseIdError, PersonId, PlaceId, RepositoryId, SourceId,
 };
 pub use model::{
     Attribute, AttributeKind, CallNumber, ChildRelation, Citation, Coordinates, Event, EventKind,
-    Fact, Family, Locator, Media, Membership, Note, Participation, Partnership, Person, Place,
-    PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
+    Fact, Family, Foreign, Locator, Media, Membership, Note, Participation, Partnership, Person,
+    Place, PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
 };
 pub use name::{NameKind, NameOrder, PersonName, fold};
 pub use rules::{Finding, Rule, Severity, audit};

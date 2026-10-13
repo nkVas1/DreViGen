@@ -236,6 +236,36 @@ kinds! {
     ConclusionKind, ConclusionId, "conclusion";
     /// Someone who records things: a relative, a researcher, an importer acting for one.
     ContributorKind, ContributorId, "contributor";
+    /// Something an import found that the model cannot represent, kept as the file wrote it.
+    ForeignKind, ForeignId, "foreign";
+}
+
+/// Anything in the archive, by identity: what an edit was refused about, what a note annotates,
+/// what a foreign item was found under.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Entity {
+    /// A person.
+    Person(PersonId),
+    /// A family.
+    Family(FamilyId),
+    /// An event.
+    Event(EventId),
+    /// A place.
+    Place(PlaceId),
+    /// A source.
+    Source(SourceId),
+    /// A citation.
+    Citation(CitationId),
+    /// A repository.
+    Repository(RepositoryId),
+    /// A note.
+    Note(NoteId),
+    /// A media item.
+    Media(MediaId),
+    /// A fact.
+    Fact(FactId),
+    /// A foreign item.
+    Foreign(ForeignId),
 }
 
 #[cfg(test)]

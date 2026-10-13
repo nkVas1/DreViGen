@@ -16,8 +16,8 @@ use drevigen_date::{DateValue, RecordedDate};
 
 use crate::claim::{Claimable, Claims, Provenance, Resolution};
 use crate::id::{
-    CitationId, EventId, FactId, FamilyId, MediaId, NoteId, PersonId, PlaceId, RepositoryId,
-    SourceId,
+    CitationId, Entity, EventId, FactId, FamilyId, ForeignId, MediaId, NoteId, PersonId, PlaceId,
+    RepositoryId, SourceId,
 };
 use crate::name::{PersonName, fold};
 use crate::value::Sex;
@@ -740,6 +740,21 @@ pub struct Media {
     /// Whether the item was generated rather than recorded. Synthetic portraits exist for the
     /// demonstration tree, and this flag is what keeps them out of a real archive's exports.
     pub synthetic: bool,
+}
+
+/// Something an import found that the model cannot represent, kept as the file wrote it so that
+/// an export can write it back (ADR 0011). Never interpreted, never merged, never shown as a fact.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Foreign {
+    /// This item.
+    pub id: ForeignId,
+    /// What it was found under: the nearest entity or fact the model does represent.
+    pub subject: Entity,
+    /// The format it is written in, with its version: `GEDCOM 5.5.1`.
+    pub format: String,
+    /// The text as that format writes it. For GEDCOM, the structure and everything beneath it as
+    /// 7.0 lines, its own level written as 0.
+    pub text: String,
 }
 
 /// Where a citation is written for a person to read: *ГАЯО ф. 230 оп. 1 д. 1437 л. 17 об.*

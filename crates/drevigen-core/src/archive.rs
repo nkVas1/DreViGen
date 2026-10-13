@@ -25,42 +25,18 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use crate::claim::{Assertion, ClaimError, Claims, Conclusion, Provenance};
+pub use crate::id::Entity;
 use crate::id::{
-    CitationId, EventId, FactId, FamilyId, MediaId, NoteId, PersonId, PlaceId, RepositoryId,
-    SourceId,
+    CitationId, EventId, FactId, FamilyId, ForeignId, MediaId, NoteId, PersonId, PlaceId,
+    RepositoryId, SourceId,
 };
 use crate::model::{
-    Attribute, ChildRelation, Citation, Event, Fact, Family, Media, Membership, Note,
+    Attribute, ChildRelation, Citation, Event, Fact, Family, Foreign, Media, Membership, Note,
     Participation, Partnership, Person, Place, Repository, Role, Source,
 };
 use crate::name::PersonName;
 use crate::value::Sex;
 use drevigen_date::RecordedDate;
-
-/// Anything in the archive, by identity. Used to say what an edit was refused about.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Entity {
-    /// A person.
-    Person(PersonId),
-    /// A family.
-    Family(FamilyId),
-    /// An event.
-    Event(EventId),
-    /// A place.
-    Place(PlaceId),
-    /// A source.
-    Source(SourceId),
-    /// A citation.
-    Citation(CitationId),
-    /// A repository.
-    Repository(RepositoryId),
-    /// A note.
-    Note(NoteId),
-    /// A media item.
-    Media(MediaId),
-    /// A fact.
-    Fact(FactId),
-}
 
 /// Why an edit was refused.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -154,8 +130,12 @@ pub struct Archive {
     repositories: BTreeMap<RepositoryId, Repository>,
     notes: BTreeMap<NoteId, Note>,
     media: BTreeMap<MediaId, Media>,
+    foreign: BTreeMap<ForeignId, Foreign>,
 
     facts: BTreeMap<FactId, Location>,
+    notes_on: BTreeMap<Entity, Vec<NoteId>>,
+    media_on: BTreeMap<Entity, Vec<MediaId>>,
+    foreign_on: BTreeMap<Entity, Vec<ForeignId>>,
     as_child: BTreeMap<PersonId, BTreeSet<FamilyId>>,
     as_partner: BTreeMap<PersonId, BTreeSet<FamilyId>>,
     in_events: BTreeMap<PersonId, BTreeSet<EventId>>,
@@ -216,6 +196,64 @@ impl Archive {
     #[must_use]
     pub fn media(&self, id: MediaId) -> Option<&Media> {
         self.media.get(&id)
+    }
+
+    /// A note, by identity.
+    #[must_use]
+    pub fn note(&self, id: NoteId) -> Option<&Note> {
+        self.notes.get(&id)
+    }
+
+    /// A foreign item, by identity.
+    #[must_use]
+    pub fn foreign_item(&self, id: ForeignId) -> Option<&Foreign> {
+        self.foreign.get(&id)
+    }
+
+    /// Whether the archive holds this entity or fact. A removed person or event is still held:
+    /// removal is a tombstone, not a deletion.
+    #[must_use]
+    pub fn holds(&self, subject: Entity) -> bool {
+        match subject {
+            Entity::Person(id) => self.people.contains_key(&id),
+            Entity::Family(id) => self.families.contains_key(&id),
+            Entity::Event(id) => self.events.contains_key(&id),
+            Entity::Place(id) => self.places.contains_key(&id),
+            Entity::Source(id) => self.sources.contains_key(&id),
+            Entity::Citation(id) => self.citations.contains_key(&id),
+            Entity::Repository(id) => self.repositories.contains_key(&id),
+            Entity::Note(id) => self.notes.contains_key(&id),
+            Entity::Media(id) => self.media.contains_key(&id),
+            Entity::Fact(id) => self.facts.contains_key(&id),
+            Entity::Foreign(id) => self.foreign.contains_key(&id),
+        }
+    }
+
+    /// The notes annotating a subject, in the order they were attached.
+    pub fn notes_on(&self, subject: Entity) -> impl Iterator<Item = &Note> {
+        self.notes_on
+            .get(&subject)
+            .into_iter()
+            .flatten()
+            .filter_map(|id| self.notes.get(id))
+    }
+
+    /// The media attached to a subject, in the order they were attached.
+    pub fn media_on(&self, subject: Entity) -> impl Iterator<Item = &Media> {
+        self.media_on
+            .get(&subject)
+            .into_iter()
+            .flatten()
+            .filter_map(|id| self.media.get(id))
+    }
+
+    /// What an import kept under a subject because the model could not represent it.
+    pub fn foreign_on(&self, subject: Entity) -> impl Iterator<Item = &Foreign> {
+        self.foreign_on
+            .get(&subject)
+            .into_iter()
+            .flatten()
+            .filter_map(|id| self.foreign.get(id))
     }
 
     /// Every person who has not been removed, in identity order — which, for minted identities,
@@ -574,6 +612,54 @@ impl Archive {
     /// [`Refusal::Duplicate`].
     pub fn add_media(&mut self, media: Media) -> Result<(), Refusal> {
         insert_unique(&mut self.media, media.id, media, Entity::Media)
+    }
+
+    /// Keeps something an import could not represent, under the subject it was found beneath
+    /// (ADR 0011).
+    ///
+    /// # Errors
+    ///
+    /// [`Refusal::Duplicate`] for a reused identity; [`Refusal::Missing`] if the subject is not in
+    /// the archive.
+    pub fn add_foreign(&mut self, item: Foreign) -> Result<(), Refusal> {
+        self.require(item.subject)?;
+        let (id, subject) = (item.id, item.subject);
+        insert_unique(&mut self.foreign, id, item, Entity::Foreign)?;
+        self.foreign_on.entry(subject).or_default().push(id);
+        Ok(())
+    }
+
+    // ── annotating ──────────────────────────────────────────────────────────────────────────
+
+    /// Annotates a subject — an entity or a fact — with a note. Annotating twice with the same
+    /// note changes nothing.
+    ///
+    /// # Errors
+    ///
+    /// [`Refusal::Missing`] if the subject or the note is not in the archive.
+    pub fn annotate(&mut self, subject: Entity, note: NoteId) -> Result<(), Refusal> {
+        self.require(subject)?;
+        self.require(Entity::Note(note))?;
+        let notes = self.notes_on.entry(subject).or_default();
+        if !notes.contains(&note) {
+            notes.push(note);
+        }
+        Ok(())
+    }
+
+    /// Attaches a media item to a subject. Attaching twice changes nothing.
+    ///
+    /// # Errors
+    ///
+    /// [`Refusal::Missing`] if the subject or the media item is not in the archive.
+    pub fn attach(&mut self, subject: Entity, media: MediaId) -> Result<(), Refusal> {
+        self.require(subject)?;
+        self.require(Entity::Media(media))?;
+        let items = self.media_on.entry(subject).or_default();
+        if !items.contains(&media) {
+            items.push(media);
+        }
+        Ok(())
     }
 
     // ── asserting ───────────────────────────────────────────────────────────────────────────
@@ -1008,10 +1094,14 @@ impl Archive {
     }
 
     fn require_place(&self, place: PlaceId) -> Result<(), Refusal> {
-        if self.places.contains_key(&place) {
+        self.require(Entity::Place(place))
+    }
+
+    fn require(&self, subject: Entity) -> Result<(), Refusal> {
+        if self.holds(subject) {
             Ok(())
         } else {
-            Err(Refusal::Missing(Entity::Place(place)))
+            Err(Refusal::Missing(subject))
         }
     }
 

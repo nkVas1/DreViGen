@@ -6,8 +6,13 @@ use drevigen_date::RecordedDate;
 
 use super::{Archive, Entity, Refusal};
 use crate::claim::{Assertion, ClaimError, Conclusion, Provenance, Resolution, Timestamp};
-use crate::id::{AssertionId, ConclusionId, ContributorId, EventId, FactId, FamilyId, PersonId};
-use crate::model::{ChildRelation, Event, EventKind, Family, Partnership, Person, Role};
+use crate::id::{
+    AssertionId, ConclusionId, ContributorId, EventId, FactId, FamilyId, ForeignId, MediaId,
+    NoteId, PersonId,
+};
+use crate::model::{
+    ChildRelation, Event, EventKind, Family, Foreign, Media, Note, Partnership, Person, Role,
+};
 use crate::name::PersonName;
 
 /// Deterministic identities for tests: every call returns the next number.
@@ -504,5 +509,88 @@ fn a_fact_is_found_by_its_identity_alone() {
     assert_eq!(
         t.archive.retract(nowhere, assertion, made(2)),
         Err(Refusal::Missing(Entity::Fact(nowhere)))
+    );
+}
+
+#[test]
+fn notes_and_media_annotate_entities_and_facts_alike() {
+    let mut t = Tree::new();
+    let note = NoteId::from_raw(t.mint.next());
+    let photo = MediaId::from_raw(t.mint.next());
+    t.archive
+        .add_note(Note {
+            id: note,
+            text: "Записан в метрической книге".to_owned(),
+        })
+        .unwrap();
+    t.archive
+        .add_media(Media {
+            id: photo,
+            content: "sha256:0".to_owned(),
+            mime: "image/jpeg".to_owned(),
+            title: None,
+            synthetic: false,
+        })
+        .unwrap();
+
+    let person = Entity::Person(t.olga);
+    let name = Entity::Fact(t.archive.person(t.olga).unwrap().names[0].id);
+    t.archive.annotate(person, note).unwrap();
+    t.archive.annotate(name, note).unwrap();
+    t.archive.annotate(person, note).unwrap();
+    t.archive.attach(person, photo).unwrap();
+
+    assert_eq!(
+        t.archive.notes_on(person).count(),
+        1,
+        "annotating twice is once"
+    );
+    assert_eq!(t.archive.notes_on(name).next().unwrap().id, note);
+    assert_eq!(t.archive.media_on(person).next().unwrap().id, photo);
+    assert_eq!(t.archive.notes_on(Entity::Person(t.ivan)).count(), 0);
+
+    let ghost = Entity::Person(PersonId::from_raw(424_242));
+    assert_eq!(
+        t.archive.annotate(ghost, note),
+        Err(Refusal::Missing(ghost))
+    );
+    let lost = NoteId::from_raw(424_243);
+    assert_eq!(
+        t.archive.annotate(person, lost),
+        Err(Refusal::Missing(Entity::Note(lost)))
+    );
+}
+
+#[test]
+fn foreign_data_is_kept_under_its_subject() {
+    let mut t = Tree::new();
+    let id = ForeignId::from_raw(t.mint.next());
+    let item = Foreign {
+        id,
+        subject: Entity::Person(t.ivan),
+        format: "GEDCOM 5.5.1".to_owned(),
+        text: "0 _MILT Served in the Imperial Army\n1 DATE 1904\n".to_owned(),
+    };
+    t.archive.add_foreign(item.clone()).unwrap();
+
+    assert_eq!(
+        t.archive
+            .foreign_on(Entity::Person(t.ivan))
+            .collect::<Vec<_>>(),
+        [&item]
+    );
+    assert!(t.archive.holds(Entity::Foreign(id)));
+    assert_eq!(
+        t.archive.add_foreign(item.clone()),
+        Err(Refusal::Duplicate(Entity::Foreign(id)))
+    );
+    let elsewhere = Foreign {
+        id: ForeignId::from_raw(t.mint.next()),
+        subject: Entity::Family(FamilyId::from_raw(424_242)),
+        ..item
+    };
+    assert_eq!(
+        t.archive.add_foreign(elsewhere.clone()),
+        Err(Refusal::Missing(elsewhere.subject))
     );
 }
