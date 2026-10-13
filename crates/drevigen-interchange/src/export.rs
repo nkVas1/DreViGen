@@ -373,6 +373,11 @@ impl<'a> Exporter<'a> {
                 if let Some(place) = value.place {
                     written.children.push(self.place_structure(place));
                 }
+                if let Some(address) = &value.address {
+                    written
+                        .children
+                        .push(Structure::new("ADDR").with_text(address));
+                }
                 self.cite(&mut written, attribute);
                 self.finish(&mut written, Entity::Fact(attribute.id));
                 indi.children.push(written);
@@ -586,6 +591,26 @@ impl<'a> Exporter<'a> {
             self.finish(&mut written_place, Entity::Fact(place.id));
             written.children.push(written_place);
             citations.extend(self.citations(place));
+        }
+        for (which, tag) in [
+            (EventText::Address, "ADDR"),
+            (EventText::Agency, "AGNC"),
+            (EventText::Religion, "RELI"),
+            (EventText::Cause, "CAUS"),
+        ] {
+            let Some(fact) = event.texts.get(&which) else {
+                continue;
+            };
+            let Some(words) = self.value(fact) else {
+                continue;
+            };
+            let mut written_words = Structure::new(tag).with_text(&words);
+            // What was kept beneath an address goes back beneath it; GEDCOM gives none of these
+            // a place for notes, which go with the event.
+            self.foreign_where(&mut written_words, Entity::Fact(fact.id), |_| true);
+            self.notes(&mut written, Entity::Fact(fact.id));
+            written.children.push(written_words);
+            citations.extend(self.citations(fact));
         }
         for participation in &event.participants {
             citations.extend(self.citations(&participation.role));

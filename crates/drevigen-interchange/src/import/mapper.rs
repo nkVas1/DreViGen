@@ -757,8 +757,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     // ── events and attributes ───────────────────────────────────────────────────────────────
 
-    /// An event, with its date, place and description as facts and its participants in their
-    /// roles. Added to the archive before anything beneath it is kept or annotated, so that a
+    /// An event, with its date, place and what is said of it in words as facts, and its
+    /// participants in their roles. Added to the archive before anything beneath it is kept or annotated, so that a
     /// refusal leaves nothing behind; the caller then keeps the structure whole.
     ///
     /// A generic `EVEN` is what its `TYPE` says it is, and its value describes it. A specific
@@ -818,7 +818,27 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                     }
                     None => rest.push(child),
                 },
-                _ => rest.push(child),
+                // An address is read from its lines; its parts, which repeat them, stay beneath
+                // it as they were.
+                "ADDR" if !event.texts.contains_key(&EventText::Address) => match text_of(child) {
+                    Some(address) => {
+                        let fact: FactId = self.mint();
+                        beneath.push((Entity::Fact(fact), child.children.iter().collect(), "ADDR"));
+                        let address = self.fact(fact, address, &support, record);
+                        event.texts.insert(EventText::Address, address);
+                    }
+                    None => rest.push(child),
+                },
+                tag => match (detail(tag), text_of(child)) {
+                    (Some(which), Some(words))
+                        if child.children.is_empty() && !event.texts.contains_key(&which) =>
+                    {
+                        let fact: FactId = self.mint();
+                        let words = self.fact(fact, words, &support, record);
+                        event.texts.insert(which, words);
+                    }
+                    _ => rest.push(child),
+                },
             }
         }
         if let Some(description) = description {
@@ -842,8 +862,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         Some(id)
     }
 
-    /// An attribute: its value, with the date and place the file gives it, as one fact. A `FACT`
-    /// or `IDNO` says what it is in its `TYPE`, which becomes the attribute's label.
+    /// An attribute: its value, with the date, place and address the file gives it, as one fact.
+    /// A `FACT` or `IDNO` says what it is in its `TYPE`, which becomes the attribute's label.
     fn attribute(
         &mut self,
         person: &mut Person,
@@ -886,6 +906,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                     }
                     None => rest.push(child),
                 },
+                "ADDR" if value.address.is_none() => match text_of(child) {
+                    Some(address) => {
+                        value.address = Some(address);
+                        beyond.push((child, child.children.iter().collect()));
+                    }
+                    None => rest.push(child),
+                },
                 _ => rest.push(child),
             }
         }
@@ -893,8 +920,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             .attributes
             .push(self.fact(id, value, &support, record));
         self.rest(subject, rest, &path);
-        // A date or place is part of the attribute's value, not a subject of its own, so what
-        // it carries beyond that is kept on its own line beneath the attribute.
+        // A date, place or address is part of the attribute's value, not a subject of its own,
+        // so what it carries beyond that is kept on its own line beneath the attribute.
         for (written, more) in beyond {
             if !more.is_empty() {
                 self.keep_partly(subject, written, more, &path);
@@ -1523,6 +1550,17 @@ fn jurisdictions(place: &Structure) -> Option<Vec<&str>> {
         .filter(|part| !part.is_empty())
         .collect();
     (!parts.is_empty()).then_some(parts)
+}
+
+/// Which of the things said of an event in words GEDCOM writes with this tag, besides its
+/// description and address.
+fn detail(tag: &str) -> Option<EventText> {
+    match tag {
+        "CAUS" => Some(EventText::Cause),
+        "AGNC" => Some(EventText::Agency),
+        "RELI" => Some(EventText::Religion),
+        _ => None,
+    }
 }
 
 /// Whether an event's value is one the model can hold: nothing; `Y`, "it happened, and nothing

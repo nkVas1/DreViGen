@@ -449,6 +449,33 @@ fn an_event_is_named_and_described_in_the_words_the_file_gives_it() {
 }
 
 #[test]
+fn an_event_and_a_residence_say_where_exactly_and_why() {
+    let file = imported(
+        "0 HEAD\n0 @I1@ INDI\n1 NAME Пётр /Смирнов/\n1 RESI\n2 ADDR г. Москва, ул. Правды, д. 3/1\n3 CITY Москва\n1 DEAT\n2 DATE 1943\n2 CAUS от тифа\n2 AGNC Эвакогоспиталь № 1\n2 ADDR ул. Мечникова, д. 5\n0 TRLR\n",
+    );
+    let petr = person(&file.archive, "Пётр");
+    let residence = agreed(&petr.attributes[0]);
+    assert_eq!(
+        residence.address.as_deref(),
+        Some("г. Москва, ул. Правды, д. 3/1")
+    );
+    // The address's parts repeat its lines, and stay beneath it as they were.
+    assert_eq!(file.report.kept.get("INDI.RESI.ADDR"), Some(&1));
+
+    let death = file.archive.events().next().unwrap();
+    let said = |which| death.texts.get(&which).map(agreed);
+    assert_eq!(said(EventText::Cause).as_deref(), Some("от тифа"));
+    assert_eq!(
+        said(EventText::Agency).as_deref(),
+        Some("Эвакогоспиталь № 1")
+    );
+    assert_eq!(
+        said(EventText::Address).as_deref(),
+        Some("ул. Мечникова, д. 5")
+    );
+}
+
+#[test]
 fn a_dual_year_is_read_and_reported() {
     let file = imported(EVENTS);
     assert!(file.report.entries.iter().any(|entry| matches!(

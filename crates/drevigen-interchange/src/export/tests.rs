@@ -344,6 +344,37 @@ fn an_event_is_written_with_its_words_where_gedcom_7_has_room_for_them() {
 }
 
 #[test]
+fn an_address_and_a_cause_are_written_where_gedcom_7_puts_them() {
+    let file = imported(
+        "0 HEAD\n0 @I1@ INDI\n1 NAME Пётр /Смирнов/\n1 RESI\n2 ADDR г. Москва, ул. Правды, д. 3/1\n3 CITY Москва\n1 DEAT\n2 CAUS от тифа\n2 ADDR ул. Мечникова, д. 5\n3 POST 191015\n0 TRLR\n",
+    );
+    let document = Document::parse(&shared(&file)).unwrap();
+    let petr = record(&document, "INDI", 0);
+
+    let residence = petr.child("RESI").unwrap().child("ADDR").unwrap();
+    assert_eq!(
+        residence.payload.text(),
+        Some("г. Москва, ул. Правды, д. 3/1")
+    );
+    assert_eq!(
+        residence.child("CITY").unwrap().payload.text(),
+        Some("Москва")
+    );
+    let death = petr.child("DEAT").unwrap();
+    assert_eq!(death.payload.text(), Some("Y"));
+    assert_eq!(death.child("CAUS").unwrap().payload.text(), Some("от тифа"));
+    let address = death.child("ADDR").unwrap();
+    assert_eq!(
+        address.child("POST").unwrap().payload.text(),
+        Some("191015")
+    );
+
+    let again = imported(&shared(&file));
+    assert_eq!(again.report.counts, file.report.counts);
+    assert_eq!(again.report.kept, file.report.kept);
+}
+
+#[test]
 fn a_disagreement_is_written_one_sided_and_reported() {
     let file = imported("0 HEAD\n0 @I1@ INDI\n1 NAME Иван /Смирнов/\n1 SEX M\n1 SEX F\n0 TRLR\n");
     let (_, report) = written(&file.archive, BTreeSet::from([file.source]));
