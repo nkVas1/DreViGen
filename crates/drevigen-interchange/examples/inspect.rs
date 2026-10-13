@@ -3,14 +3,17 @@
 //! entry in the report, and whether an export and a second import come back to the same place.
 //!
 //! ```text
-//! cargo run --release -p drevigen-interchange --example inspect -- path/to/file.ged
+//! cargo run --release -p drevigen-interchange --example inspect -- path/to/file.ged [export.ged]
 //! ```
 //!
 //! For trying real files — someone's own tree, an export from another program — without putting
-//! them anywhere: nothing is written but what is printed, and what is printed is counts and tags,
-//! not names.
+//! them anywhere: nothing is written but what is printed, and the export where one is asked for;
+//! what is printed is counts and tags, not names.
 
 #![allow(clippy::print_stdout, clippy::unwrap_used, missing_docs)]
+
+#[path = "../tests/support/fingerprint.rs"]
+mod fingerprint;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::time::Instant;
@@ -20,7 +23,7 @@ use drevigen_interchange::{Import, Options, export, import};
 
 fn main() {
     let Some(path) = std::env::args().nth(1) else {
-        eprintln!("usage: inspect <file.ged>");
+        eprintln!("usage: inspect <file.ged> [export.ged]");
         std::process::exit(2);
     };
     let bytes = std::fs::read(&path).unwrap_or_else(|error| {
@@ -60,6 +63,12 @@ fn describe(first: &Import) {
         report.version, report.program
     );
     println!("holds     {:?}", report.counts);
+    let positioned = first
+        .archive
+        .places()
+        .filter(|place| place.position.is_some())
+        .count();
+    println!("          {positioned} of the places with a position");
 
     let mut kinds: BTreeMap<String, usize> = BTreeMap::new();
     for entry in &report.entries {
@@ -100,6 +109,10 @@ fn round_trip(first: &Import, options: &Options, entropy: &mut impl FnMut() -> u
         },
     );
     let text = written.document.write();
+    // Written only where asked: a real tree is someone's family.
+    if let Some(out) = std::env::args().nth(2) {
+        std::fs::write(&out, &text).unwrap();
+    }
     let verdict = match drevigen_gedcom::Document::parse(&text) {
         Ok(_) => "accepted".to_owned(),
         Err(error) => format!("REFUSED — {error}"),
@@ -148,6 +161,21 @@ fn round_trip(first: &Import, options: &Options, entropy: &mut impl FnMut() -> u
     for path in paths {
         if before.get(path) != after.get(path) {
             println!("  {path}: {:?} -> {:?}", before.get(path), after.get(path));
+        }
+    }
+
+    // What the archive says, compared thing by thing; told here by kind only, not by content.
+    let said = fingerprint::fingerprint(&first.archive, &BTreeSet::from([first.source]));
+    let said_again = fingerprint::fingerprint(&second.archive, &BTreeSet::from([second.source]));
+    println!("            content {}", same(said == said_again));
+    for (direction, this, that) in [("lost", &said, &said_again), ("gained", &said_again, &said)] {
+        let mut kinds: BTreeMap<String, usize> = BTreeMap::new();
+        for (line, count) in fingerprint::difference(this, that) {
+            let kind = line.split(' ').next().unwrap_or_default().to_owned();
+            *kinds.entry(kind).or_default() += count;
+        }
+        for (kind, count) in kinds {
+            println!("  {count:>6}  {kind} {direction}");
         }
     }
 }

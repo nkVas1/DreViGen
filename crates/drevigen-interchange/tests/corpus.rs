@@ -4,6 +4,10 @@
 
 #![allow(clippy::unwrap_used, clippy::panic, missing_docs)]
 
+#[path = "support/fingerprint.rs"]
+mod fingerprint;
+
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 use drevigen_core::{ContributorId, Timestamp};
@@ -40,7 +44,7 @@ fn round_trip(path: &Path, file: &Import) {
     let options = drevigen_interchange::export::Options {
         version: "0.0.0".to_owned(),
         at: Timestamp(1_760_000_000_000),
-        provenance: std::collections::BTreeSet::from([file.source]),
+        provenance: BTreeSet::from([file.source]),
     };
     let text = drevigen_interchange::export(&file.archive, &options)
         .document
@@ -54,8 +58,9 @@ fn round_trip(path: &Path, file: &Import) {
     })
     .unwrap();
     // A fixed point: everything the first import held, the second holds — the same number of
-    // each kind of thing, and the same foreign data from the same places. One place is renamed on
-    // the way, as 7.0 renamed it: a 5.5.1 note record is a 7.0 SNOTE.
+    // each kind of thing, the same foreign data from the same places, and the same things said
+    // about the same things. One place is renamed on the way, as 7.0 renamed it: a 5.5.1 note
+    // record is a 7.0 SNOTE.
     let places = |kept: &std::collections::BTreeMap<String, usize>| {
         kept.iter()
             .map(|(path, count)| {
@@ -77,6 +82,15 @@ fn round_trip(path: &Path, file: &Import) {
         places(&file.report.kept),
         "{}",
         path.display()
+    );
+    let before = fingerprint::fingerprint(&file.archive, &BTreeSet::from([file.source]));
+    let after = fingerprint::fingerprint(&again.archive, &BTreeSet::from([again.source]));
+    assert!(
+        before == after,
+        "{}\nlost: {:#?}\ngained: {:#?}",
+        path.display(),
+        fingerprint::difference(&before, &after),
+        fingerprint::difference(&after, &before)
     );
 }
 
