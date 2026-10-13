@@ -113,6 +113,7 @@ enum Location {
     Attribute(PersonId),
     EventDate(EventId),
     EventPlace(EventId),
+    EventDescription(EventId),
     Participation(EventId),
     Partner(FamilyId),
     Child(FamilyId),
@@ -493,6 +494,12 @@ impl Archive {
             )
             .chain(
                 event
+                    .description
+                    .iter()
+                    .map(|fact| (fact.id, Location::EventDescription(event.id))),
+            )
+            .chain(
+                event
                     .participants
                     .iter()
                     .map(|p| (p.role.id, Location::Participation(event.id))),
@@ -803,6 +810,29 @@ impl Archive {
         Ok(())
     }
 
+    /// Asserts what an event was, in words.
+    ///
+    /// # Errors
+    ///
+    /// As for [`Archive::assert_event_date`].
+    pub fn assert_event_description(
+        &mut self,
+        event: EventId,
+        fact: FactId,
+        assertion: Assertion<String>,
+    ) -> Result<(), Refusal> {
+        self.check_citation(assertion.citation)?;
+        self.check_single(fact, Location::EventDescription(event))?;
+        let owner = self.live_event_mut(event)?;
+        owner
+            .description
+            .get_or_insert_with(|| Fact::new(fact))
+            .claims
+            .assert(assertion)?;
+        self.facts.insert(fact, Location::EventDescription(event));
+        Ok(())
+    }
+
     /// Asserts that someone took part in an event, and in what role.
     ///
     /// # Errors
@@ -1025,6 +1055,15 @@ impl Archive {
                 &mut self
                     .live_event_mut(event)?
                     .place
+                    .as_mut()
+                    .filter(|f| f.id == fact)
+                    .ok_or_else(wrong)?
+                    .claims,
+            ),
+            Location::EventDescription(event) => operation(
+                &mut self
+                    .live_event_mut(event)?
+                    .description
                     .as_mut()
                     .filter(|f| f.id == fact)
                     .ok_or_else(wrong)?

@@ -7,6 +7,7 @@
 use drevigen_date::{RecordedDate, Trivalent};
 
 use crate::claim::Claimable;
+use crate::name::fold;
 
 /// Two recorded dates agree when they could describe the same day.
 ///
@@ -30,6 +31,23 @@ impl Claimable for RecordedDate {
             (Some(_), None) => true,
             _ => false,
         }
+    }
+}
+
+/// Free text — what a source says of an event in words — agrees with text that says the same once
+/// spelling is set aside: case, *ё*, the pre-reform letters and spacing, [folded](fold) as names
+/// are.
+///
+/// Whether one phrase says more than another cannot be read off the words: *умер* and *умер от
+/// тифа* look like a refinement, *пропал без вести* and *погиб* do not. So no text is more
+/// specific than another, and texts that differ are an open question for a person to settle.
+impl Claimable for String {
+    fn compatible(&self, other: &Self) -> bool {
+        fold(self) == fold(other)
+    }
+
+    fn more_specific_than(&self, _other: &Self) -> bool {
+        false
     }
 }
 

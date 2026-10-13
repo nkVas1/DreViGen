@@ -496,6 +496,39 @@ fn a_contested_date_can_be_concluded_and_the_conclusion_withdrawn() {
 }
 
 #[test]
+fn what_an_event_was_in_words_agrees_when_only_the_spelling_differs() {
+    let mut t = Tree::new();
+    let death = EventId::from_raw(t.mint.next());
+    t.archive
+        .add_event(Event::new(death, EventKind::Death))
+        .unwrap();
+
+    let fact = t.mint.fact();
+    for text in ["Пропал без вести", "пропал  без вести"] {
+        let assertion = t.mint.assertion(text.to_owned());
+        t.archive
+            .assert_event_description(death, fact, assertion)
+            .unwrap();
+    }
+    // (agreed, open question)
+    let described = |archive: &Archive| {
+        let event = archive.event(death).unwrap();
+        let resolved = event.description.as_ref().unwrap().resolve();
+        (
+            matches!(resolved, Resolution::Agreed { .. }),
+            resolved.is_open_question(),
+        )
+    };
+    assert_eq!(described(&t.archive), (true, false));
+
+    let other = t.mint.assertion("погиб под Ржевом".to_owned());
+    t.archive
+        .assert_event_description(death, fact, other)
+        .unwrap();
+    assert_eq!(described(&t.archive), (false, true));
+}
+
+#[test]
 fn a_fact_is_found_by_its_identity_alone() {
     let mut t = Tree::new();
     let olga = t.archive.person(t.olga).unwrap();

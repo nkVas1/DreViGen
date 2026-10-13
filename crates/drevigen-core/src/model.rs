@@ -344,10 +344,15 @@ pub struct Event {
     pub id: EventId,
     /// What kind.
     pub kind: EventKind,
+    /// For [`EventKind::Other`], what it is called: *переезд*, *поступление в гимназию*. Like the
+    /// kind, part of what the event is rather than something a source says about it.
+    pub label: Option<String>,
     /// When, as sources record it.
     pub date: Option<Fact<RecordedDate>>,
     /// Where, as sources record it.
     pub place: Option<Fact<PlaceId>>,
+    /// What sources say of it in words: *пропал без вести*, *от тифа*, *в домовой церкви*.
+    pub description: Option<Fact<String>>,
     /// Who took part.
     pub participants: Vec<Participation>,
     /// Who removed it, and when.
@@ -361,8 +366,10 @@ impl Event {
         Self {
             id,
             kind,
+            label: None,
             date: None,
             place: None,
+            description: None,
             participants: Vec::new(),
             removed: None,
         }
