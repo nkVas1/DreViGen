@@ -634,6 +634,16 @@ fn a_record_wide_citation_supports_the_names_or_the_union() {
 }
 
 #[test]
+fn a_citation_given_twice_for_one_fact_asserts_it_once() {
+    // Under the name, and again under the person whose name it is: one source saying one thing.
+    let file = imported(
+        "0 HEAD\n0 @S1@ SOUR\n1 TITL Ревизская сказка, 1858\n0 @I1@ INDI\n1 NAME Мария /Смирнова/\n2 SOUR @S1@\n3 PAGE л. 3\n1 SOUR @S1@\n2 PAGE л. 3\n0 TRLR\n",
+    );
+    let maria = person(&file.archive, "Мария");
+    assert_eq!(maria.names[0].claims.assertions().len(), 1);
+}
+
+#[test]
 fn a_leaf_is_read_as_a_leaf_and_anything_else_as_written() {
     use super::mapper::read_locator;
     use drevigen_core::Locator;

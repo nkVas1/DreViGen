@@ -1025,7 +1025,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     /// Asserts a value once for each citation the file gives for it, with the confidence the
     /// file gives that citation — or, where it gives none, once, cited by the file's own citation
-    /// of the record (ADR 0011).
+    /// of the record (ADR 0011). A citation given twice — under a name, and again under the
+    /// person whose name it is — is one source saying one thing, and asserts it once.
     fn claim<V: Claimable + Clone>(
         &mut self,
         fact: &mut Fact<V>,
@@ -1039,7 +1040,12 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 confidence: None,
             }]
         } else {
-            support.to_vec()
+            let mut seen = BTreeSet::new();
+            support
+                .iter()
+                .filter(|cited| seen.insert(cited.citation))
+                .copied()
+                .collect()
         };
         let values = core::iter::repeat_n(value, support.len());
         for (cited, value) in support.into_iter().zip(values) {
