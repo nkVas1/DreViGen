@@ -760,6 +760,11 @@ pub struct Foreign {
     /// The text as that format writes it. For GEDCOM, the structure and everything beneath it as
     /// 7.0 lines, its own level written as 0.
     pub text: String,
+    /// Whether this is only what remained of a structure the import did take — its own line, and
+    /// beneath it only what was not taken — rather than a whole structure. An export merges a
+    /// remainder into the structure it writes from the archive in the same place; a whole one it
+    /// writes beside it, even when the two look alike.
+    pub remainder: bool,
 }
 
 impl Foreign {

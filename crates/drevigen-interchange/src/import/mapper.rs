@@ -118,6 +118,9 @@ struct Mapper<'d, 'r, E> {
     positions: BTreeMap<String, Coordinates>,
     /// The sources 5.5.1 citations describe in place, by their description.
     described: BTreeMap<String, SourceId>,
+    /// The citations made so far that carry nothing beyond their source, place and text, by
+    /// those three, so that a citation written out again is not made twice.
+    repeated: BTreeMap<(SourceId, Option<String>, Option<String>), CitationId>,
     deferred: Vec<Deferred>,
 }
 
@@ -146,6 +149,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             places: BTreeMap::new(),
             positions: BTreeMap::new(),
             described: BTreeMap::new(),
+            repeated: BTreeMap::new(),
             deferred: Vec::new(),
         }
     }
@@ -1087,9 +1091,29 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 _ => rest.push(child),
             }
         }
+        // A citation the file repeats word for word — the same source, place and text, with
+        // nothing more beneath it — is one citation, however many facts it is written under.
+        let plain = rest.is_empty() && data.as_ref().is_none_or(|(_, more)| more.is_empty());
+        let key = (
+            citation.source,
+            citation
+                .locator
+                .as_ref()
+                .map(drevigen_core::Locator::written),
+            citation.transcription.clone(),
+        );
+        if plain && let Some(&existing) = self.repeated.get(&key) {
+            return Some(Cited {
+                citation: existing,
+                confidence,
+            });
+        }
         if !self.add(structure.line, |archive| archive.add_citation(citation)) {
             self.keep(subject, structure, parent);
             return None;
+        }
+        if plain {
+            self.repeated.insert(key, id);
         }
         self.report.counts.citations += 1;
         let subject = Entity::Citation(id);
@@ -1199,12 +1223,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     /// A structure whose pointer leads nowhere it can: reported, and kept.
     fn unresolved(&mut self, subject: Entity, structure: &'d Structure, parent: &str) {
-        let xref = match &structure.payload {
-            Payload::Pointer(xref) => xref.clone(),
-            _ => String::new(),
-        };
-        self.report
-            .note(structure.line, Mapping::Unresolved { xref });
+        // 7.0's @VOID@ points at nothing on purpose — "a pointer is required here, and there is no
+        // record" — and is kept without remark.
+        if let Payload::Pointer(xref) = &structure.payload {
+            let xref = xref.clone();
+            self.report
+                .note(structure.line, Mapping::Unresolved { xref });
+        }
         self.keep(subject, structure, parent);
     }
 
@@ -1245,6 +1270,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         parent: &str,
     ) {
         let mut kept = self.rewritten(structure);
+        let remainder = only.is_some();
         if let Some(only) = only {
             kept.children = only
                 .into_iter()
@@ -1267,6 +1293,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 path,
                 format: self.format.clone(),
                 text: kept.write(),
+                remainder,
             },
             line: structure.line,
         });
