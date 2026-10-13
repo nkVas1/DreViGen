@@ -284,7 +284,7 @@ impl Document {
 }
 
 /// Splits on the three terminators GEDCOM 7 allows: CR LF, CR, and LF.
-fn lines(text: &str) -> impl Iterator<Item = &str> {
+pub(crate) fn lines(text: &str) -> impl Iterator<Item = &str> {
     let mut rest = Some(text);
     core::iter::from_fn(move || {
         let current = rest?;

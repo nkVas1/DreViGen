@@ -16,11 +16,15 @@
 //!   could not be decoded.
 //! - [`mod@line`] — one line: level, cross-reference, tag, value.
 //! - [`mod@document`] — lines into a forest of structures and back, `CONT` included.
+//! - [`mod@lenient`] — the same forest from the files people have: 5.5.1 and older, read as 7.0
+//!   means them, with every repair reported.
 
 pub mod document;
 pub mod encoding;
+pub mod lenient;
 pub mod line;
 
 pub use document::{Document, DocumentError, DocumentErrorKind, Payload, Structure};
 pub use encoding::{Decoded, Encoding};
+pub use lenient::Reading;
 pub use line::{Line, LineError, Value};

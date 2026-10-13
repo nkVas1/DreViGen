@@ -1,4 +1,5 @@
-//! FamilySearch's own GEDCOM 7 test files, read and written back.
+//! FamilySearch's own GEDCOM 7 test files: read and written back, and read by the whole import
+//! path — decoding and the lenient reader — to the same document the strict reader sees.
 //!
 //! The files are published for exactly this use and carry no licence permitting redistribution,
 //! so they are not in this repository. `tools/fetch-gedcom-testfiles.sh` downloads them into the
@@ -17,7 +18,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use drevigen_gedcom::{Document, Structure};
+use drevigen_gedcom::{Document, Encoding, Structure, encoding, lenient};
 
 fn directory() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/gedcom-testfiles")
@@ -32,9 +33,7 @@ fn strip_lines(mut document: Document) -> Document {
     document
 }
 
-#[test]
-#[ignore = "needs the official files; run tools/fetch-gedcom-testfiles.sh"]
-fn every_official_file_is_read_and_survives_a_round_trip() {
+fn files() -> Vec<PathBuf> {
     let entries: Vec<PathBuf> = fs::read_dir(directory())
         .expect("run tools/fetch-gedcom-testfiles.sh first")
         .map(|entry| entry.unwrap().path())
@@ -45,8 +44,13 @@ fn every_official_file_is_read_and_survives_a_round_trip() {
         "expected the full set, found {}",
         entries.len()
     );
+    entries
+}
 
-    for path in entries {
+#[test]
+#[ignore = "needs the official files; run tools/fetch-gedcom-testfiles.sh"]
+fn every_official_file_is_read_and_survives_a_round_trip() {
+    for path in files() {
         let text = fs::read_to_string(&path).unwrap();
         let document =
             Document::parse(&text).unwrap_or_else(|error| panic!("{}: {error}", path.display()));
@@ -57,6 +61,32 @@ fn every_official_file_is_read_and_survives_a_round_trip() {
             strip_lines(again),
             "{} changed on a round trip",
             path.display()
+        );
+    }
+}
+
+#[test]
+#[ignore = "needs the official files; run tools/fetch-gedcom-testfiles.sh"]
+fn the_import_path_reads_every_official_file_as_the_strict_reader_does() {
+    for path in files() {
+        let decoded = encoding::decode(&fs::read(&path).unwrap());
+        assert_eq!(decoded.encoding, Encoding::Utf8, "{}", path.display());
+        assert!(
+            decoded.flaws.is_empty(),
+            "{}: {:?}",
+            path.display(),
+            decoded.flaws
+        );
+
+        let strict = Document::parse(&decoded.text).unwrap();
+        let reading = lenient::read(&decoded.text)
+            .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+        assert_eq!(reading.document, strict, "{}", path.display());
+        assert!(
+            reading.repairs.is_empty(),
+            "{}: {:?}",
+            path.display(),
+            reading.repairs
         );
     }
 }
