@@ -132,7 +132,9 @@ tree in it, import their existing GEDCOM, and show it to relatives.
       windows-1250/1251/1252, IBM437/850/866 and Mac OS Roman, with the header's `CHAR`
       weighed against the bytes rather than trusted, since files that misdeclare are common.
       The lenient container reader is done too, matching the GEDCOM 7 editor's own conversions
-      in `gedcom7code/test-files` and reporting every repair; mapping into the archive is next
+      in `gedcom7code/test-files` and reporting every repair. Mapping into the archive has
+      begun in `drevigen-interchange` (ADR 0011): people, names with their patronymics, sex,
+      families, notes, and the file as a source; events, places, sources and citations next
 - [ ] Verbatim preservation of unrepresentable structures, with a loss report shown on import
 - [ ] Golden-file round-trip tests against exports from Gramps, MyHeritage, MacFamilyTree,
       Ancestris and webtrees

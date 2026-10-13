@@ -1,0 +1,20 @@
+[package]
+name = "drevigen-interchange"
+description = "GEDCOM files into the archive and back, keeping everything the archive cannot hold."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+# The workspace and nothing else (ADR 0011): the format crate reads files, the core holds the
+# model, and this crate is the only one that knows both.
+[dependencies]
+drevigen-core = { version = "0.0.0", path = "../drevigen-core" }
+drevigen-date = { version = "0.0.0", path = "../drevigen-date" }
+drevigen-gedcom = { version = "0.0.0", path = "../drevigen-gedcom" }
+
+[lints]
+workspace = true

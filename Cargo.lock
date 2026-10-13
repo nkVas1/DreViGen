@@ -1119,6 +1119,15 @@ name = "drevigen-gedcom"
 version = "0.0.0"
 
 [[package]]
+name = "drevigen-interchange"
+version = "0.0.0"
+dependencies = [
+ "drevigen-core",
+ "drevigen-date",
+ "drevigen-gedcom",
+]
+
+[[package]]
 name = "drevigen-mark"
 version = "0.0.0"
 dependencies = [
