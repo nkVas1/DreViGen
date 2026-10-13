@@ -535,12 +535,41 @@ impl<'a> Exporter<'a> {
     // ── events and places ───────────────────────────────────────────────────────────────────
 
     fn event(&mut self, event: &Event) -> Structure {
+        let description = event
+            .description
+            .as_ref()
+            .and_then(|fact| Some((fact, self.value(fact)?)));
         let mut written = match event_tag(event.kind) {
-            Ok(tag) => Structure::new(tag),
-            // GEDCOM's generic event, which must say what it is.
-            Err(kind) => Structure::new("EVEN").with_child(Structure::new("TYPE").with_text(kind)),
+            Ok(tag) => {
+                let mut written = Structure::new(tag);
+                // GEDCOM 7 gives a specific event no words of its own. Its `TYPE` "further
+                // classifies" it, and is to be shown wherever the event is.
+                if let Some((_, text)) = &description {
+                    written
+                        .children
+                        .push(Structure::new("TYPE").with_text(text));
+                }
+                written
+            }
+            // GEDCOM's generic event, which must say what it is, and is described by its value.
+            Err(kind) => {
+                let classified = match event.kind {
+                    EventKind::Other => event.label.as_deref().unwrap_or(kind),
+                    _ => kind,
+                };
+                let mut written =
+                    Structure::new("EVEN").with_child(Structure::new("TYPE").with_text(classified));
+                if let Some((_, text)) = &description {
+                    written.payload = Payload::Text(text.clone());
+                }
+                written
+            }
         };
         let mut citations: Vec<(CitationId, Option<Confidence>)> = Vec::new();
+        if let Some((fact, _)) = description {
+            citations.extend(self.citations(fact));
+            self.finish(&mut written, Entity::Fact(fact.id));
+        }
         if let Some(date) = &event.date
             && let Some(value) = self.value(date)
         {
@@ -577,10 +606,16 @@ impl<'a> Exporter<'a> {
                 written.children.push(cited);
             }
         }
-        if written.children.is_empty() {
+        self.finish(&mut written, Entity::Event(event.id));
+        // GEDCOM 7 reads an event as having happened only if it has a date, a place or a value,
+        // and the archive holds events that happened.
+        let occurred = written
+            .children
+            .iter()
+            .any(|child| matches!(child.tag.as_str(), "DATE" | "PLAC"));
+        if !occurred && written.tag != "EVEN" {
             written.payload = Payload::Text("Y".to_owned());
         }
-        self.finish(&mut written, Entity::Event(event.id));
         written
     }
 
@@ -887,6 +922,14 @@ fn date_structure(date: &drevigen_date::RecordedDate) -> Structure {
     written
 }
 
+/// What a generic `EVEN` is classified as for military service, which GEDCOM has no tag for. An
+/// import reads it back as that kind.
+pub(crate) const MILITARY_SERVICE: &str = "Military service";
+
+/// What a generic `EVEN` is classified as when nothing says more. An import reads it back as an
+/// event with no label.
+pub(crate) const AN_EVENT: &str = "Event";
+
 /// The tag GEDCOM writes an event of this kind with, or — for the kinds it has none for — the
 /// words for the generic `EVEN`'s `TYPE`.
 const fn event_tag(kind: EventKind) -> Result<&'static str, &'static str> {
@@ -913,8 +956,8 @@ const fn event_tag(kind: EventKind) -> Result<&'static str, &'static str> {
         EventKind::Banns => "MARB",
         EventKind::Divorce => "DIV",
         EventKind::Annulment => "ANUL",
-        EventKind::Military => return Err("Military service"),
-        EventKind::Other => return Err("Event"),
+        EventKind::Military => return Err(MILITARY_SERVICE),
+        EventKind::Other => return Err(AN_EVENT),
     })
 }
 

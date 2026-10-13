@@ -359,14 +359,52 @@ fn attributes_carry_their_date_place_and_label() {
 }
 
 #[test]
-fn an_event_the_model_has_no_kind_for_is_kept_and_a_dual_year_is_reported() {
+fn an_event_is_named_and_described_in_the_words_the_file_gives_it() {
+    let file = imported(
+        "0 HEAD
+0 @I1@ INDI
+1 NAME Пётр /Смирнов/
+1 DEAT пропал без вести
+2 DATE 1943
+1 BURI Y
+2 TYPE Охтинское кладбище
+1 EVEN Служил в армии
+2 TYPE Военная служба
+1 EVEN
+2 TYPE Military service
+1 BARM
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 EVEN
+2 TYPE MYHERITAGE:REL_PARTNERS
+0 TRLR
+",
+    );
+    let of = |kind: EventKind| {
+        let event = file.archive.events().find(|e| e.kind == kind).unwrap();
+        (event.label.clone(), event.description.as_ref().map(agreed))
+    };
+    let words = |text: &str| Some(text.to_owned());
+    // A specific event is described by its value, or else by its TYPE.
+    assert_eq!(of(EventKind::Death), (None, words("пропал без вести")));
+    assert_eq!(of(EventKind::Burial), (None, words("Охтинское кладбище")));
+    // A generic one is named by its TYPE and described by its value.
+    assert_eq!(
+        of(EventKind::Other),
+        (words("Военная служба"), words("Служил в армии"))
+    );
+    assert_eq!(of(EventKind::Military), (None, None));
+    assert_eq!(file.archive.events().count(), 4);
+
+    // A kind the model does not have, and a program's code in place of words, are kept.
+    assert_eq!(file.report.kept.get("INDI.BARM"), Some(&1));
+    assert_eq!(file.report.kept.get("FAM.EVEN"), Some(&1));
+}
+
+#[test]
+fn a_dual_year_is_read_and_reported() {
     let file = imported(EVENTS);
-    let ivan = person(&file.archive, "Иван").id;
-    assert!(file.archive.foreign_on(Entity::Person(ivan)).any(|item| {
-        item.text
-            .starts_with("0 EVEN Служил в армии\n1 TYPE Военная служба")
-    }));
-    assert_eq!(file.report.kept.get("INDI.EVEN"), Some(&1));
     assert!(file.report.entries.iter().any(|entry| matches!(
         &entry.what,
         What::Mapping(Mapping::Date { text, repair: Repair::DualYear { .. } }) if text == "1873/74"

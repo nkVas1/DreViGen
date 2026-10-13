@@ -134,9 +134,11 @@ tree in it, import their existing GEDCOM, and show it to relatives.
       The lenient container reader is done too, matching the GEDCOM 7 editor's own conversions
       in `gedcom7code/test-files` and reporting every repair. Mapping into the archive has
       begun in `drevigen-interchange` (ADR 0011): people, names with their patronymics, sex,
-      families, events with their dates and places, attributes, notes, the file as a source,
-      and the citations a file gives for its facts — leaf locators such as *л. 17 об.* read as
-      leaves. Still kept rather than mapped: media (`OBJE`), the generic `EVEN`, `ASSO`
+      families, events with their dates, places and descriptions (the generic `EVEN` named by
+      its `TYPE`), attributes, notes, the file as a source, and the citations a file gives for
+      its facts — leaf locators such as *л. 17 об.* read as leaves. Still kept rather than
+      mapped: media (`OBJE`), `ASSO`, and the tags MacFamilyTree writes without GEDCOM's
+      underscore (`MISE`, `MIAW` and the like) until what each means is confirmed
 - [x] Verbatim preservation of unrepresentable structures, with a loss report — kept as
       foreign data under the nearest subject and written back in place by the exporter. Every
       vendored corpus file and every official FamilySearch file round-trips to a fixed point:

@@ -32,6 +32,7 @@ use drevigen_gedcom::{Document, Payload, Structure};
 use super::Options;
 use super::names;
 use super::report::{Mapping, Report};
+use crate::export::{AN_EVENT, MILITARY_SERVICE};
 
 /// Maps a document into a new archive. Returns the archive and the source the file became.
 pub(super) fn map(
@@ -438,7 +439,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 "FAMS" => self.link(id, child, false),
                 "NOTE" | "SNOTE" => self.annotation(subject, child, "INDI"),
                 _ => match (person_event(tag), attribute_kind(tag)) {
-                    (Some(kind), _) if plain_event(child) => events.push((child, kind)),
+                    (Some(kind), _) if mappable(child) => events.push((child, kind)),
                     (_, Some(kind))
                         if !matches!(child.payload, Payload::Pointer(_) | Payload::Void) =>
                     {
@@ -485,7 +486,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         };
         for child in &record.children {
             if let Some(kind) = family_event(&child.tag)
-                && plain_event(child)
+                && mappable(child)
             {
                 events.push((child, kind));
                 continue;
@@ -739,9 +740,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     // ── events and attributes ───────────────────────────────────────────────────────────────
 
-    /// An event, with its date and place as facts and its participants in their roles. Added to
-    /// the archive before anything beneath it is kept or annotated, so that a refusal leaves
-    /// nothing behind; the caller then keeps the structure whole.
+    /// An event, with its date, place and description as facts and its participants in their
+    /// roles. Added to the archive before anything beneath it is kept or annotated, so that a
+    /// refusal leaves nothing behind; the caller then keeps the structure whole.
+    ///
+    /// A generic `EVEN` is what its `TYPE` says it is, and its value describes it. A specific
+    /// event's `TYPE` "further classifies" it in GEDCOM 7's words — *венчание*, *в больнице* — and
+    /// is its description, unless the file gave it words as its value, as many programs do.
     fn event(
         &mut self,
         structure: &'d Structure,
@@ -750,8 +755,22 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         record: &'d Structure,
         parent: &str,
     ) -> Option<EventId> {
+        let classified = structure.children.iter().find(|child| {
+            child.tag == "TYPE" && child.children.is_empty() && text_of(child).is_some()
+        });
+        let words = described(structure);
+        let (kind, label, description, taken) = if structure.tag == "EVEN" {
+            let (kind, label) = generic_event(classified.and_then(text_of).as_deref())?;
+            (kind, label, words, classified)
+        } else if words.is_some() {
+            (kind, None, words, None)
+        } else {
+            (kind, None, classified.and_then(text_of), classified)
+        };
+
         let id: EventId = self.mint();
         let mut event = Event::new(id, kind);
+        event.label = label;
         let path = format!("{parent}.{}", structure.tag);
         // What the event's citations say, they say of all of it: its date, its place, and who
         // took part in what role.
@@ -765,6 +784,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         for child in &structure.children {
             match child.tag.as_str() {
                 "SOUR" => {}
+                "TYPE" if taken.is_some_and(|taken| core::ptr::eq(taken, child)) => {}
                 "DATE" if event.date.is_none() => match self.date(child) {
                     Some((date, more)) => {
                         let fact: FactId = self.mint();
@@ -783,6 +803,10 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 },
                 _ => rest.push(child),
             }
+        }
+        if let Some(description) = description {
+            let fact: FactId = self.mint();
+            event.description = Some(self.fact(fact, description, &support, record));
         }
         for (person, role) in participants {
             let fact: FactId = self.mint();
@@ -1408,11 +1432,13 @@ fn relation(pedigree: &Structure) -> Option<ChildRelation> {
     }
 }
 
-/// The kind of a person's event GEDCOM writes with this tag, where the model has the same kind.
-/// `EVEN` and the kinds the model does not distinguish — `BARM`, `FCOM` and the rest — are kept,
-/// because `Other` would lose which one it was.
+/// The kind of a person's event GEDCOM writes with this tag, where the model has the same kind;
+/// for the generic `EVEN`, `Other` until its `TYPE` is read. The kinds the model does not
+/// distinguish — `BARM`, `FCOM` and the rest — are kept, because `Other` would lose which one it
+/// was.
 fn person_event(tag: &str) -> Option<EventKind> {
     Some(match tag {
+        "EVEN" => EventKind::Other,
         "BIRT" => EventKind::Birth,
         "CHR" => EventKind::Christening,
         "BAPM" => EventKind::Baptism,
@@ -1437,6 +1463,7 @@ fn person_event(tag: &str) -> Option<EventKind> {
 /// The kind of a family's event, on the same terms.
 fn family_event(tag: &str) -> Option<EventKind> {
     Some(match tag {
+        "EVEN" => EventKind::Other,
         "MARR" => EventKind::Marriage,
         "ENGA" => EventKind::Engagement,
         "MARB" => EventKind::Banns,
@@ -1478,14 +1505,42 @@ fn jurisdictions(place: &Structure) -> Option<Vec<&str>> {
     (!parts.is_empty()).then_some(parts)
 }
 
-/// Whether an event's value is one the model can hold: nothing, or `Y` — "it happened, and
-/// nothing more is known". Anything else is words the event structure has no place for.
-fn plain_event(event: &Structure) -> bool {
-    match &event.payload {
-        Payload::None => true,
-        Payload::Text(text) => text.trim().eq_ignore_ascii_case("Y"),
-        Payload::Pointer(_) | Payload::Void => false,
+/// Whether an event's value is one the model can hold: nothing; `Y`, "it happened, and nothing
+/// more is known"; or words, which become its description. A pointer is none of these.
+fn mappable(event: &Structure) -> bool {
+    matches!(event.payload, Payload::None | Payload::Text(_))
+}
+
+/// The words an event's value gives it, where it gives more than `Y`: MobileFamilyTree writes
+/// *пропал без вести* there, and GEDCOM 7 a generic event's description.
+fn described(event: &Structure) -> Option<String> {
+    text_of(event).filter(|text| !text.eq_ignore_ascii_case("Y"))
+}
+
+/// What a generic `EVEN` is, from the words of its `TYPE`: military service, which GEDCOM has no
+/// tag for and an export writes this way; an event of no particular kind; or anything else, under
+/// its own name. `None` for a program's code in place of words — MyHeritage classifies a couple
+/// as `MYHERITAGE:REL_PARTNERS` this way — which says something about a union rather than naming
+/// an event, and is kept.
+fn generic_event(classified: Option<&str>) -> Option<(EventKind, Option<String>)> {
+    let Some(words) = classified else {
+        return Some((EventKind::Other, None));
+    };
+    let code = words.contains(':')
+        && words
+            .chars()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || matches!(c, '_' | ':'));
+    if code {
+        return None;
     }
+    let folded = fold(words);
+    Some(if folded == fold(MILITARY_SERVICE) {
+        (EventKind::Military, None)
+    } else if folded == fold(AN_EVENT) {
+        (EventKind::Other, None)
+    } else {
+        (EventKind::Other, Some(words.to_owned()))
+    })
 }
 
 /// Coordinates from a `PLAC.MAP`: `N55.7558`, `E37.6173`, or plain signed degrees. `None` unless

@@ -294,6 +294,42 @@ fn a_round_trip_brings_the_same_tree_back() {
 }
 
 #[test]
+fn an_event_is_written_with_its_words_where_gedcom_7_has_room_for_them() {
+    let file = imported(
+        "0 HEAD\n0 @I1@ INDI\n1 NAME Пётр /Смирнов/\n1 DEAT пропал без вести\n2 SOUR Похоронная книга\n1 EVEN Служил в армии\n2 TYPE Военная служба\n2 DATE 1914\n1 EVEN\n2 TYPE Military service\n0 TRLR\n",
+    );
+    let document = Document::parse(&shared(&file)).unwrap();
+    let petr = record(&document, "INDI", 0);
+
+    // A specific event's words go in its TYPE, and with no date or place, `Y` says it happened.
+    let death = petr.child("DEAT").unwrap();
+    assert_eq!(death.payload.text(), Some("Y"));
+    assert_eq!(
+        death.child("TYPE").unwrap().payload.text(),
+        Some("пропал без вести")
+    );
+    // A generic one is classified by its TYPE and described by its value.
+    let generic: BTreeSet<_> = petr
+        .children_tagged("EVEN")
+        .map(|event| {
+            let classified = event.child("TYPE").unwrap().payload.text();
+            (classified, event.payload.text())
+        })
+        .collect();
+    assert_eq!(
+        generic,
+        BTreeSet::from([
+            (Some("Military service"), None),
+            (Some("Военная служба"), Some("Служил в армии")),
+        ])
+    );
+
+    let again = imported(&shared(&file));
+    assert_eq!(again.report.counts, file.report.counts);
+    assert_eq!(again.report.kept, file.report.kept);
+}
+
+#[test]
 fn a_disagreement_is_written_one_sided_and_reported() {
     let file = imported("0 HEAD\n0 @I1@ INDI\n1 NAME Иван /Смирнов/\n1 SEX M\n1 SEX F\n0 TRLR\n");
     let (_, report) = written(&file.archive, BTreeSet::from([file.source]));
