@@ -36,8 +36,8 @@ pub use id::{
 };
 pub use model::{
     Attribute, AttributeKind, CallNumber, ChildRelation, Citation, Coordinates, Event, EventKind,
-    Fact, Family, Foreign, Locator, Media, Membership, Note, Participation, Partnership, Person,
-    Place, PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
+    EventText, Fact, Family, Foreign, Locator, Media, Membership, Note, Participation, Partnership,
+    Person, Place, PlaceKind, PlaceName, PlaceParent, Repository, Role, Source, written_citation,
 };
 pub use name::{NameKind, NameOrder, PersonName, fold};
 pub use rules::{Finding, Rule, Severity, audit};

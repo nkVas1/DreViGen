@@ -2,8 +2,9 @@
 //!
 //! Two kinds of thing live here, and ADR 0010 is the line between them.
 //!
-//! **Facts about people and relationships are claims.** A person's names and sex, an event's date
-//! and place, who took part in it and as what, who belongs to a family and how — each is a
+//! **Facts about people and relationships are claims.** A person's names and sex, an event's date,
+//! place and what is said of it in words, who took part in it and as what, who belongs to a family
+//! and how — each is a
 //! [`Fact`] holding the assertions sources make about it. A person is barely more than an identity
 //! that facts attach to, which is the point: nothing about them is recorded except as something a
 //! source said.
@@ -11,6 +12,8 @@
 //! **The evidence apparatus is plain data.** Sources, citations, repositories, notes, media and
 //! place definitions are what claims cite. A source's title is not evidence of anything; it is the
 //! thing the evidence is in.
+
+use std::collections::BTreeMap;
 
 use drevigen_date::{DateValue, RecordedDate};
 
@@ -153,10 +156,14 @@ pub struct Attribute {
     pub date: Option<RecordedDate>,
     /// Where it held.
     pub place: Option<PlaceId>,
+    /// Where exactly, finer than a place: *ул. Правды, д. 3/1, кв. 27*. Most of what a residence
+    /// says.
+    pub address: Option<String>,
 }
 
 /// Two attributes agree when they are of the same kind, say the same thing, and could have held
-/// at the same time and place. A missing date or place is a refinement, not a disagreement.
+/// at the same time, place and address. A missing date, place or address is a refinement, not a
+/// disagreement.
 impl Claimable for Attribute {
     fn compatible(&self, other: &Self) -> bool {
         let dates = match (&self.date, &other.date) {
@@ -167,16 +174,23 @@ impl Claimable for Attribute {
             (Some(a), Some(b)) => a == b,
             _ => true,
         };
+        let addresses = match (&self.address, &other.address) {
+            (Some(a), Some(b)) => fold(a) == fold(b),
+            _ => true,
+        };
         self.kind == other.kind
             && self.label.as_deref().map(fold) == other.label.as_deref().map(fold)
             && fold(&self.value) == fold(&other.value)
             && dates
             && places
+            && addresses
     }
 
     fn more_specific_than(&self, other: &Self) -> bool {
         let detail = |attribute: &Self| {
-            usize::from(attribute.date.is_some()) + usize::from(attribute.place.is_some())
+            usize::from(attribute.date.is_some())
+                + usize::from(attribute.place.is_some())
+                + usize::from(attribute.address.is_some())
         };
         let by_date = match (&self.date, &other.date) {
             (Some(a), Some(b)) => a.more_specific_than(b),
@@ -333,6 +347,22 @@ pub struct Participation {
     pub role: Fact<Role>,
 }
 
+/// What sources say of an event in words, besides when and where: GEDCOM 7's event details. Each
+/// is a fact of its own, since a second source may say otherwise of one and not of the rest.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum EventText {
+    /// What it was: *пропал без вести*, *в домовой церкви*.
+    Description,
+    /// What brought it about: *от тифа* — `CAUS`, most often of a death.
+    Cause,
+    /// Who was responsible for it, or recorded it: *ЗАГС Октябрьского района* — `AGNC`.
+    Agency,
+    /// The faith it was held in: *лютеранская* — `RELI`.
+    Religion,
+    /// Where exactly, finer than a place: *ул. Правды, д. 3/1, кв. 27* — `ADDR`.
+    Address,
+}
+
 /// Something that happened.
 ///
 /// The kind is intrinsic — a baptism record is about a baptism — and everything else is a fact.
@@ -351,8 +381,8 @@ pub struct Event {
     pub date: Option<Fact<RecordedDate>>,
     /// Where, as sources record it.
     pub place: Option<Fact<PlaceId>>,
-    /// What sources say of it in words: *пропал без вести*, *от тифа*, *в домовой церкви*.
-    pub description: Option<Fact<String>>,
+    /// What sources say of it in words, besides when and where.
+    pub texts: BTreeMap<EventText, Fact<String>>,
     /// Who took part.
     pub participants: Vec<Participation>,
     /// Who removed it, and when.
@@ -369,7 +399,7 @@ impl Event {
             label: None,
             date: None,
             place: None,
-            description: None,
+            texts: BTreeMap::new(),
             participants: Vec::new(),
             removed: None,
         }
@@ -842,6 +872,7 @@ mod tests {
             value: value.to_owned(),
             date: date.map(|d| RecordedDate::parse_gedcom7(d, None).unwrap()),
             place: place.map(PlaceId::from_raw),
+            address: None,
         }
     }
 

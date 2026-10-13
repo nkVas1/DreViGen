@@ -1,8 +1,8 @@
 #![allow(clippy::unwrap_used, clippy::panic)]
 
 use drevigen_core::{
-    Archive, Attribute, AttributeKind, ChildRelation, ContributorId, Entity, EventKind, Fact,
-    NameKind, Person, PersonId, Resolution, Role, Timestamp,
+    Archive, Attribute, AttributeKind, ChildRelation, ContributorId, Entity, EventKind, EventText,
+    Fact, NameKind, Person, PersonId, Resolution, Role, Timestamp,
 };
 use drevigen_date::Repair;
 use drevigen_gedcom::lenient::{NotGedcom, Severity};
@@ -428,7 +428,8 @@ fn an_event_is_named_and_described_in_the_words_the_file_gives_it() {
     );
     let of = |kind: EventKind| {
         let event = file.archive.events().find(|e| e.kind == kind).unwrap();
-        (event.label.clone(), event.description.as_ref().map(agreed))
+        let description = event.texts.get(&EventText::Description);
+        (event.label.clone(), description.map(agreed))
     };
     let words = |text: &str| Some(text.to_owned());
     // A specific event is described by its value, or else by its TYPE.

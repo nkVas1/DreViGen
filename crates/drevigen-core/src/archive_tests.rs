@@ -11,7 +11,8 @@ use crate::id::{
     NoteId, PersonId,
 };
 use crate::model::{
-    ChildRelation, Event, EventKind, Family, Foreign, Media, Note, Partnership, Person, Role,
+    ChildRelation, Event, EventKind, EventText, Family, Foreign, Media, Note, Partnership, Person,
+    Role,
 };
 use crate::name::PersonName;
 
@@ -507,13 +508,13 @@ fn what_an_event_was_in_words_agrees_when_only_the_spelling_differs() {
     for text in ["Пропал без вести", "пропал  без вести"] {
         let assertion = t.mint.assertion(text.to_owned());
         t.archive
-            .assert_event_description(death, fact, assertion)
+            .assert_event_text(death, EventText::Description, fact, assertion)
             .unwrap();
     }
     // (agreed, open question)
     let described = |archive: &Archive| {
         let event = archive.event(death).unwrap();
-        let resolved = event.description.as_ref().unwrap().resolve();
+        let resolved = event.texts[&EventText::Description].resolve();
         (
             matches!(resolved, Resolution::Agreed { .. }),
             resolved.is_open_question(),
@@ -523,7 +524,7 @@ fn what_an_event_was_in_words_agrees_when_only_the_spelling_differs() {
 
     let other = t.mint.assertion("погиб под Ржевом".to_owned());
     t.archive
-        .assert_event_description(death, fact, other)
+        .assert_event_text(death, EventText::Description, fact, other)
         .unwrap();
     assert_eq!(described(&t.archive), (false, true));
 }

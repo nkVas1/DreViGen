@@ -23,8 +23,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use drevigen_core::{
     Archive, AttributeKind, CallNumber, ChildRelation, Citation, CitationId, Claimable, Confidence,
-    Entity, Event, EventId, EventKind, Fact, Family, FamilyId, Foreign, ForeignId, NoteId,
-    Partnership, Person, PersonId, PersonName, PlaceId, Resolution, Role, Sex, SourceId, Timestamp,
+    Entity, Event, EventId, EventKind, EventText, Fact, Family, FamilyId, Foreign, ForeignId,
+    NoteId, Partnership, Person, PersonId, PersonName, PlaceId, Resolution, Role, Sex, SourceId,
+    Timestamp,
 };
 use drevigen_date::gregorian;
 use drevigen_gedcom::{Document, Payload, Structure};
@@ -536,8 +537,8 @@ impl<'a> Exporter<'a> {
 
     fn event(&mut self, event: &Event) -> Structure {
         let description = event
-            .description
-            .as_ref()
+            .texts
+            .get(&EventText::Description)
             .and_then(|fact| Some((fact, self.value(fact)?)));
         let mut written = match event_tag(event.kind) {
             Ok(tag) => {

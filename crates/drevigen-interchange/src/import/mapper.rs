@@ -20,10 +20,10 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use drevigen_core::{
     Archive, Assertion, Attribute, AttributeKind, CallNumber, ChildRelation, Citation, CitationId,
-    Claimable, Confidence, Coordinates, Entity, Event, EventId, EventKind, Fact, FactId, Family,
-    FamilyId, Foreign, ForeignId, Id, Kind, Locator, Membership, Note, NoteId, Participation,
-    Partnership, Person, PersonId, Place, PlaceId, PlaceName, PlaceParent, Provenance, Refusal,
-    Repository, RepositoryId, Resolution, Role, Sex, Source, SourceId, fold,
+    Claimable, Confidence, Coordinates, Entity, Event, EventId, EventKind, EventText, Fact, FactId,
+    Family, FamilyId, Foreign, ForeignId, Id, Kind, Locator, Membership, Note, NoteId,
+    Participation, Partnership, Person, PersonId, Place, PlaceId, PlaceName, PlaceParent,
+    Provenance, Refusal, Repository, RepositoryId, Resolution, Role, Sex, Source, SourceId, fold,
 };
 use drevigen_date::RecordedDate;
 use drevigen_date::gedcom::Severity as DateSeverity;
@@ -823,7 +823,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         }
         if let Some(description) = description {
             let fact: FactId = self.mint();
-            event.description = Some(self.fact(fact, description, &support, record));
+            let description = self.fact(fact, description, &support, record);
+            event.texts.insert(EventText::Description, description);
         }
         for (person, role) in participants {
             let fact: FactId = self.mint();
@@ -861,6 +862,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             value: structure.payload.text().unwrap_or_default().to_owned(),
             date: None,
             place: None,
+            address: None,
         };
         let mut rest = Vec::new();
         let mut beyond = Vec::new();

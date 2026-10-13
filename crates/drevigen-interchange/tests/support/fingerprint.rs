@@ -53,12 +53,16 @@ pub(crate) fn fingerprint(
             .place
             .as_ref()
             .map(|place| print.fact_with(place, |id| print.place(*id)));
+        let texts: Vec<String> = event
+            .texts
+            .iter()
+            .map(|(which, words)| format!("{which:?} {}", print.fact(words)))
+            .collect();
         add(format!(
-            "event {:?} {:?} date {:?} place {place:?} description {:?} roles {roles:?}{}",
+            "event {:?} {:?} date {:?} place {place:?} texts {texts:?} roles {roles:?}{}",
             event.kind,
             event.label,
             event.date.as_ref().map(|date| print.fact(date)),
-            event.description.as_ref().map(|words| print.fact(words)),
             print.annotations(Entity::Event(event.id))
         ));
     }
@@ -183,8 +187,8 @@ impl Printer<'_> {
         self.fact_with(fact, |attribute| {
             let place = attribute.place.map(|place| self.place(place));
             format!(
-                "{:?} {:?} {:?} {:?} {place:?}",
-                attribute.kind, attribute.label, attribute.value, attribute.date
+                "{:?} {:?} {:?} {:?} {place:?} {:?}",
+                attribute.kind, attribute.label, attribute.value, attribute.date, attribute.address
             )
         })
     }

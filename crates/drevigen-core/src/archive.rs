@@ -31,8 +31,8 @@ use crate::id::{
     RepositoryId, SourceId,
 };
 use crate::model::{
-    Attribute, ChildRelation, Citation, Event, Fact, Family, Foreign, Media, Membership, Note,
-    Participation, Partnership, Person, Place, Repository, Role, Source,
+    Attribute, ChildRelation, Citation, Event, EventText, Fact, Family, Foreign, Media, Membership,
+    Note, Participation, Partnership, Person, Place, Repository, Role, Source,
 };
 use crate::name::PersonName;
 use crate::value::Sex;
@@ -113,7 +113,7 @@ enum Location {
     Attribute(PersonId),
     EventDate(EventId),
     EventPlace(EventId),
-    EventDescription(EventId),
+    EventText(EventId, EventText),
     Participation(EventId),
     Partner(FamilyId),
     Child(FamilyId),
@@ -494,9 +494,9 @@ impl Archive {
             )
             .chain(
                 event
-                    .description
+                    .texts
                     .iter()
-                    .map(|fact| (fact.id, Location::EventDescription(event.id))),
+                    .map(|(&which, fact)| (fact.id, Location::EventText(event.id, which))),
             )
             .chain(
                 event
@@ -806,24 +806,28 @@ impl Archive {
         Ok(())
     }
 
-    /// Asserts what an event was, in words.
+    /// Asserts one of the things said of an event in words: what it was, its cause, and the rest.
     ///
     /// # Errors
     ///
     /// As for [`Archive::assert_event_date`].
-    pub fn assert_event_description(
+    pub fn assert_event_text(
         &mut self,
         event: EventId,
+        which: EventText,
         fact: FactId,
         assertion: Assertion<String>,
     ) -> Result<(), Refusal> {
         self.check_citation(assertion.citation)?;
-        self.check_single(fact, Location::EventDescription(event))?;
+        let location = Location::EventText(event, which);
+        self.check_single(fact, location)?;
         let owner = self.live_event_mut(event)?;
-        single(&mut owner.description, fact)
-            .ok_or(Refusal::WrongFact(fact))?
-            .assert(assertion)?;
-        self.facts.insert(fact, Location::EventDescription(event));
+        let held = owner.texts.entry(which).or_insert_with(|| Fact::new(fact));
+        if held.id != fact {
+            return Err(Refusal::WrongFact(fact));
+        }
+        held.claims.assert(assertion)?;
+        self.facts.insert(fact, location);
         Ok(())
     }
 
@@ -1054,11 +1058,11 @@ impl Archive {
                     .ok_or_else(wrong)?
                     .claims,
             ),
-            Location::EventDescription(event) => operation(
+            Location::EventText(event, which) => operation(
                 &mut self
                     .live_event_mut(event)?
-                    .description
-                    .as_mut()
+                    .texts
+                    .get_mut(&which)
                     .filter(|f| f.id == fact)
                     .ok_or_else(wrong)?
                     .claims,
