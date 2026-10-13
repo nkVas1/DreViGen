@@ -360,6 +360,199 @@ fn an_event_the_model_has_no_kind_for_is_kept_and_a_dual_year_is_reported() {
     )));
 }
 
+const CITED: &str = "0 HEAD
+1 GEDC
+2 VERS 5.5.1
+0 @S1@ SOUR
+1 TITL Метрическая книга церкви Рождества Христова, 1871
+0 @S2@ SOUR
+1 TITL Исповедные ведомости, 1880
+0 @I1@ INDI
+1 NAME Иван Петрович /Смирнов/
+2 SOUR @S1@
+3 PAGE л. 17 об.
+3 QUAY 3
+3 DATA
+4 TEXT Иванъ, сынъ Петра Смирнова
+1 BIRT
+2 DATE 12 MAR 1871
+2 SOUR @S1@
+3 PAGE л. 17 об.
+2 SOUR @S2@
+3 PAGE л. 4
+1 OCCU кузнец
+2 SOUR Семейная Библия
+3 TEXT Иван — кузнец
+1 DEAT Y
+2 SOUR Семейная Библия
+2 SOUR @S9@
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Анна /Смирнова/
+1 SOUR @S2@
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 SOUR @S2@
+2 PAGE л. 5
+0 TRLR
+";
+
+/// Every assertion of a fact, as (source title, locator, confidence).
+fn citations_of<V: drevigen_core::Claimable>(
+    archive: &Archive,
+    fact: &Fact<V>,
+) -> Vec<(
+    String,
+    Option<drevigen_core::Locator>,
+    Option<drevigen_core::Confidence>,
+)> {
+    fact.claims
+        .assertions()
+        .iter()
+        .map(|assertion| {
+            let citation = archive.citation(assertion.citation.unwrap()).unwrap();
+            let source = archive.source(citation.source).unwrap();
+            (
+                source.title.clone(),
+                citation.locator.clone(),
+                assertion.confidence,
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn a_cited_fact_is_cited_by_its_own_citation_and_not_by_the_file() {
+    let file = imported(CITED);
+    let ivan = person(&file.archive, "Иван");
+    let name = &ivan.names[0];
+    assert_eq!(
+        citations_of(&file.archive, name),
+        [(
+            "Метрическая книга церкви Рождества Христова, 1871".to_owned(),
+            Some(drevigen_core::Locator::Leaf {
+                leaf: "17".to_owned(),
+                verso: true
+            }),
+            Some(drevigen_core::Confidence::Primary)
+        )]
+    );
+    let citation = name.claims.assertions()[0].citation.unwrap();
+    assert_eq!(
+        file.archive
+            .citation(citation)
+            .unwrap()
+            .transcription
+            .as_deref(),
+        Some("Иванъ, сынъ Петра Смирнова")
+    );
+}
+
+#[test]
+fn an_event_cited_twice_is_asserted_twice_and_agrees() {
+    let file = imported(CITED);
+    let ivan = person(&file.archive, "Иван").id;
+    let birth = file.archive.events_of(ivan).next().unwrap();
+    let date = birth.date.as_ref().unwrap();
+    assert_eq!(date.claims.assertions().len(), 2);
+    assert!(matches!(date.resolve(), Resolution::Agreed { live: 2, .. }));
+    // The citations support the place and the participant's role too.
+    assert_eq!(birth.participants[0].role.claims.assertions().len(), 2);
+}
+
+#[test]
+fn a_source_described_in_place_becomes_one_source() {
+    let file = imported(CITED);
+    let ivan = person(&file.archive, "Иван");
+    let occupation = citations_of(&file.archive, &ivan.attributes[0]);
+    assert_eq!(occupation[0].0, "Семейная Библия");
+    let described = file
+        .archive
+        .citation(ivan.attributes[0].claims.assertions()[0].citation.unwrap())
+        .unwrap();
+    assert_eq!(described.transcription.as_deref(), Some("Иван — кузнец"));
+
+    // The death cites the same described source again: one source, two citations.
+    let death = file
+        .archive
+        .events_of(ivan.id)
+        .find(|event| event.kind == EventKind::Death)
+        .unwrap();
+    let death_source = file
+        .archive
+        .citation(
+            death.participants[0].role.claims.assertions()[0]
+                .citation
+                .unwrap(),
+        )
+        .unwrap()
+        .source;
+    assert_eq!(death_source, described.source);
+}
+
+#[test]
+fn a_citation_of_nothing_the_file_has_is_reported_and_kept() {
+    let file = imported(CITED);
+    let ivan = person(&file.archive, "Иван").id;
+    let death = file
+        .archive
+        .events_of(ivan)
+        .find(|event| event.kind == EventKind::Death)
+        .unwrap();
+    assert!(
+        file.archive
+            .foreign_on(Entity::Event(death.id))
+            .any(|item| item.text == "0 SOUR @S9@\n")
+    );
+    assert!(file.report.entries.iter().any(|entry| matches!(
+        &entry.what,
+        What::Mapping(Mapping::Unresolved { xref }) if xref == "S9"
+    )));
+}
+
+#[test]
+fn a_record_wide_citation_supports_the_names_or_the_union() {
+    let file = imported(CITED);
+    let anna = person(&file.archive, "Анна");
+    assert_eq!(
+        citations_of(&file.archive, &anna.names[0])[0].0,
+        "Исповедные ведомости, 1880"
+    );
+    let family = file.archive.families_as_partner(anna.id).next().unwrap();
+    for partner in &family.partners {
+        let cited = citations_of(&file.archive, &partner.fact);
+        assert_eq!(
+            cited,
+            [(
+                "Исповедные ведомости, 1880".to_owned(),
+                Some(drevigen_core::Locator::Leaf {
+                    leaf: "5".to_owned(),
+                    verso: false
+                }),
+                None
+            )]
+        );
+    }
+}
+
+#[test]
+fn a_leaf_is_read_as_a_leaf_and_anything_else_as_written() {
+    use super::mapper::read_locator;
+    use drevigen_core::Locator;
+    let leaf = |leaf: &str, verso| Locator::Leaf {
+        leaf: leaf.to_owned(),
+        verso,
+    };
+    assert_eq!(read_locator("л. 17 об."), leaf("17", true));
+    assert_eq!(read_locator("Л.245"), leaf("245", false));
+    assert_eq!(read_locator("лист 3а оборот"), leaf("3а", true));
+    assert_eq!(read_locator("л. 17об"), leaf("17", true));
+    assert_eq!(read_locator("p. 12"), Locator::Free("p. 12".to_owned()));
+    assert_eq!(read_locator("л. 3-4"), Locator::Free("л. 3-4".to_owned()));
+}
+
 #[test]
 fn a_link_recorded_on_one_side_is_read_and_reported() {
     let file =

@@ -134,8 +134,9 @@ tree in it, import their existing GEDCOM, and show it to relatives.
       The lenient container reader is done too, matching the GEDCOM 7 editor's own conversions
       in `gedcom7code/test-files` and reporting every repair. Mapping into the archive has
       begun in `drevigen-interchange` (ADR 0011): people, names with their patronymics, sex,
-      families, events with their dates and places, attributes, notes, and the file as a
-      source; the citations a file gives for its facts are next
+      families, events with their dates and places, attributes, notes, the file as a source,
+      and the citations a file gives for its facts — leaf locators such as *л. 17 об.* read as
+      leaves. Writing the archive back out, foreign data in its place, is next
 - [ ] Verbatim preservation of unrepresentable structures, with a loss report shown on import
 - [ ] Golden-file round-trip tests against exports from Gramps, MyHeritage, MacFamilyTree,
       Ancestris and webtrees

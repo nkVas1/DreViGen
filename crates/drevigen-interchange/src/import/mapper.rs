@@ -20,10 +20,10 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use drevigen_core::{
     Archive, Assertion, Attribute, AttributeKind, CallNumber, ChildRelation, Citation, CitationId,
-    Claimable, Coordinates, Entity, Event, EventId, EventKind, Fact, Family, FamilyId, Foreign,
-    ForeignId, Id, Kind, Locator, Membership, Note, NoteId, Participation, Partnership, Person,
-    PersonId, Place, PlaceId, PlaceName, PlaceParent, Provenance, Refusal, Repository,
-    RepositoryId, Resolution, Role, Sex, Source, SourceId, fold,
+    Claimable, Confidence, Coordinates, Entity, Event, EventId, EventKind, Fact, FactId, Family,
+    FamilyId, Foreign, ForeignId, Id, Kind, Locator, Membership, Note, NoteId, Participation,
+    Partnership, Person, PersonId, Place, PlaceId, PlaceName, PlaceParent, Provenance, Refusal,
+    Repository, RepositoryId, Resolution, Role, Sex, Source, SourceId, fold,
 };
 use drevigen_date::RecordedDate;
 use drevigen_date::gedcom::Severity as DateSeverity;
@@ -70,6 +70,13 @@ impl Target {
     }
 }
 
+/// A citation the file gives for a value, and how far the file trusts it.
+#[derive(Debug, Clone, Copy)]
+struct Cited {
+    citation: CitationId,
+    confidence: Option<Confidence>,
+}
+
 /// Work that has to wait until its subject is in the archive.
 enum Deferred {
     Annotate {
@@ -109,6 +116,8 @@ struct Mapper<'d, 'r, E> {
     places: BTreeMap<String, PlaceId>,
     /// The coordinates the file gives for places, by the same key.
     positions: BTreeMap<String, Coordinates>,
+    /// The sources 5.5.1 citations describe in place, by their description.
+    described: BTreeMap<String, SourceId>,
     deferred: Vec<Deferred>,
 }
 
@@ -136,6 +145,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             citations: BTreeMap::new(),
             places: BTreeMap::new(),
             positions: BTreeMap::new(),
+            described: BTreeMap::new(),
             deferred: Vec::new(),
         }
     }
@@ -402,11 +412,24 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         let subject = Entity::Person(id);
         let mut person = Person::new(id);
         let mut events = Vec::new();
+        // A citation on the person as a whole supports their names: a source that mentions
+        // someone records them by name. Without a name, there is nothing for it to support.
+        let named = record
+            .children
+            .iter()
+            .any(|c| c.tag == "NAME" && !names::person_name(c).is_empty());
+        let general = if named {
+            let sources = record.children_tagged("SOUR").collect();
+            self.sources(subject, sources, "INDI")
+        } else {
+            Vec::new()
+        };
         for child in &record.children {
             let tag = child.tag.as_str();
             match tag {
-                "NAME" => self.name(&mut person, record, child),
+                "NAME" => self.name(&mut person, record, child, &general),
                 "SEX" => self.sex(&mut person, record, child),
+                "SOUR" if named => {}
                 "FAMC" => self.link(id, child, true),
                 "FAMS" => self.link(id, child, false),
                 "NOTE" | "SNOTE" => self.annotation(subject, child),
@@ -444,11 +467,26 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         let subject = Entity::Family(id);
         let mut family = Family::new(id);
         let mut events = Vec::new();
+        // A citation on the family as a whole supports the union: its partners, not its
+        // children, whose own records say where they come from.
+        let partnered = record.children.iter().any(|c| {
+            matches!(c.tag.as_str(), "HUSB" | "WIFE")
+                && matches!(self.pointer(c), Some(Target::Person(_)))
+        }) || self.as_partner.keys().any(|&(_, family)| family == id);
+        let general = if partnered {
+            let sources = record.children_tagged("SOUR").collect();
+            self.sources(subject, sources, "FAM")
+        } else {
+            Vec::new()
+        };
         for child in &record.children {
             if let Some(kind) = family_event(&child.tag)
                 && plain_event(child)
             {
                 events.push((child, kind));
+                continue;
+            }
+            if child.tag == "SOUR" && partnered {
                 continue;
             }
             let person = match self.pointer(child) {
@@ -463,7 +501,16 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                         Partnership::Wife
                     };
                     let side = self.as_partner.remove(&(person, id));
-                    self.partner(&mut family, person, partnership, record, Some(child), side);
+                    let written = Some(child);
+                    self.partner(
+                        &mut family,
+                        person,
+                        partnership,
+                        record,
+                        written,
+                        side,
+                        &general,
+                    );
                 }
                 ("CHIL", Some(person)) if family.children.iter().all(|m| m.person != person) => {
                     let side = self.as_child.remove(&(person, id));
@@ -475,34 +522,53 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             }
         }
 
-        // Links that people's records make and this family's record does not: read as if the
-        // family made them too, and said so.
-        let one_sided = |links: &BTreeMap<(PersonId, FamilyId), &'d Structure>| -> Vec<_> {
+        self.one_sided_links(&mut family, record, &general);
+        self.family_events(&mut family, events, record);
+
+        if self.add(record.line, |archive| archive.add_family(family)) {
+            self.report.counts.families += 1;
+        }
+    }
+
+    /// Links that people's records make and the family's record does not: read as if the family
+    /// made them too, and said so.
+    fn one_sided_links(&mut self, family: &mut Family, record: &'d Structure, general: &[Cited]) {
+        let id = family.id;
+        let on_this = |links: &BTreeMap<(PersonId, FamilyId), &'d Structure>| -> Vec<_> {
             links
                 .iter()
-                .filter(|((_, family), _)| *family == id)
+                .filter(|((_, found), _)| *found == id)
                 .map(|(&key, &side)| (key, side))
                 .collect()
         };
-        for (key, side) in one_sided(&self.as_partner) {
+        for (key, side) in on_this(&self.as_partner) {
             self.as_partner.remove(&key);
             self.one_sided(record, side);
+            let partnership = Partnership::Partner;
             self.partner(
-                &mut family,
+                family,
                 key.0,
-                Partnership::Partner,
+                partnership,
                 record,
                 None,
                 Some(side),
+                general,
             );
         }
-        for (key, side) in one_sided(&self.as_child) {
+        for (key, side) in on_this(&self.as_child) {
             self.as_child.remove(&key);
             self.one_sided(record, side);
-            self.child(&mut family, key.0, record, None, Some(side));
+            self.child(family, key.0, record, None, Some(side));
         }
+    }
 
-        // A family's events are its partners' events, each in the role the family gives them.
+    /// A family's events are its partners' events, each in the role the family gives them.
+    fn family_events(
+        &mut self,
+        family: &mut Family,
+        events: Vec<(&'d Structure, EventKind)>,
+        record: &'d Structure,
+    ) {
         let partners: Vec<(PersonId, Role)> = family
             .partners
             .iter()
@@ -521,12 +587,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         for (structure, kind) in events {
             match self.event(structure, kind, partners.clone(), record, "FAM") {
                 Some(event) => family.events.push(event),
-                None => self.keep(subject, structure, "FAM"),
+                None => self.keep(Entity::Family(family.id), structure, "FAM"),
             }
-        }
-
-        if self.add(record.line, |archive| archive.add_family(family)) {
-            self.report.counts.families += 1;
         }
     }
 
@@ -542,7 +604,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     // ── a person's facts ────────────────────────────────────────────────────────────────────
 
-    fn name(&mut self, person: &mut Person, record: &'d Structure, name: &'d Structure) {
+    fn name(
+        &mut self,
+        person: &mut Person,
+        record: &'d Structure,
+        name: &'d Structure,
+        general: &[Cited],
+    ) {
         let parsed = names::person_name(name);
         if parsed.is_empty() {
             self.report.note(name.line, Mapping::EmptyName);
@@ -551,16 +619,19 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             }
             return;
         }
-        let fact = self.fact(parsed, record);
-        let subject = Entity::Fact(fact.id);
-        person.names.push(fact);
+        let id: FactId = self.mint();
+        let subject = Entity::Fact(id);
+        let mut support =
+            self.sources(subject, name.children_tagged("SOUR").collect(), "INDI.NAME");
+        support.extend_from_slice(general);
+        person.names.push(self.fact(id, parsed, &support, record));
         let rest = name
             .children
             .iter()
             .filter(|child| {
                 let part = names::PARTS.contains(&child.tag.as_str()) && child.children.is_empty();
                 let kind = child.tag == "TYPE" && names::kind(child).is_some();
-                !(part || kind)
+                !(part || kind || child.tag == "SOUR")
             })
             .collect();
         self.rest(subject, rest, "INDI.NAME");
@@ -577,18 +648,17 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             );
             return self.keep(Entity::Person(person.id), sex, "INDI");
         };
-        let assertion = self.assertion(parsed, record);
-        if person.sex.is_none() {
-            person.sex = Some(Fact::new(self.mint()));
-        }
-        let Some(fact) = person.sex.as_mut() else {
-            return;
+        // A second SEX line is a second claim about the same fact.
+        let id = match &person.sex {
+            Some(fact) => fact.id,
+            None => self.mint(),
         };
-        // A second SEX line is a second claim about the same fact, with a fresh identity: it
-        // cannot be refused.
-        let _ = fact.claims.assert(assertion);
-        let subject = Entity::Fact(fact.id);
-        self.rest(subject, sex.children.iter().collect(), "INDI.SEX");
+        let subject = Entity::Fact(id);
+        let support = self.sources(subject, sex.children_tagged("SOUR").collect(), "INDI.SEX");
+        let fact = person.sex.get_or_insert_with(|| Fact::new(id));
+        self.claim(fact, parsed, &support, record);
+        let rest = sex.children.iter().filter(|c| c.tag != "SOUR").collect();
+        self.rest(subject, rest, "INDI.SEX");
     }
 
     /// The person's side of a family link, held until the family is mapped.
@@ -610,6 +680,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     // ── a family's members ──────────────────────────────────────────────────────────────────
 
+    #[allow(clippy::too_many_arguments)]
     fn partner(
         &mut self,
         family: &mut Family,
@@ -618,9 +689,11 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         record: &'d Structure,
         written: Option<&'d Structure>,
         side: Option<&'d Structure>,
+        general: &[Cited],
     ) {
-        let fact = self.fact(partnership, record);
-        let subject = Entity::Fact(fact.id);
+        let id: FactId = self.mint();
+        let fact = self.fact(id, partnership, general, record);
+        let subject = Entity::Fact(id);
         family.partners.push(Membership { person, fact });
         if let Some(written) = written {
             let path = format!("FAM.{}", written.tag);
@@ -643,8 +716,9 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         let how = pedigree
             .and_then(relation)
             .unwrap_or(ChildRelation::Unspecified);
-        let fact = self.fact(how, record);
-        let subject = Entity::Fact(fact.id);
+        let id: FactId = self.mint();
+        let fact = self.fact(id, how, &[], record);
+        let subject = Entity::Fact(id);
         family.children.push(Membership { person, fact });
         if let Some(written) = written {
             self.rest(subject, written.children.iter().collect(), "FAM.CHIL");
@@ -674,23 +748,32 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
     ) -> Option<EventId> {
         let id: EventId = self.mint();
         let mut event = Event::new(id, kind);
+        let path = format!("{parent}.{}", structure.tag);
+        // What the event's citations say, they say of all of it: its date, its place, and who
+        // took part in what role.
+        let support = self.sources(
+            Entity::Event(id),
+            structure.children_tagged("SOUR").collect(),
+            &path,
+        );
         let mut rest = Vec::new();
         let mut beneath = Vec::new();
         for child in &structure.children {
             match child.tag.as_str() {
+                "SOUR" => {}
                 "DATE" if event.date.is_none() => match self.date(child) {
                     Some((date, more)) => {
-                        let fact = self.fact(date, record);
-                        beneath.push((Entity::Fact(fact.id), more, "DATE"));
-                        event.date = Some(fact);
+                        let fact: FactId = self.mint();
+                        beneath.push((Entity::Fact(fact), more, "DATE"));
+                        event.date = Some(self.fact(fact, date, &support, record));
                     }
                     None => rest.push(child),
                 },
                 "PLAC" if event.place.is_none() => match self.place(child) {
                     Some((place, more)) => {
-                        let fact = self.fact(place, record);
-                        beneath.push((Entity::Fact(fact.id), more, "PLAC"));
-                        event.place = Some(fact);
+                        let fact: FactId = self.mint();
+                        beneath.push((Entity::Fact(fact), more, "PLAC"));
+                        event.place = Some(self.fact(fact, place, &support, record));
                     }
                     None => rest.push(child),
                 },
@@ -698,14 +781,14 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             }
         }
         for (person, role) in participants {
-            let role = self.fact(role, record);
+            let fact: FactId = self.mint();
+            let role = self.fact(fact, role, &support, record);
             event.participants.push(Participation { person, role });
         }
         if !self.add(structure.line, |archive| archive.add_event(event)) {
             return None;
         }
         self.report.counts.events += 1;
-        let path = format!("{parent}.{}", structure.tag);
         self.rest(Entity::Event(id), rest, &path);
         for (subject, more, tag) in beneath {
             self.rest(subject, more, &format!("{path}.{tag}"));
@@ -723,6 +806,10 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         kind: AttributeKind,
     ) {
         let labelled = matches!(structure.tag.as_str(), "FACT" | "IDNO");
+        let path = format!("INDI.{}", structure.tag);
+        let id: FactId = self.mint();
+        let subject = Entity::Fact(id);
+        let support = self.sources(subject, structure.children_tagged("SOUR").collect(), &path);
         let mut value = Attribute {
             kind,
             label: None,
@@ -734,6 +821,7 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         let mut beyond = Vec::new();
         for child in &structure.children {
             match child.tag.as_str() {
+                "SOUR" => {}
                 "TYPE" if labelled && value.label.is_none() && child.children.is_empty() => {
                     value.label = text_of(child);
                 }
@@ -754,10 +842,9 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 _ => rest.push(child),
             }
         }
-        let fact = self.fact(value, record);
-        let subject = Entity::Fact(fact.id);
-        person.attributes.push(fact);
-        let path = format!("INDI.{}", structure.tag);
+        person
+            .attributes
+            .push(self.fact(id, value, &support, record));
         self.rest(subject, rest, &path);
         // A date or place is part of the attribute's value, not a subject of its own, so what
         // it carries beyond that is kept on its own line beneath the attribute.
@@ -883,21 +970,162 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     // ── claims ──────────────────────────────────────────────────────────────────────────────
 
-    /// A fact with one assertion of a value, cited by the file's citation of its record.
-    fn fact<V: Claimable>(&mut self, value: V, record: &'d Structure) -> Fact<V> {
-        let assertion = self.assertion(value, record);
-        let mut fact = Fact::new(self.mint());
-        // A fresh fact and a fresh assertion: nothing to refuse.
-        let _ = fact.claims.assert(assertion);
+    /// A fact claiming a value, as [`Mapper::claim`] claims it.
+    fn fact<V: Claimable + Clone>(
+        &mut self,
+        id: FactId,
+        value: V,
+        support: &[Cited],
+        record: &'d Structure,
+    ) -> Fact<V> {
+        let mut fact = Fact::new(id);
+        self.claim(&mut fact, value, support, record);
         fact
     }
 
-    fn assertion<V>(&mut self, value: V, record: &'d Structure) -> Assertion<V> {
-        let citation = self.citation(record);
-        Assertion {
-            citation: Some(citation),
-            ..Assertion::new(self.mint(), value, self.made)
+    /// Asserts a value once for each citation the file gives for it, with the confidence the
+    /// file gives that citation — or, where it gives none, once, cited by the file's own citation
+    /// of the record (ADR 0011).
+    fn claim<V: Claimable + Clone>(
+        &mut self,
+        fact: &mut Fact<V>,
+        value: V,
+        support: &[Cited],
+        record: &'d Structure,
+    ) {
+        let support = if support.is_empty() {
+            vec![Cited {
+                citation: self.citation(record),
+                confidence: None,
+            }]
+        } else {
+            support.to_vec()
+        };
+        let values = core::iter::repeat_n(value, support.len());
+        for (cited, value) in support.into_iter().zip(values) {
+            let assertion = Assertion {
+                citation: Some(cited.citation),
+                confidence: cited.confidence,
+                ..Assertion::new(self.mint(), value, self.made)
+            };
+            // A fresh assertion identity: nothing to refuse.
+            let _ = fact.claims.assert(assertion);
         }
+    }
+
+    /// The citations a list of `SOUR` structures make; those that cite nothing the file has are
+    /// reported and kept under the subject.
+    fn sources(
+        &mut self,
+        subject: Entity,
+        sources: Vec<&'d Structure>,
+        parent: &str,
+    ) -> Vec<Cited> {
+        sources
+            .into_iter()
+            .filter_map(|source| self.cited(subject, source, parent))
+            .collect()
+    }
+
+    /// One `SOUR` beneath a fact: a citation of a source record, or — 5.5.1's other form — of a
+    /// source described in place, which becomes a source of its own. Its `PAGE` is the locator,
+    /// its text the transcription, its `QUAY` the confidence of what it supports.
+    fn cited(&mut self, subject: Entity, structure: &'d Structure, parent: &str) -> Option<Cited> {
+        let source = match &structure.payload {
+            Payload::Pointer(_) => {
+                let Some(Target::Source(source)) = self.pointer(structure) else {
+                    self.unresolved(subject, structure, parent);
+                    return None;
+                };
+                source
+            }
+            Payload::Text(description) => self.described_source(description, structure.line),
+            // A citation of nothing — 7.0's @VOID@ — supports nothing, and is kept as written.
+            Payload::Void | Payload::None => {
+                self.keep(subject, structure, parent);
+                return None;
+            }
+        };
+        let described = matches!(structure.payload, Payload::Text(_));
+        let id: CitationId = self.mint();
+        let mut citation = Citation {
+            id,
+            source,
+            locator: None,
+            transcription: None,
+            media: Vec::new(),
+        };
+        let mut confidence = None;
+        let mut rest = Vec::new();
+        let mut data = None;
+        for child in &structure.children {
+            let bare = child.children.is_empty();
+            match child.tag.as_str() {
+                "PAGE" if bare && citation.locator.is_none() => {
+                    citation.locator = text_of(child).map(|page| read_locator(&page));
+                }
+                "QUAY" if bare && confidence.is_none() && quay(child).is_some() => {
+                    confidence = quay(child);
+                }
+                // The described form writes the transcription beneath it; the record form, beneath
+                // its DATA.
+                "TEXT" if bare && described && citation.transcription.is_none() => {
+                    citation.transcription = text_of(child);
+                }
+                "DATA" if data.is_none() => {
+                    let mut more = Vec::new();
+                    for part in &child.children {
+                        let text = part.tag == "TEXT" && part.children.is_empty();
+                        if text && citation.transcription.is_none() {
+                            citation.transcription = text_of(part);
+                        } else {
+                            more.push(part);
+                        }
+                    }
+                    data = Some((child, more));
+                }
+                _ => rest.push(child),
+            }
+        }
+        if !self.add(structure.line, |archive| archive.add_citation(citation)) {
+            self.keep(subject, structure, parent);
+            return None;
+        }
+        self.report.counts.citations += 1;
+        let subject = Entity::Citation(id);
+        self.rest(subject, rest, "SOUR");
+        if let Some((data, more)) = data
+            && !more.is_empty()
+        {
+            self.keep_partly(subject, data, more, "SOUR");
+        }
+        Some(Cited {
+            citation: id,
+            confidence,
+        })
+    }
+
+    /// The source a 5.5.1 citation describes in place instead of pointing at: one source for each
+    /// description, however many times the file repeats it.
+    fn described_source(&mut self, description: &str, line: usize) -> SourceId {
+        let title = description.trim().to_owned();
+        if let Some(source) = self.described.get(&title) {
+            return *source;
+        }
+        let id: SourceId = self.mint();
+        let source = Source {
+            id,
+            title: title.clone(),
+            author: None,
+            publication: None,
+            repository: None,
+            call_number: None,
+        };
+        if self.add(line, |archive| archive.add_source(source)) {
+            self.report.counts.sources += 1;
+        }
+        self.described.insert(title, id);
+        id
     }
 
     /// The file's citation of a record, made the first time a value from the record needs it:
@@ -1256,4 +1484,47 @@ fn coordinates(place: &Structure) -> Option<Coordinates> {
     let longitude = degrees("LONG", 'E', 'W')?;
     ((-90.0..=90.0).contains(&latitude) && (-180.0..=180.0).contains(&longitude))
         .then(|| Coordinates::from_degrees(latitude, longitude))
+}
+
+/// A `QUAY` read as a confidence: 0 to 3, nothing else.
+fn quay(quay: &Structure) -> Option<Confidence> {
+    text_of(quay)?
+        .parse::<u8>()
+        .ok()
+        .and_then(Confidence::from_quay)
+}
+
+/// A `PAGE` read as a locator. Russian archival files are numbered by leaf, and a citation of one
+/// is written *л. 17* or *л. 17 об.* — the back of the leaf — which is read as a leaf; anything
+/// else is kept as written.
+pub(super) fn read_locator(page: &str) -> Locator {
+    leaf(page).unwrap_or_else(|| Locator::Free(page.to_owned()))
+}
+
+fn leaf(page: &str) -> Option<Locator> {
+    let lower = page.trim().to_lowercase();
+    let rest = lower
+        .strip_prefix("лист")
+        .or_else(|| lower.strip_prefix("л."))?
+        .trim_start();
+    let digits = rest.chars().take_while(char::is_ascii_digit).count();
+    if digits == 0 {
+        return None;
+    }
+    // A leaf number may carry one letter: 17а.
+    let letter = rest[digits..]
+        .chars()
+        .next()
+        .filter(|c| matches!(c, 'а'..='я'))
+        .filter(|_| !rest[digits..].starts_with("об"));
+    let number_end = digits + letter.map_or(0, char::len_utf8);
+    let verso = match rest[number_end..].trim() {
+        "" => false,
+        "об" | "об." | "оборот" => true,
+        _ => return None,
+    };
+    Some(Locator::Leaf {
+        leaf: rest[..number_end].to_owned(),
+        verso,
+    })
 }
