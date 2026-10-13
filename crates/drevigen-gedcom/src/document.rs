@@ -102,6 +102,15 @@ impl Structure {
     pub fn children_tagged<'a>(&'a self, tag: &'a str) -> impl Iterator<Item = &'a Self> + 'a {
         self.children.iter().filter(move |child| child.tag == tag)
     }
+
+    /// The structure and everything beneath it as GEDCOM 7 lines, itself at level 0: how a
+    /// structure is kept when nothing else can hold it, and how it is written back in place.
+    #[must_use]
+    pub fn write(&self) -> String {
+        let mut out = String::new();
+        write_structure(&mut out, self, 0);
+        out
+    }
 }
 
 /// A whole data stream: the header first, then the records. The trailer is implied — it carries
@@ -615,6 +624,17 @@ mod tests {
         let twice = parse(&once.write());
         // Line numbers are where a structure was read from, and are allowed to differ.
         assert_eq!(strip_lines(once), strip_lines(twice));
+    }
+
+    #[test]
+    fn a_structure_writes_itself_from_level_0() {
+        let kept = Structure::new("_MILT")
+            .with_text("Served\n@ the front")
+            .with_child(Structure::new("DATE").with_text("1904"));
+        assert_eq!(
+            kept.write(),
+            "0 _MILT Served\n1 CONT @@ the front\n1 DATE 1904\n"
+        );
     }
 
     fn strip_lines(mut document: Document) -> Document {
