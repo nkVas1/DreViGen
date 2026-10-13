@@ -303,3 +303,23 @@ fn a_disagreement_is_written_one_sided_and_reported() {
             .any(|entry| matches!(entry, Unwritten::Contested { .. }))
     );
 }
+
+#[test]
+fn a_citation_of_the_whole_person_is_written_once_at_the_person() {
+    // Found by a real MobileFamilyTree file: a person-level citation with something kept beneath
+    // it, written under each of two names, came back as two citations.
+    let file = imported(
+        "0 HEAD\n0 @S1@ SOUR\n1 TITL Ревизская сказка, 1858\n0 @I1@ INDI\n1 NAME Мария /Смирнова/\n1 NAME Мария /Петрова/\n2 TYPE maiden\n1 SOUR @S1@\n2 PAGE л. 3\n2 _QUAL\n3 _INFO 1\n0 TRLR\n",
+    );
+    let document = Document::parse(&shared(&file)).unwrap();
+    let maria = record(&document, "INDI", 0);
+    assert_eq!(maria.children_tagged("SOUR").count(), 1);
+    assert!(
+        maria
+            .children_tagged("NAME")
+            .all(|name| name.child("SOUR").is_none())
+    );
+    let again = imported(&shared(&file));
+    assert_eq!(again.report.counts, file.report.counts);
+    assert_eq!(again.report.kept, file.report.kept);
+}

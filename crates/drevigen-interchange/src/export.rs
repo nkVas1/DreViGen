@@ -321,12 +321,26 @@ impl<'a> Exporter<'a> {
     fn person(&mut self, person: &Person) -> Structure {
         let mut indi = Structure::new("INDI");
         indi.xref = self.xref(person.id.raw());
+        // A citation supporting every name supports the person: an import reads a citation of the
+        // person as a whole that way, and so it is written back that way, once.
+        let shared = self.shared_citations(&person.names);
         for name in &person.names {
             if let Some(value) = self.value(name) {
                 let mut written = name_structure(&value);
-                self.cite(&mut written, name);
+                for (citation, confidence) in self.citations(name) {
+                    if !shared.iter().any(|(found, _)| *found == citation)
+                        && let Some(cited) = self.citation(citation, confidence)
+                    {
+                        written.children.push(cited);
+                    }
+                }
                 self.finish(&mut written, Entity::Fact(name.id));
                 indi.children.push(written);
+            }
+        }
+        for (citation, confidence) in shared {
+            if let Some(cited) = self.citation(citation, confidence) {
+                indi.children.push(cited);
             }
         }
         if let Some(sex) = &person.sex
@@ -626,6 +640,24 @@ impl<'a> Exporter<'a> {
                     .is_some_and(|c| !self.options.provenance.contains(&c.source))
             })
             .filter(|(citation, _)| seen.insert(*citation))
+            .collect()
+    }
+
+    /// The citations every one of these facts has, in the order the first has them.
+    fn shared_citations<V: Claimable>(
+        &self,
+        facts: &[Fact<V>],
+    ) -> Vec<(CitationId, Option<Confidence>)> {
+        let Some((first, rest)) = facts.split_first() else {
+            return Vec::new();
+        };
+        let others: Vec<BTreeSet<CitationId>> = rest
+            .iter()
+            .map(|fact| self.citations(fact).into_iter().map(|(id, _)| id).collect())
+            .collect();
+        self.citations(first)
+            .into_iter()
+            .filter(|(id, _)| others.iter().all(|cited| cited.contains(id)))
             .collect()
     }
 
