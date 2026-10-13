@@ -529,6 +529,37 @@ fn what_an_event_was_in_words_agrees_when_only_the_spelling_differs() {
 }
 
 #[test]
+fn a_single_valued_fact_keeps_the_identity_it_was_given() {
+    let mut t = Tree::new();
+    let birth = EventId::from_raw(t.mint.next());
+    t.archive
+        .add_event(Event::new(birth, EventKind::Birth))
+        .unwrap();
+    let date = t.mint.fact();
+    let register = t
+        .mint
+        .assertion(RecordedDate::parse_gedcom7("1871", None).unwrap());
+    t.archive.assert_event_date(birth, date, register).unwrap();
+
+    // A second date for the same birth is a second assertion about the same fact.
+    let second = t.mint.fact();
+    let census = t
+        .mint
+        .assertion(RecordedDate::parse_gedcom7("ABT 1873", None).unwrap());
+    let census_id = census.id;
+    assert_eq!(
+        t.archive.assert_event_date(birth, second, census),
+        Err(Refusal::WrongFact(second))
+    );
+    let held = t.archive.event(birth).unwrap().date.as_ref().unwrap();
+    assert_eq!((held.id, held.claims.assertions().len()), (date, 1));
+    assert_eq!(
+        t.archive.retract(second, census_id, made(1)),
+        Err(Refusal::Missing(Entity::Fact(second)))
+    );
+}
+
+#[test]
 fn a_fact_is_found_by_its_identity_alone() {
     let mut t = Tree::new();
     let olga = t.archive.person(t.olga).unwrap();

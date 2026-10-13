@@ -720,7 +720,8 @@ impl Archive {
     ///
     /// # Errors
     ///
-    /// As for [`Archive::assert_name`].
+    /// As for [`Archive::assert_name`], and [`Refusal::WrongFact`] if the person's sex is already
+    /// a fact under another identity.
     pub fn assert_sex(
         &mut self,
         person: PersonId,
@@ -730,10 +731,8 @@ impl Archive {
         self.check_citation(assertion.citation)?;
         self.check_single(fact, Location::Sex(person))?;
         let owner = self.live_person_mut(person)?;
-        owner
-            .sex
-            .get_or_insert_with(|| Fact::new(fact))
-            .claims
+        single(&mut owner.sex, fact)
+            .ok_or(Refusal::WrongFact(fact))?
             .assert(assertion)?;
         self.facts.insert(fact, Location::Sex(person));
         Ok(())
@@ -766,7 +765,8 @@ impl Archive {
     ///
     /// # Errors
     ///
-    /// [`Refusal::Missing`] for the event or citation, [`Refusal::WrongFact`], or
+    /// [`Refusal::Missing`] for the event or citation; [`Refusal::WrongFact`] if the fact belongs
+    /// elsewhere or the event's date is already a fact under another identity;
     /// [`Refusal::Claim`].
     pub fn assert_event_date(
         &mut self,
@@ -777,10 +777,8 @@ impl Archive {
         self.check_citation(assertion.citation)?;
         self.check_single(fact, Location::EventDate(event))?;
         let owner = self.live_event_mut(event)?;
-        owner
-            .date
-            .get_or_insert_with(|| Fact::new(fact))
-            .claims
+        single(&mut owner.date, fact)
+            .ok_or(Refusal::WrongFact(fact))?
             .assert(assertion)?;
         self.facts.insert(fact, Location::EventDate(event));
         Ok(())
@@ -801,10 +799,8 @@ impl Archive {
         self.require_place(assertion.value)?;
         self.check_single(fact, Location::EventPlace(event))?;
         let owner = self.live_event_mut(event)?;
-        owner
-            .place
-            .get_or_insert_with(|| Fact::new(fact))
-            .claims
+        single(&mut owner.place, fact)
+            .ok_or(Refusal::WrongFact(fact))?
             .assert(assertion)?;
         self.facts.insert(fact, Location::EventPlace(event));
         Ok(())
@@ -824,10 +820,8 @@ impl Archive {
         self.check_citation(assertion.citation)?;
         self.check_single(fact, Location::EventDescription(event))?;
         let owner = self.live_event_mut(event)?;
-        owner
-            .description
-            .get_or_insert_with(|| Fact::new(fact))
-            .claims
+        single(&mut owner.description, fact)
+            .ok_or(Refusal::WrongFact(fact))?
             .assert(assertion)?;
         self.facts.insert(fact, Location::EventDescription(event));
         Ok(())
@@ -1228,6 +1222,17 @@ fn fact_in<V: crate::claim::Claimable>(facts: &mut Vec<Fact<V>>, id: FactId) -> 
             facts.len() - 1
         });
     &mut facts[index].claims
+}
+
+/// The claims of a single-valued fact, creating it if the owner has none yet. `None` if the owner
+/// already has one under another identity: a second date for one event is a second assertion
+/// about the same fact, not a second fact.
+fn single<V: crate::claim::Claimable>(
+    slot: &mut Option<Fact<V>>,
+    id: FactId,
+) -> Option<&mut Claims<V>> {
+    let fact = slot.get_or_insert_with(|| Fact::new(id));
+    (fact.id == id).then_some(&mut fact.claims)
 }
 
 fn claims_by_id<V: crate::claim::Claimable>(
