@@ -1,12 +1,57 @@
 #![allow(clippy::unwrap_used, clippy::panic)]
 
 use drevigen_core::{
-    Archive, ChildRelation, ContributorId, Entity, NameKind, Person, PersonId, Resolution,
-    Timestamp,
+    Archive, Attribute, AttributeKind, ChildRelation, ContributorId, Entity, EventKind, Fact,
+    NameKind, Person, PersonId, Resolution, Role, Timestamp,
 };
+use drevigen_date::Repair;
 use drevigen_gedcom::lenient::{NotGedcom, Severity};
 
 use super::{Import, Mapping, Options, What, import};
+
+const EVENTS: &str = "0 HEAD
+1 GEDC
+2 VERS 5.5.1
+0 @I1@ INDI
+1 NAME Иван Петрович /Смирнов/
+1 SEX M
+1 BIRT
+2 DATE 12 MAR 1871
+2 PLAC с. Великое, Ярославский уезд, Ярославская губерния
+3 MAP
+4 LATI N57.0167
+4 LONG E39.3833
+1 DEAT Y
+1 OCCU кузнец
+2 DATE 1897
+2 PLAC с. Великое, Ярославский уезд, Ярославская губерния
+1 CAST крестьянин
+1 FACT Георгиевский кавалер
+2 TYPE Награда
+1 EVEN Служил в армии
+2 TYPE Военная служба
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Анна /Смирнова/
+1 BIRT
+2 DATE 1873/74
+2 PLAC д. Горки, Ярославский уезд, Ярославская губерния
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 3 FEB 1895
+2 PLAC с. Великое, Ярославский уезд, Ярославская губерния
+0 TRLR
+";
+
+fn agreed<V: drevigen_core::Claimable + Clone + core::fmt::Debug>(fact: &Fact<V>) -> V {
+    match fact.resolve() {
+        Resolution::Agreed { assertion, .. } => assertion.value.clone(),
+        other => panic!("{other:?}"),
+    }
+}
 
 const FAMILY: &str = "0 HEAD
 1 SOUR GENERY
@@ -207,6 +252,112 @@ fn notes_annotate_what_they_were_written_under() {
     let notes: Vec<_> = file.archive.notes_on(Entity::Person(olga)).collect();
     assert_eq!(notes.len(), 1);
     assert_eq!(notes[0].text, "Родилась в селе Великом.");
+}
+
+#[test]
+fn events_come_in_dated_and_placed() {
+    let file = imported(EVENTS);
+    let archive = &file.archive;
+    let ivan = person(archive, "Иван").id;
+
+    let birth = archive
+        .events_of(ivan)
+        .find(|event| event.kind == EventKind::Birth)
+        .unwrap();
+    let date = agreed(birth.date.as_ref().unwrap());
+    assert_eq!(date.value.unwrap().to_gedcom7(), "12 MAR 1871");
+    let village = archive
+        .place(agreed(birth.place.as_ref().unwrap()))
+        .unwrap();
+    assert_eq!(village.names[0].name, "с. Великое");
+    assert!(
+        village.position.is_some(),
+        "MAP gave the village its position"
+    );
+
+    let death = archive
+        .events_of(ivan)
+        .find(|event| event.kind == EventKind::Death)
+        .unwrap();
+    assert!(
+        death.date.is_none(),
+        "DEAT Y: it happened, nothing more is known"
+    );
+
+    let marriage = archive
+        .events_of(ivan)
+        .find(|event| event.kind == EventKind::Marriage)
+        .unwrap();
+    let roles: Vec<Role> = marriage
+        .participants
+        .iter()
+        .map(|participation| agreed(&participation.role))
+        .collect();
+    assert_eq!(roles, [Role::Husband, Role::Wife]);
+    let family = archive.families_as_partner(ivan).next().unwrap();
+    assert_eq!(family.events, [marriage.id]);
+}
+
+#[test]
+fn places_share_the_jurisdictions_they_have_in_common() {
+    let file = imported(EVENTS);
+    // A village, a hamlet, their uyezd and their governorate: four places, not nine.
+    assert_eq!(file.report.counts.places, 4);
+    let anna = person(&file.archive, "Анна").id;
+    let birth = file.archive.events_of(anna).next().unwrap();
+    let hamlet = file
+        .archive
+        .place(agreed(birth.place.as_ref().unwrap()))
+        .unwrap();
+    let uyezd = file.archive.place(hamlet.within[0].place).unwrap();
+    assert_eq!(uyezd.names[0].name, "Ярославский уезд");
+}
+
+#[test]
+fn attributes_carry_their_date_place_and_label() {
+    let file = imported(EVENTS);
+    let ivan = person(&file.archive, "Иван");
+    let attributes: Vec<Attribute> = ivan.attributes.iter().map(agreed).collect();
+
+    let occupation = &attributes[0];
+    assert_eq!(occupation.kind, AttributeKind::Occupation);
+    assert_eq!(occupation.value, "кузнец");
+    assert_eq!(
+        occupation
+            .date
+            .as_ref()
+            .unwrap()
+            .value
+            .as_ref()
+            .unwrap()
+            .to_gedcom7(),
+        "1897"
+    );
+    assert!(occupation.place.is_some());
+
+    assert_eq!(
+        attributes[1].kind,
+        AttributeKind::Estate,
+        "CAST is сословие"
+    );
+    assert_eq!(attributes[1].value, "крестьянин");
+    assert_eq!(attributes[2].kind, AttributeKind::Other);
+    assert_eq!(attributes[2].label.as_deref(), Some("Награда"));
+}
+
+#[test]
+fn an_event_the_model_has_no_kind_for_is_kept_and_a_dual_year_is_reported() {
+    let file = imported(EVENTS);
+    let ivan = person(&file.archive, "Иван").id;
+    assert!(file.archive.foreign_on(Entity::Person(ivan)).any(|item| {
+        item.text
+            .starts_with("0 EVEN Служил в армии\n1 TYPE Военная служба")
+    }));
+    assert_eq!(file.report.kept.get("INDI.EVEN"), Some(&1));
+    assert!(file.report.entries.iter().any(|entry| matches!(
+        &entry.what,
+        What::Mapping(Mapping::Date { text, repair: Repair::DualYear { .. } }) if text == "1873/74"
+    )));
 }
 
 #[test]

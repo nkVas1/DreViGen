@@ -95,6 +95,14 @@ pub enum Mapping {
     },
     /// A source with no title, given its abbreviation as one where it has one.
     UntitledSource,
+    /// A date read with a liberty that changed more than its spelling: a dual year, words with
+    /// no date in them, a calendar that cannot be computed with. The words are kept beside it.
+    Date {
+        /// The date as written.
+        text: String,
+        /// What the date reader did.
+        repair: drevigen_date::Repair,
+    },
     /// The archive refused an edit the import made: a defect in the importer, reported rather
     /// than hidden.
     Refused {
@@ -109,6 +117,11 @@ impl Mapping {
     pub const fn severity(&self) -> Severity {
         match self {
             Self::EmptyName | Self::UntitledSource => Severity::Notation,
+            // Never a loss: whatever a date reader cannot read, it keeps as words.
+            Self::Date { repair, .. } => match repair.severity() {
+                drevigen_date::gedcom::Severity::Notation => Severity::Notation,
+                _ => Severity::Interpretation,
+            },
             Self::UnknownSex { .. }
             | Self::Unresolved { .. }
             | Self::OneSidedLink { .. }
@@ -215,6 +228,9 @@ impl fmt::Display for Entry {
                         write!(f, "a second record with @{xref}@, which no pointer reaches")
                     }
                     Mapping::UntitledSource => f.write_str("a source with no title"),
+                    Mapping::Date { text, repair } => {
+                        write!(f, "date {text} read with a liberty: {repair:?}")
+                    }
                     Mapping::Refused { refusal } => write!(f, "the archive refused: {refusal}"),
                 }
             }

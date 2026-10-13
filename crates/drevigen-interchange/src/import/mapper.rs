@@ -19,10 +19,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use drevigen_core::{
-    Archive, Assertion, CallNumber, ChildRelation, Citation, CitationId, Claimable, Entity, Fact,
-    Family, FamilyId, Foreign, ForeignId, Id, Kind, Locator, Membership, Note, NoteId, Partnership,
-    Person, PersonId, Provenance, Refusal, Repository, RepositoryId, Sex, Source, SourceId,
+    Archive, Assertion, Attribute, AttributeKind, CallNumber, ChildRelation, Citation, CitationId,
+    Claimable, Coordinates, Entity, Event, EventId, EventKind, Fact, Family, FamilyId, Foreign,
+    ForeignId, Id, Kind, Locator, Membership, Note, NoteId, Participation, Partnership, Person,
+    PersonId, Place, PlaceId, PlaceName, PlaceParent, Provenance, Refusal, Repository,
+    RepositoryId, Resolution, Role, Sex, Source, SourceId, fold,
 };
+use drevigen_date::RecordedDate;
+use drevigen_date::gedcom::Severity as DateSeverity;
 use drevigen_gedcom::{Document, Payload, Structure};
 
 use super::Options;
@@ -101,6 +105,10 @@ struct Mapper<'d, 'r, E> {
     as_partner: BTreeMap<(PersonId, FamilyId), &'d Structure>,
     /// The file's citation of each record, by the record's line, made when first needed.
     citations: BTreeMap<usize, CitationId>,
+    /// Every place made so far, by its jurisdictions from the largest down, folded.
+    places: BTreeMap<String, PlaceId>,
+    /// The coordinates the file gives for places, by the same key.
+    positions: BTreeMap<String, Coordinates>,
     deferred: Vec<Deferred>,
 }
 
@@ -126,6 +134,8 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             as_child: BTreeMap::new(),
             as_partner: BTreeMap::new(),
             citations: BTreeMap::new(),
+            places: BTreeMap::new(),
+            positions: BTreeMap::new(),
             deferred: Vec::new(),
         }
     }
@@ -143,6 +153,9 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             }
         }
 
+        for record in &document.records {
+            self.collect_positions(record);
+        }
         let head = document
             .records
             .first()
@@ -388,18 +401,39 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         };
         let subject = Entity::Person(id);
         let mut person = Person::new(id);
+        let mut events = Vec::new();
         for child in &record.children {
-            match child.tag.as_str() {
+            let tag = child.tag.as_str();
+            match tag {
                 "NAME" => self.name(&mut person, record, child),
                 "SEX" => self.sex(&mut person, record, child),
                 "FAMC" => self.link(id, child, true),
                 "FAMS" => self.link(id, child, false),
                 "NOTE" | "SNOTE" => self.annotation(subject, child),
-                _ => self.keep(subject, child, "INDI"),
+                _ => match (person_event(tag), attribute_kind(tag)) {
+                    (Some(kind), _) if plain_event(child) => events.push((child, kind)),
+                    (_, Some(kind))
+                        if !matches!(child.payload, Payload::Pointer(_) | Payload::Void) =>
+                    {
+                        self.attribute(&mut person, record, child, kind);
+                    }
+                    _ => self.keep(subject, child, "INDI"),
+                },
             }
         }
-        if self.add(record.line, |archive| archive.add_person(person)) {
-            self.report.counts.people += 1;
+        if !self.add(record.line, |archive| archive.add_person(person)) {
+            return;
+        }
+        self.report.counts.people += 1;
+        // An event needs its participant in the archive, so it comes after the person.
+        for (structure, kind) in events {
+            let principal = vec![(id, Role::Principal)];
+            if self
+                .event(structure, kind, principal, record, "INDI")
+                .is_none()
+            {
+                self.keep(subject, structure, "INDI");
+            }
         }
     }
 
@@ -409,7 +443,14 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         };
         let subject = Entity::Family(id);
         let mut family = Family::new(id);
+        let mut events = Vec::new();
         for child in &record.children {
+            if let Some(kind) = family_event(&child.tag)
+                && plain_event(child)
+            {
+                events.push((child, kind));
+                continue;
+            }
             let person = match self.pointer(child) {
                 Some(Target::Person(person)) => Some(person),
                 _ => None,
@@ -459,6 +500,29 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             self.as_child.remove(&key);
             self.one_sided(record, side);
             self.child(&mut family, key.0, record, None, Some(side));
+        }
+
+        // A family's events are its partners' events, each in the role the family gives them.
+        let partners: Vec<(PersonId, Role)> = family
+            .partners
+            .iter()
+            .map(|membership| {
+                let role = match membership.fact.resolve() {
+                    Resolution::Agreed { assertion, .. } => match assertion.value {
+                        Partnership::Husband => Role::Husband,
+                        Partnership::Wife => Role::Wife,
+                        Partnership::Partner => Role::Spouse,
+                    },
+                    _ => Role::Spouse,
+                };
+                (membership.person, role)
+            })
+            .collect();
+        for (structure, kind) in events {
+            match self.event(structure, kind, partners.clone(), record, "FAM") {
+                Some(event) => family.events.push(event),
+                None => self.keep(subject, structure, "FAM"),
+            }
         }
 
         if self.add(record.line, |archive| archive.add_family(family)) {
@@ -592,6 +656,219 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
                 .filter(|c| !(c.tag == "PEDI" && relation(c).is_some()))
                 .collect();
             self.rest(subject, rest, "INDI.FAMC");
+        }
+    }
+
+    // ── events and attributes ───────────────────────────────────────────────────────────────
+
+    /// An event, with its date and place as facts and its participants in their roles. Added to
+    /// the archive before anything beneath it is kept or annotated, so that a refusal leaves
+    /// nothing behind; the caller then keeps the structure whole.
+    fn event(
+        &mut self,
+        structure: &'d Structure,
+        kind: EventKind,
+        participants: Vec<(PersonId, Role)>,
+        record: &'d Structure,
+        parent: &str,
+    ) -> Option<EventId> {
+        let id: EventId = self.mint();
+        let mut event = Event::new(id, kind);
+        let mut rest = Vec::new();
+        let mut beneath = Vec::new();
+        for child in &structure.children {
+            match child.tag.as_str() {
+                "DATE" if event.date.is_none() => match self.date(child) {
+                    Some((date, more)) => {
+                        let fact = self.fact(date, record);
+                        beneath.push((Entity::Fact(fact.id), more, "DATE"));
+                        event.date = Some(fact);
+                    }
+                    None => rest.push(child),
+                },
+                "PLAC" if event.place.is_none() => match self.place(child) {
+                    Some((place, more)) => {
+                        let fact = self.fact(place, record);
+                        beneath.push((Entity::Fact(fact.id), more, "PLAC"));
+                        event.place = Some(fact);
+                    }
+                    None => rest.push(child),
+                },
+                _ => rest.push(child),
+            }
+        }
+        for (person, role) in participants {
+            let role = self.fact(role, record);
+            event.participants.push(Participation { person, role });
+        }
+        if !self.add(structure.line, |archive| archive.add_event(event)) {
+            return None;
+        }
+        self.report.counts.events += 1;
+        let path = format!("{parent}.{}", structure.tag);
+        self.rest(Entity::Event(id), rest, &path);
+        for (subject, more, tag) in beneath {
+            self.rest(subject, more, &format!("{path}.{tag}"));
+        }
+        Some(id)
+    }
+
+    /// An attribute: its value, with the date and place the file gives it, as one fact. A `FACT`
+    /// or `IDNO` says what it is in its `TYPE`, which becomes the attribute's label.
+    fn attribute(
+        &mut self,
+        person: &mut Person,
+        record: &'d Structure,
+        structure: &'d Structure,
+        kind: AttributeKind,
+    ) {
+        let labelled = matches!(structure.tag.as_str(), "FACT" | "IDNO");
+        let mut value = Attribute {
+            kind,
+            label: None,
+            value: structure.payload.text().unwrap_or_default().to_owned(),
+            date: None,
+            place: None,
+        };
+        let mut rest = Vec::new();
+        let mut beyond = Vec::new();
+        for child in &structure.children {
+            match child.tag.as_str() {
+                "TYPE" if labelled && value.label.is_none() && child.children.is_empty() => {
+                    value.label = text_of(child);
+                }
+                "DATE" if value.date.is_none() => match self.date(child) {
+                    Some((date, more)) => {
+                        value.date = Some(date);
+                        beyond.push((child, more));
+                    }
+                    None => rest.push(child),
+                },
+                "PLAC" if value.place.is_none() => match self.place(child) {
+                    Some((place, more)) => {
+                        value.place = Some(place);
+                        beyond.push((child, more));
+                    }
+                    None => rest.push(child),
+                },
+                _ => rest.push(child),
+            }
+        }
+        let fact = self.fact(value, record);
+        let subject = Entity::Fact(fact.id);
+        person.attributes.push(fact);
+        let path = format!("INDI.{}", structure.tag);
+        self.rest(subject, rest, &path);
+        // A date or place is part of the attribute's value, not a subject of its own, so what
+        // it carries beyond that is kept on its own line beneath the attribute.
+        for (written, more) in beyond {
+            if !more.is_empty() {
+                self.keep_partly(subject, written, more, &path);
+            }
+        }
+    }
+
+    /// A `DATE` read as 7.0 reads it, however the file wrote it, with a 7.0 `PHRASE` beside it
+    /// taken as the date's own words. Returns what else the `DATE` carries. `None` for one with
+    /// nothing in it.
+    fn date(&mut self, date: &'d Structure) -> Option<(RecordedDate, Vec<&'d Structure>)> {
+        let text = date.payload.text().unwrap_or_default();
+        let phrase = date
+            .child("PHRASE")
+            .filter(|phrase| phrase.children.is_empty())
+            .and_then(text_of);
+        if text.trim().is_empty() && phrase.is_none() {
+            return None;
+        }
+        let read = RecordedDate::parse_lenient(text);
+        for repair in read.repairs {
+            if repair.severity() >= DateSeverity::Interpretation {
+                self.report.note(
+                    date.line,
+                    Mapping::Date {
+                        text: text.to_owned(),
+                        repair,
+                    },
+                );
+            }
+        }
+        let mut recorded = read.date;
+        let mut more = Vec::new();
+        for child in &date.children {
+            if child.tag == "PHRASE" && recorded.phrase.is_none() && phrase.is_some() {
+                recorded.phrase.clone_from(&phrase);
+            } else {
+                more.push(child);
+            }
+        }
+        Some((recorded, more))
+    }
+
+    /// The place a `PLAC` names, as a hierarchy: `с. Великое, Ярославский уезд, Ярославская
+    /// губерния` is a village within an uyezd within a governorate, and every other village in
+    /// the same uyezd shares the uyezd and the governorate. A new place takes its coordinates from
+    /// `MAP`. Returns what else the `PLAC` carries.
+    fn place(&mut self, place: &'d Structure) -> Option<(PlaceId, Vec<&'d Structure>)> {
+        let parts = jurisdictions(place)?;
+        let mut key = String::new();
+        let mut within: Option<PlaceId> = None;
+        for part in parts.iter().rev() {
+            key.push('|');
+            key.push_str(&fold(part));
+            if let Some(found) = self.places.get(&key) {
+                within = Some(*found);
+                continue;
+            }
+            let id: PlaceId = self.mint();
+            let position = self.positions.get(&key).copied();
+            let new = Place {
+                id,
+                kind: None,
+                names: vec![PlaceName {
+                    name: (*part).to_owned(),
+                    language: None,
+                    valid: None,
+                }],
+                within: within
+                    .map(|place| PlaceParent { place, valid: None })
+                    .into_iter()
+                    .collect(),
+                position,
+            };
+            if self.add(place.line, |archive| archive.add_place(new)) {
+                self.report.counts.places += 1;
+            }
+            self.places.insert(key.clone(), id);
+            within = Some(id);
+        }
+        // A MAP that agrees with the place's position is the position; one that does not is
+        // another claim about where the place is, and is kept.
+        let agrees =
+            coordinates(place).is_some() && coordinates(place) == self.positions.get(&key).copied();
+        let more = place
+            .children
+            .iter()
+            .filter(|child| !(agrees && child.tag == "MAP"))
+            .collect();
+        Some((within?, more))
+    }
+
+    /// The first coordinates the file gives for each place, wherever it gives them, so that a
+    /// place has them however it was first mentioned.
+    fn collect_positions(&mut self, structure: &Structure) {
+        if structure.tag == "PLAC"
+            && let (Some(parts), Some(position)) =
+                (jurisdictions(structure), coordinates(structure))
+        {
+            let mut key = String::new();
+            for part in parts.iter().rev() {
+                key.push('|');
+                key.push_str(&fold(part));
+            }
+            self.positions.entry(key).or_insert(position);
+        }
+        for child in &structure.children {
+            self.collect_positions(child);
         }
     }
 
@@ -873,4 +1150,110 @@ fn relation(pedigree: &Structure) -> Option<ChildRelation> {
         "SEALING" => Some(ChildRelation::Sealing),
         _ => None,
     }
+}
+
+/// The kind of a person's event GEDCOM writes with this tag, where the model has the same kind.
+/// `EVEN` and the kinds the model does not distinguish — `BARM`, `FCOM` and the rest — are kept,
+/// because `Other` would lose which one it was.
+fn person_event(tag: &str) -> Option<EventKind> {
+    Some(match tag {
+        "BIRT" => EventKind::Birth,
+        "CHR" => EventKind::Christening,
+        "BAPM" => EventKind::Baptism,
+        "DEAT" => EventKind::Death,
+        "BURI" => EventKind::Burial,
+        "CREM" => EventKind::Cremation,
+        "ADOP" => EventKind::Adoption,
+        "CONF" => EventKind::Confirmation,
+        "ORDN" => EventKind::Ordination,
+        "GRAD" => EventKind::Graduation,
+        "EMIG" => EventKind::Emigration,
+        "IMMI" => EventKind::Immigration,
+        "NATU" => EventKind::Naturalisation,
+        "CENS" => EventKind::Census,
+        "PROB" => EventKind::Probate,
+        "WILL" => EventKind::Will,
+        "RETI" => EventKind::Retirement,
+        _ => return None,
+    })
+}
+
+/// The kind of a family's event, on the same terms.
+fn family_event(tag: &str) -> Option<EventKind> {
+    Some(match tag {
+        "MARR" => EventKind::Marriage,
+        "ENGA" => EventKind::Engagement,
+        "MARB" => EventKind::Banns,
+        "DIV" => EventKind::Divorce,
+        "ANUL" => EventKind::Annulment,
+        "CENS" => EventKind::Census,
+        _ => return None,
+    })
+}
+
+/// The kind of attribute GEDCOM writes with this tag. `CAST`, *caste*, is the closest GEDCOM
+/// comes to a Russian *сословие*, and is read as one.
+fn attribute_kind(tag: &str) -> Option<AttributeKind> {
+    Some(match tag {
+        "OCCU" => AttributeKind::Occupation,
+        "CAST" => AttributeKind::Estate,
+        "RELI" => AttributeKind::Religion,
+        "RESI" => AttributeKind::Residence,
+        "NATI" => AttributeKind::Nationality,
+        "EDUC" => AttributeKind::Education,
+        "TITL" => AttributeKind::Title,
+        "PROP" => AttributeKind::Property,
+        "DSCR" => AttributeKind::Description,
+        "FACT" | "IDNO" => AttributeKind::Other,
+        _ => return None,
+    })
+}
+
+/// A `PLAC`'s jurisdictions as written, smallest first; empty ones, which only hold a position
+/// in a 5.5.1 `FORM`, left out. `None` for a place with no name.
+fn jurisdictions(place: &Structure) -> Option<Vec<&str>> {
+    let parts: Vec<&str> = place
+        .payload
+        .text()?
+        .split(',')
+        .map(str::trim)
+        .filter(|part| !part.is_empty())
+        .collect();
+    (!parts.is_empty()).then_some(parts)
+}
+
+/// Whether an event's value is one the model can hold: nothing, or `Y` — "it happened, and
+/// nothing more is known". Anything else is words the event structure has no place for.
+fn plain_event(event: &Structure) -> bool {
+    match &event.payload {
+        Payload::None => true,
+        Payload::Text(text) => text.trim().eq_ignore_ascii_case("Y"),
+        Payload::Pointer(_) | Payload::Void => false,
+    }
+}
+
+/// Coordinates from a `PLAC.MAP`: `N55.7558`, `E37.6173`, or plain signed degrees. `None` unless
+/// both are there and readable, and the `MAP` carries nothing else.
+fn coordinates(place: &Structure) -> Option<Coordinates> {
+    let map = place.child("MAP")?;
+    let bare = map
+        .children
+        .iter()
+        .all(|c| matches!(c.tag.as_str(), "LATI" | "LONG") && c.children.is_empty());
+    if !bare || map.payload != Payload::None {
+        return None;
+    }
+    let degrees = |tag: &str, positive: char, negative: char| -> Option<f64> {
+        let text = map.child(tag)?.payload.text()?.trim().to_ascii_uppercase();
+        let (sign, digits) = match text.chars().next()? {
+            c if c == positive => (1.0, &text[1..]),
+            c if c == negative => (-1.0, &text[1..]),
+            _ => (1.0, text.as_str()),
+        };
+        digits.parse::<f64>().ok().map(|value| sign * value)
+    };
+    let latitude = degrees("LATI", 'N', 'S')?;
+    let longitude = degrees("LONG", 'E', 'W')?;
+    ((-90.0..=90.0).contains(&latitude) && (-180.0..=180.0).contains(&longitude))
+        .then(|| Coordinates::from_degrees(latitude, longitude))
 }
