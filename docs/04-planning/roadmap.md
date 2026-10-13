@@ -136,8 +136,12 @@ tree in it, import their existing GEDCOM, and show it to relatives.
       begun in `drevigen-interchange` (ADR 0011): people, names with their patronymics, sex,
       families, events with their dates and places, attributes, notes, the file as a source,
       and the citations a file gives for its facts — leaf locators such as *л. 17 об.* read as
-      leaves. Writing the archive back out, foreign data in its place, is next
-- [ ] Verbatim preservation of unrepresentable structures, with a loss report shown on import
+      leaves. Still kept rather than mapped: media (`OBJE`), the generic `EVEN`, `ASSO`
+- [x] Verbatim preservation of unrepresentable structures, with a loss report — kept as
+      foreign data under the nearest subject and written back in place by the exporter. Every
+      vendored corpus file and every official FamilySearch file round-trips to a fixed point:
+      import, export, import again holds the same things and the same kept data. Showing the
+      report is 1.7's
 - [ ] Golden-file round-trip tests against exports from Gramps, MyHeritage, MacFamilyTree,
       Ancestris and webtrees
 

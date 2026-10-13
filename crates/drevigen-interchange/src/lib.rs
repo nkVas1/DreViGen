@@ -12,8 +12,12 @@
 //!   export. Mapping more of GEDCOM later only shrinks what is kept that way.
 //! - **One report** says what decoding, reading and mapping could not keep exactly, line by line.
 //!
+//! [`export()`] writes an archive back out as GEDCOM 7, foreign data in the places it was found.
+//!
 //! [ADR 0011]: https://github.com/nkVas1/DreViGen/blob/main/docs/02-architecture/adr/0011-import-keeps-everything.md
 
+pub mod export;
 pub mod import;
 
+pub use export::{Export, export};
 pub use import::{Import, Options, Report, import};

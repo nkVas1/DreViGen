@@ -34,10 +34,65 @@ fn imported(path: &Path) -> Import {
     .unwrap_or_else(|error| panic!("{}: {error}", path.display()))
 }
 
+/// Exported as a cousin would receive it, the file's own citations left out: the strict GEDCOM 7
+/// reader must accept it, and importing it again must bring the same tree back.
+fn round_trip(path: &Path, file: &Import) {
+    let options = drevigen_interchange::export::Options {
+        version: "0.0.0".to_owned(),
+        at: Timestamp(1_760_000_000_000),
+        provenance: std::collections::BTreeSet::from([file.source]),
+    };
+    let text = drevigen_interchange::export(&file.archive, &options)
+        .document
+        .write();
+    drevigen_gedcom::Document::parse(&text)
+        .unwrap_or_else(|error| panic!("{} exported: {error}\n{text}", path.display()));
+    let mut counter = 0;
+    let again = import(text.as_bytes(), &file_options(path), move || {
+        counter += 1;
+        counter
+    })
+    .unwrap();
+    // A fixed point: everything the first import held, the second holds — the same number of
+    // each kind of thing, and the same foreign data from the same places. One place is renamed on
+    // the way, as 7.0 renamed it: a 5.5.1 note record is a 7.0 SNOTE.
+    let places = |kept: &std::collections::BTreeMap<String, usize>| {
+        kept.iter()
+            .map(|(path, count)| {
+                let path = path
+                    .strip_prefix("NOTE.")
+                    .map_or_else(|| path.clone(), |rest| format!("SNOTE.{rest}"));
+                (path, *count)
+            })
+            .collect::<std::collections::BTreeMap<_, _>>()
+    };
+    assert_eq!(
+        again.report.counts,
+        file.report.counts,
+        "{}",
+        path.display()
+    );
+    assert_eq!(
+        places(&again.report.kept),
+        places(&file.report.kept),
+        "{}",
+        path.display()
+    );
+}
+
+fn file_options(path: &Path) -> Options {
+    Options {
+        file_name: path.file_name().unwrap().to_string_lossy().into_owned(),
+        by: ContributorId::from_raw(1),
+        at: Timestamp(1_760_000_000_000),
+    }
+}
+
 /// What the importer must never do, whatever the file: have an edit refused, or leave a person or
 /// family record out.
 fn check(path: &Path) {
     let file = imported(path);
+    round_trip(path, &file);
     let refused: Vec<_> = file
         .report
         .entries
