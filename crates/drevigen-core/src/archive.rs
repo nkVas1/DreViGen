@@ -274,6 +274,31 @@ impl Archive {
         self.events.values().filter(|event| event.removed.is_none())
     }
 
+    /// Every place, in identity order.
+    pub fn places(&self) -> impl Iterator<Item = &Place> {
+        self.places.values()
+    }
+
+    /// Every source, in identity order.
+    pub fn sources(&self) -> impl Iterator<Item = &Source> {
+        self.sources.values()
+    }
+
+    /// Every citation, in identity order.
+    pub fn citations(&self) -> impl Iterator<Item = &Citation> {
+        self.citations.values()
+    }
+
+    /// Every repository, in identity order.
+    pub fn repositories(&self) -> impl Iterator<Item = &Repository> {
+        self.repositories.values()
+    }
+
+    /// Every note, in identity order.
+    pub fn notes(&self) -> impl Iterator<Item = &Note> {
+        self.notes.values()
+    }
+
     /// How many people have not been removed.
     #[must_use]
     pub fn population(&self) -> usize {
