@@ -327,6 +327,51 @@ fn places_share_the_jurisdictions_they_have_in_common() {
 }
 
 #[test]
+fn a_place_record_gives_the_place_it_names_its_position() {
+    let file = imported(
+        "0 HEAD
+0 @I1@ INDI
+1 NAME Пётр /Смирнов/
+1 BIRT
+2 PLAC Великое, Ярославская губерния
+0 _PLAC Великое, Ярославская губерния
+1 MAP
+2 LATI N57.0167
+2 LONG E39.3833
+1 _COR
+2 _LAD 57
+0 _PLAC Горки
+1 MAP
+2 LATI N57.5
+2 LONG E39.9
+0 TRLR
+",
+    );
+    let village = file
+        .archive
+        .places()
+        .find(|place| place.names[0].name == "Великое")
+        .unwrap();
+    assert!(village.position.is_some());
+
+    // The record keeps what it says beyond the position; one naming no place in the tree keeps
+    // its MAP as well.
+    let kept: Vec<&str> = file
+        .archive
+        .foreign_on(Entity::Source(file.source))
+        .filter(|item| item.path == "_PLAC")
+        .map(|item| item.text.as_str())
+        .collect();
+    assert_eq!(
+        kept,
+        [
+            "0 _PLAC Великое, Ярославская губерния\n1 _COR\n2 _LAD 57\n",
+            "0 _PLAC Горки\n1 MAP\n2 LATI N57.5\n2 LONG E39.9\n",
+        ]
+    );
+}
+
+#[test]
 fn attributes_carry_their_date_place_and_label() {
     let file = imported(EVENTS);
     let ivan = person(&file.archive, "Иван");

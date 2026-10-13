@@ -599,12 +599,29 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
 
     /// A record the archive cannot hold: kept whole under the file's source, under the identity
     /// its identifier was given, so that whatever points at it still does.
+    ///
+    /// Except for the `MAP` of a `_PLAC` — GEDCOM-L's place record, which MobileFamilyTree
+    /// writes — when it became the position of the place the record names: the position is the
+    /// archive's now, and a copy kept beside it would go stale the first time it is corrected.
     fn keep_record(&mut self, record: &'d Structure) {
         let id = match self.identity(record) {
             Target::Foreign(id) => id,
             _ => self.mint(),
         };
-        self.keep_as(id, Entity::Source(self.file), record, None, "");
+        let positioned = record.tag == "_PLAC"
+            && place_key(record).is_some_and(|key| {
+                self.places.contains_key(&key)
+                    && coordinates(record).is_some()
+                    && coordinates(record) == self.positions.get(&key).copied()
+            });
+        let only = positioned.then(|| {
+            record
+                .children
+                .iter()
+                .filter(|child| child.tag != "MAP")
+                .collect()
+        });
+        self.keep_as(id, Entity::Source(self.file), record, only, "");
     }
 
     // ── a person's facts ────────────────────────────────────────────────────────────────────
@@ -968,18 +985,13 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         Some((within?, more))
     }
 
-    /// The first coordinates the file gives for each place, wherever it gives them, so that a
-    /// place has them however it was first mentioned.
+    /// The first coordinates the file gives for each place, wherever it gives them — in a `PLAC`,
+    /// or in a `_PLAC` record that names it — so that a place has them however it was first
+    /// mentioned.
     fn collect_positions(&mut self, structure: &Structure) {
-        if structure.tag == "PLAC"
-            && let (Some(parts), Some(position)) =
-                (jurisdictions(structure), coordinates(structure))
+        if matches!(structure.tag.as_str(), "PLAC" | "_PLAC")
+            && let (Some(key), Some(position)) = (place_key(structure), coordinates(structure))
         {
-            let mut key = String::new();
-            for part in parts.iter().rev() {
-                key.push('|');
-                key.push_str(&fold(part));
-            }
             self.positions.entry(key).or_insert(position);
         }
         for child in &structure.children {
@@ -1541,6 +1553,16 @@ fn generic_event(classified: Option<&str>) -> Option<(EventKind, Option<String>)
     } else {
         (EventKind::Other, Some(words.to_owned()))
     })
+}
+
+/// What a place is known by while a file is read: its jurisdictions, largest first, folded.
+fn place_key(place: &Structure) -> Option<String> {
+    let mut key = String::new();
+    for part in jurisdictions(place)?.iter().rev() {
+        key.push('|');
+        key.push_str(&fold(part));
+    }
+    Some(key)
 }
 
 /// Coordinates from a `PLAC.MAP`: `N55.7558`, `E37.6173`, or plain signed degrees. `None` unless
