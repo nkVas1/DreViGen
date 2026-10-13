@@ -309,13 +309,15 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
         };
         let (mut name, mut address) = (None, None);
         let mut rest = Vec::new();
+        let mut beneath_address = None;
         for child in &record.children {
             match child.tag.as_str() {
                 "NAME" if name.is_none() && child.children.is_empty() => name = text_of(child),
-                // The address's parts repeat its lines; the lines are what is kept, the parts
-                // only read when there are no lines.
-                "ADDR" if address.is_none() && child.children.iter().all(is_address_part) => {
-                    address = text_of(child).or_else(|| address_parts(child));
+                // An address is read from its lines; its parts, which repeat them, stay beneath
+                // it as they were.
+                "ADDR" if address.is_none() && text_of(child).is_some() => {
+                    address = text_of(child);
+                    beneath_address = Some(child).filter(|child| !child.children.is_empty());
                 }
                 _ => rest.push(child),
             }
@@ -330,6 +332,10 @@ impl<'d, 'r, E: FnMut() -> u128> Mapper<'d, 'r, E> {
             self.report.counts.repositories += 1;
         }
         self.rest(Entity::Repository(id), rest, "REPO");
+        if let Some(written) = beneath_address {
+            let parts = written.children.iter().collect();
+            self.keep_partly(Entity::Repository(id), written, parts, "REPO");
+        }
     }
 
     fn source(&mut self, record: &'d Structure) {
@@ -1441,21 +1447,6 @@ fn text_of(structure: &Structure) -> Option<String> {
         .map(str::trim)
         .filter(|text| !text.is_empty())
         .map(str::to_owned)
-}
-
-const ADDRESS_PARTS: [&str; 7] = ["ADR1", "ADR2", "ADR3", "CITY", "STAE", "POST", "CTRY"];
-
-fn is_address_part(structure: &Structure) -> bool {
-    ADDRESS_PARTS.contains(&structure.tag.as_str()) && structure.children.is_empty()
-}
-
-/// An address from its parts, for a file that gives the parts and no lines.
-fn address_parts(address: &Structure) -> Option<String> {
-    let parts: Vec<String> = ADDRESS_PARTS
-        .iter()
-        .filter_map(|tag| address.child(tag).and_then(text_of))
-        .collect();
-    (!parts.is_empty()).then(|| parts.join(", "))
 }
 
 /// The relation a `PEDI` names, when it names one of GEDCOM's and carries nothing more. 7.0's

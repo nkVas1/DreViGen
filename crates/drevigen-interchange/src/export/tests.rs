@@ -375,6 +375,25 @@ fn an_address_and_a_cause_are_written_where_gedcom_7_puts_them() {
 }
 
 #[test]
+fn a_repository_keeps_the_parts_of_its_address() {
+    let file = imported(
+        "0 HEAD\n0 @R1@ REPO\n1 NAME ГАЯО\n1 ADDR Ярославль, ул. Свердлова, 28\n2 CITY Ярославль\n2 POST 150000\n0 @S1@ SOUR\n1 TITL Метрическая книга, 1871\n1 REPO @R1@\n0 TRLR\n",
+    );
+    let repository = file.archive.repositories().next().unwrap();
+    assert_eq!(
+        repository.address.as_deref(),
+        Some("Ярославль, ул. Свердлова, 28")
+    );
+    let document = Document::parse(&shared(&file)).unwrap();
+    let address = record(&document, "REPO", 0).child("ADDR").unwrap();
+    assert_eq!(
+        address.child("POST").unwrap().payload.text(),
+        Some("150000")
+    );
+    assert_eq!(address.children.len(), 2);
+}
+
+#[test]
 fn a_disagreement_is_written_one_sided_and_reported() {
     let file = imported("0 HEAD\n0 @I1@ INDI\n1 NAME Иван /Смирнов/\n1 SEX M\n1 SEX F\n0 TRLR\n");
     let (_, report) = written(&file.archive, BTreeSet::from([file.source]));
