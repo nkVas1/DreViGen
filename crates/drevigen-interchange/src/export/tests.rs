@@ -294,6 +294,20 @@ fn a_round_trip_brings_the_same_tree_back() {
 }
 
 #[test]
+fn a_citation_one_name_trusts_more_stays_with_that_name() {
+    let file = imported(
+        "0 HEAD\n0 @S1@ SOUR\n1 TITL Ревизская сказка, 1858\n0 @I1@ INDI\n1 NAME Мария /Смирнова/\n1 NAME Мария /Петрова/\n2 TYPE maiden\n2 SOUR @S1@\n3 PAGE л. 3\n3 QUAY 3\n1 SOUR @S1@\n2 PAGE л. 3\n0 TRLR\n",
+    );
+    let document = Document::parse(&shared(&file)).unwrap();
+    let maiden = record(&document, "INDI", 0)
+        .children_tagged("NAME")
+        .nth(1)
+        .unwrap();
+    let cited = maiden.child("SOUR").unwrap();
+    assert_eq!(cited.child("QUAY").unwrap().payload.text(), Some("3"));
+}
+
+#[test]
 fn an_event_is_written_with_its_words_where_gedcom_7_has_room_for_them() {
     let file = imported(
         "0 HEAD\n0 @I1@ INDI\n1 NAME Пётр /Смирнов/\n1 DEAT пропал без вести\n2 SOUR Похоронная книга\n1 EVEN Служил в армии\n2 TYPE Военная служба\n2 DATE 1914\n1 EVEN\n2 TYPE Military service\n0 TRLR\n",

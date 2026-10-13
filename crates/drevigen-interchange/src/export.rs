@@ -678,7 +678,8 @@ impl<'a> Exporter<'a> {
             .collect()
     }
 
-    /// The citations every one of these facts has, in the order the first has them.
+    /// The citations every one of these facts has, trusted as far by each, in the order the
+    /// first has them.
     fn shared_citations<V: Claimable>(
         &self,
         facts: &[Fact<V>],
@@ -686,13 +687,11 @@ impl<'a> Exporter<'a> {
         let Some((first, rest)) = facts.split_first() else {
             return Vec::new();
         };
-        let others: Vec<BTreeSet<CitationId>> = rest
-            .iter()
-            .map(|fact| self.citations(fact).into_iter().map(|(id, _)| id).collect())
-            .collect();
+        let others: Vec<Vec<(CitationId, Option<Confidence>)>> =
+            rest.iter().map(|fact| self.citations(fact)).collect();
         self.citations(first)
             .into_iter()
-            .filter(|(id, _)| others.iter().all(|cited| cited.contains(id)))
+            .filter(|cited| others.iter().all(|other| other.contains(cited)))
             .collect()
     }
 
