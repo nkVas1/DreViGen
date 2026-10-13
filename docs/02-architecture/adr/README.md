@@ -17,3 +17,4 @@ what it gives up has not been made yet.
 | [0008](./0008-opfs-sahpool-single-connection.md) | One SQLite connection on `opfs-sahpool`; no cross-origin isolation | Accepted |
 | [0009](./0009-msdf-atlas-tiers.md) | Pre-bake one MSDF coverage tier; load the rest on demand | Accepted |
 | [0010](./0010-claims-per-fact-agreement-is-compatibility.md) | Claims attach to facts, and agreement means compatibility | Accepted |
+| [0011](./0011-import-keeps-everything.md) | An import keeps everything: annotations, foreign structures, the file as a source | Accepted |

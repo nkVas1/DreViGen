@@ -108,7 +108,8 @@ DreViGen/
 │   ├── drevigen-color/   OKLab/OKLCH, gamut mapping, APCA and WCAG 2, CVD simulation
 │   ├── drevigen-core/    Domain model, invariants, validation rules
 │   ├── drevigen-date/    Genealogical dates: calendars, intervals, 3-valued predicates
-│   ├── drevigen-gedcom/  GEDCOM 7.0.18 parser, serializer, validator, loss reporter
+│   ├── drevigen-gedcom/  GEDCOM files: encodings, the 7.0 container, lenient reading of 5.5.1
+│   ├── drevigen-interchange/ GEDCOM ↔ archive mapping, preservation, the import report (ADR 0011)
 │   ├── drevigen-layout/  Graph layout: generation assignment, ordering, coordinates
 │   ├── drevigen-mark/    The mark, drawn from the palette and rasterised for every platform
 │   ├── drevigen-match/   Daitch–Mokotoff, Beider–Morse, Fellegi–Sunter linkage
